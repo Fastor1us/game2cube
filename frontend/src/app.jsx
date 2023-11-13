@@ -6,7 +6,7 @@ export default function App() {
 
   return (<>
     <h1>React 18</h1>
-    12345
+
     <p>
       fsdfs
     </p>

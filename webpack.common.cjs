@@ -6,9 +6,9 @@ module.exports = {
   entry: './frontend/src/index.js',
   output: {
     filename: 'bundle.js',
-    path: path.resolve(__dirname, './frontend/public'),
+    path: path.resolve(__dirname, './frontend/build'),
     clean: true,
-    publicPath: '/',
+    // publicPath: '/',
   },
   module: {
     rules: [
