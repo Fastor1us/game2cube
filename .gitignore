@@ -4,3 +4,6 @@
 
 # production
 /frontend/build/*
+
+# package lock
+package-lock.json

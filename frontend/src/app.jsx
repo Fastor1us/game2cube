@@ -1,17 +1,17 @@
 import React from 'react';
+import axios from 'axios';
 
-// const URL = 'http://localhost:3001/';
-const URL = 'https://game2cube-server.onrender.com';
+import serverData from '../../server_data.js';
 
 
 export default function App() {
   const [res, setRes] = React.useState('none');
 
   const handleButtonClick = () => {
-    fetch(`${URL}/users`)
-      .then(response => response.json())
-      .then(data => {
-        setRes(data);
+    axios
+      .get(`${serverData.url}/users`)
+      .then(res => {
+        setRes(res.data);
       })
       .catch(error => {
         console.error('Error:', error);
