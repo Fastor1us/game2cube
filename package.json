@@ -1,6 +1,6 @@
 {
   "name": "game2cube",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "pet-project",
   "private": true,
   "type": "module",
@@ -8,7 +8,8 @@
     "dev": "concurrently \"npm run b-start\" \"npm run f-start\"",
     "f-start": "webpack serve --open --config webpack.dev.cjs",
     "b-start": "node backend/server.js",
-    "build": "webpack --config webpack.prod.cjs"
+    "build": "webpack --config webpack.prod.cjs --mode production",
+    "run-build": "start ./frontend/build/index.html"
   },
   "keywords": [],
   "author": "Kiryushin Oleg <fewgwer3@yandex.ru>",
