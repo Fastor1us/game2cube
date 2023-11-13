@@ -5,9 +5,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "concurrently \"npm run b-start\" \"npm run f-start\"",
+    "dev": "concurrently \"npm run b-serve\" \"npm run f-start\"",
     "f-start": "webpack serve --open --config webpack.dev.cjs",
     "b-start": "node backend/server.js",
+    "b-serve": "nodemon backend/server.js",
     "build": "webpack --config webpack.prod.cjs --mode production",
     "run-build": "start ./frontend/build/index.html"
   },

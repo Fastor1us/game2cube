@@ -1,11 +1,14 @@
 import React from 'react';
 
+// const URL = 'http://localhost:3001/';
+const URL = 'https://game2cube-server.onrender.com';
+
 
 export default function App() {
   const [res, setRes] = React.useState('none');
 
   const handleButtonClick = () => {
-    fetch('http://localhost:3001/users')
+    fetch(`${URL}/users`)
       .then(response => response.json())
       .then(data => {
         setRes(data);
