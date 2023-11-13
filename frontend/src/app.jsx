@@ -2,8 +2,18 @@ import React from 'react';
 
 
 export default function App() {
+  const [count, setCount] = React.useState(0);
 
-  return (
+  return (<>
     <h1>React 18</h1>
+    12345
+    <p>
+      fsdfs
+    </p>
+
+    <button onClick={() => setCount(count + 1)}>
+      count is: {count}
+    </button>
+  </>
   );
 }

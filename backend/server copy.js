@@ -1,16 +1,21 @@
 // import pkg from 'pg';
 import express from 'express';
-
-const port = 3001;
-
+import webpack from 'webpack';
+import webpackDevMiddleware from 'webpack-dev-middleware';
+import config from '../webpack.dev.cjs';
 
 // const { Pool } = pkg;
 const app = express();
+const compiler = webpack(config);
 
+// Tell express to use the webpack-dev-middleware and use the webpack.config.js
+// configuration file as a base.
 app.use(
+  webpackDevMiddleware(compiler, {
+    publicPath: config.output.publicPath,
+  }),
   express.json(),
 );
-
 
 app.get('/users', (req, res) => {
   console.log('работает');
@@ -37,6 +42,7 @@ app.get('/users', (req, res) => {
 //   }
 // });
 
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}!\n`);
+// Serve the files on port 3000.
+app.listen(3000, () => {
+  console.log('Example app listening on port 3000!\n');
 });
