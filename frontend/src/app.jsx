@@ -1,32 +1,21 @@
 import React from 'react';
-import axios from 'axios';
+import { Routes, Route } from 'react-router-dom';
 
-import serverData from '../../server_data.js';
+import Layout from './components/Layout/Layout';
+import HomePage from './pages/home-page/home-page';
+import AboutPage from './pages/about-page/about-page';
+import NotFoundPage from './pages/not-found-page/not-found-page';
 
 
 export default function App() {
-  const [res, setRes] = React.useState('none');
 
-  const handleButtonClick = () => {
-    axios
-      .get(`${serverData.url}/users`)
-      .then(res => {
-        setRes(res.data);
-      })
-      .catch(error => {
-        console.error('Error:', error);
-      });
-  };
-
-  return (<>
-    <h1>React 18</h1>
-
-    <button onClick={handleButtonClick}>
-      нажми на меня
-    </button>
-    <p>
-      {res}
-    </p>
-  </>
+  return (
+    <Routes>
+      <Route path='/' element={<Layout />}>
+        <Route index element={<HomePage />} />
+        <Route path='/about' element={<AboutPage />} />
+        <Route path='*' element={<NotFoundPage />} />
+      </Route>
+    </Routes>
   );
 }

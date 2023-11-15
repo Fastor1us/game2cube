@@ -10,6 +10,7 @@ module.exports = merge(common, {
   devServer: {
     static: path.resolve(__dirname, './frontend/public'),
     port: 3000,
+    historyApiFallback: true,
     hot: true,
   },
   plugins: [
