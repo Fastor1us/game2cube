@@ -1,0 +1,56 @@
+.cell {
+  list-style-type: none;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+  position: relative;
+  border: 1px solid grey;
+}
+
+.emptyCell {
+  background-color: antiquewhite;
+}
+
+.filledCell {
+  border: 1px solid rgba(0, 0, 0, 0.5);
+  border-width: 6px;
+  border-style: outset;
+}
+
+.halfwayCell {
+  transform: scale(.75);
+}
+
+.mainCell::before {
+  position: absolute;
+  content: "1";
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 50px;
+  font-weight: bolder;
+  height: 100%;
+  width: 100%;
+  transform: scale(.75);
+  background-color: rgb(250 234 214 / 80%);
+}
+
+
+.red {
+  background-color: red;
+}
+
+.blue {
+  background-color: blue;
+}
+
+.green {
+  background-color: green;
+}
+
+.yellow {
+  background-color: yellow;
+}

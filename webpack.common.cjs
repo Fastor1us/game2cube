@@ -62,6 +62,9 @@ module.exports = {
     new MiniCssExtractPlugin(),
   ],
   resolve: {
-    extensions: ['.js', '.jsx']
-  }
+    extensions: ['.js', '.jsx'],
+    // modules: [
+    //   path.resolve(__dirname, 'frontend/src'), 'node_modules'
+    // ],
+  },
 };

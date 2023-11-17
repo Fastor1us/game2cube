@@ -20,6 +20,7 @@ export default function HomePage() {
         console.error('Error:', error);
       });
   };
+
   return (
     <>
       <h1>React 18</h1>
