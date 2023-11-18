@@ -9,7 +9,6 @@ import NotFoundPage from './pages/not-found-page/not-found-page';
 
 
 export default function App() {
-
   return (
     <Routes>
       <Route path='/' element={<Layout />}>

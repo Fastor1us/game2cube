@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
-import { useDispatch } from 'react-redux';
-import { setCurrentCellParams } from '../../../store/slicers/gameSlicer';
+import { useDispatch, useSelector } from 'react-redux';
+import { setCurrCellParams } from '../../../store/slicers/gameSlicer';
 import styles from './cell.module.css';
 
 
@@ -9,12 +9,10 @@ const Cell = React.memo((props) => {
   const ref = useRef();
 
   useEffect(() => {
-    console.log('Cell render');
     const handleMouseOver = () => {
-      dispatch(setCurrentCellParams({
+      dispatch(setCurrCellParams({
         row: props.row,
         col: props.col,
-        color: props.color,
       }));
     }
     ref.current.addEventListener('mouseover', handleMouseOver);
