@@ -1,7 +1,11 @@
 import React, { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import store from '../../store/store';
-import { setGridData, setIsWatching } from '../../store/slicers/gameSlicer';
+import {
+  setGridData,
+  setIsWatching,
+  setCellState
+} from '../../store/slicers/gameSlicer';
 import data from './field.json';
 import Engine from './engine/engine.jsx';
 import Cell from './cell/cell.jsx';
@@ -25,14 +29,16 @@ export default function Game() {
     const { fields } = data;
     dispatch(setGridData(fields));
 
-    const getReduxState = () => {
-      return store.getState().game;
-    }
     const handleMouseDown = () => {
       dispatch(setIsWatching(true));
     }
     const handleMouseUp = () => {
       dispatch(setIsWatching(false));
+      const currCoords = getReduxState().currCoords;
+      dispatch(setCellState({
+        address: { row: currCoords.row, col: currCoords.col },
+        data: { focus: false },
+      }))
     }
     const handleMouseLeave = () => {
       getReduxState().isWatching && dispatch(setIsWatching(false));
@@ -54,7 +60,10 @@ export default function Game() {
       <Engine />
       <ul
         ref={ref}
-        className={styles.gameField}
+        className={`${[
+          styles.gameField,
+          styles[`gameGrid${fields.length}`],
+        ].join(' ')}`}
       >
         {fields.map((_, row) => {
           return _.map((item, col) => {
@@ -65,4 +74,8 @@ export default function Game() {
       </ul>
     </section>
   );
+}
+
+function getReduxState() {
+  return store.getState().game;
 }

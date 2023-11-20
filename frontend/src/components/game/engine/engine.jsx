@@ -5,15 +5,22 @@ import {
   currCoordsSelector,
   prevCoordsSelector
 } from '../../../store/selectors/gameSelectors';
-import { setIsWatching, setCellState } from '../../../store/slicers/gameSlicer';
+import {
+  setIsWatching,
+  setCellState,
+  setIsFocus,
+  setTest
+} from '../../../store/slicers/gameSlicer';
 import store from '../../../store/store';
 
+
+// TODO патерн будем получать от сервера
 const cellPattern = {
-  color: 'none',
+  color: null,
   step: false,
   belong: '0',
-  sequenceNumber: 'none',
-  extra2: 'none'
+  sequenceNumber: null,
+  focus: false
 }
 
 
@@ -33,26 +40,39 @@ export default function Engine() {
     const currCell = getGridData()[currCellCoords.row][currCellCoords.col];
 
     // выходим, если клик пришелся по пустой ячейке
-    if (currCell.color === 'none' && prevCellCoords.row === null) {
+    if (!currCell.color && prevCellCoords.row === null) {
       return;
     }
 
-    // когда было движение мыши, в этом блоке 2 сценария
+    // когда было движение мыши, в этом блоке 3 сценария
     if (prevCellCoords.row !== null) {
       const prevCell = getGridData()[prevCellCoords.row][prevCellCoords.col];
       // 1.
-      // выходим, если при движении мыши предыдущая ячейка без цвета
-      // так же выключаем отслеживаение через диспатч
-      if (prevCell.color === 'none') {
-        dispatch(setIsWatching(false));
+      // убираем возмонжость ходить наискосок
+      const overload = checkMoveOverload(getGridData, currCellCoords, prevCell, 1);
+      if (!overload) {
         return;
       }
       // 2.
+      // выходим, если при движении мыши предыдущая ячейка без цвета
+      // так же выключаем отслеживаение через диспатч
+      if (!prevCell.color) {
+        dispatch(setIsWatching(false));
+        return;
+      }
+      // 3.
       // если двигались "назад" с того же цвета и принадлежности, то чистим пред. ячейку
       if (currCell.color === prevCell.color && currCell.belong === prevCell.belong) {
+        dispatch(setTest(1));
         dispatch(setCellState({
           address: { row: prevCellCoords.row, col: prevCellCoords.col }, data: cellPattern
         }));
+        if (currCell.sequenceNumber > 1) {
+          dispatch(setCellState({
+            address: { row: currCellCoords.row, col: currCellCoords.col },
+            data: { step: true, focus: true }
+          }));
+        }
       }
     }
 
@@ -63,6 +83,7 @@ export default function Engine() {
         if (cell.color === currCell.color &&
           cell.belong === currCell.belong &&
           cell.sequenceNumber > currCell.sequenceNumber) {
+          dispatch(setTest(2));
           dispatch(setCellState({
             address: { row: rowIndex, col: colIndex },
             data: { ...cellPattern }
@@ -70,9 +91,16 @@ export default function Engine() {
         }
       }));
       if (currCell.sequenceNumber > 1) {
+        dispatch(setTest(3));
         dispatch(setCellState({
           address: { row: currCellCoords.row, col: currCellCoords.col },
-          data: { ...currCell, step: true }
+          data: { step: true, focus: true }
+        }));
+      } else {
+        dispatch(setTest(4));
+        dispatch(setCellState({
+          address: { row: currCellCoords.row, col: currCellCoords.col },
+          data: { focus: true }
         }));
       }
     }
@@ -82,7 +110,7 @@ export default function Engine() {
       // если двигались с "цветной" ячейки
       const prevCell = getGridData()[prevCellCoords.row][prevCellCoords.col];
       // если ячейка куда попали без цвета
-      if (currCell.color === 'none') {
+      if (!currCell.color) {
         // перед покраской смотрим нет ли сосодних ячеек такого же цвета и пренадлежности
         // если нет, то просто красим
         // смотрим четыре напрвления - сверху, справа, снизу, слева
@@ -104,19 +132,27 @@ export default function Engine() {
         const nextSequenceNumber = overload ? overload + 1 : prevCell.sequenceNumber + 1;
         // делаем предыдущую ячейку нормального размера
         if (!overload && prevCell.sequenceNumber > 1) {
+          dispatch(setTest(5));
           dispatch(setCellState({
             address: { row: prevCellCoords.row, col: prevCellCoords.col },
-            data: { ...prevCell, step: false, }
+            data: { step: false, }
           }));
         }
         // красим след. ячейку с размером "шаг" 
+        dispatch(setTest(6));
         dispatch(setCellState({
           address: { row: currCellCoords.row, col: currCellCoords.col },
-          data: { ...prevCell, step: true, sequenceNumber: nextSequenceNumber }
+          data: { ...prevCell, step: true, sequenceNumber: nextSequenceNumber, focus: true }
         }));
+      } else {
+        // после клика по цветной ячейки и движения мыши
+        // если попали по цветной ячейке
+        // -------------------------------------------------------------------------------
+        // ВАЖНО! выше в коде уже реализован функционал: (поиск по setTest(1)) -----------
+        // если двигались "назад" с того же цвета и принадлежности, то чистим пред. ячейку
+        // -------------------------------------------------------------------------------
       }
 
-      //дальнейшие манипуляции по условиям  
     }
   }, [isWatching, currCellCoords, prevCellCoords]);
 
@@ -128,7 +164,7 @@ function getGridData() {
   return store.getState().game.grid.data;
 }
 
-function checkMoveOverload(getGridData, currCellCoords, prevCell) {
+function checkMoveOverload(getGridData, currCellCoords, prevCell, minOverloadSize = 2) {
   // функция должна вернуть минимальный sequenceNumber если их больше одного рядом
   // с currCell и вернуть false если найдена только одно совподение
   const gridData = getGridData();
@@ -155,7 +191,7 @@ function checkMoveOverload(getGridData, currCellCoords, prevCell) {
   // смотрим влево
   col - 1 >= 0 && check(gridData[row][col - 1]);
 
-  if (suitableCells.length > 1) {
+  if (suitableCells.length >= minOverloadSize) {
     return suitableCells.sort((a, b) => a - b)[0];
   } else { return false }
 }
@@ -166,6 +202,7 @@ function clearOverload(getGridData, dispatch, color, belong, sequenceNumber) {
       cell.belong === belong &&
       cell.sequenceNumber > sequenceNumber
     ) {
+      dispatch(setTest(7));
       dispatch(setCellState({
         address: { row: rowIndex, col: colIndex }, data: cellPattern
       }));

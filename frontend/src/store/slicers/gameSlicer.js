@@ -3,6 +3,7 @@ import { collectCustomHooksForSignature } from 'react-refresh';
 
 const initialState = {
   isWatching: false,
+  isFocus: false,
   currCoords: {
     row: null,
     col: null
@@ -44,11 +45,16 @@ const gameSlicer = createSlice({
       state.currCoords.col = action.payload.col;
     },
     setCellState(state, action) {
-      state.grid.data[action.payload.address.row][action.payload.address.col] =
-        action.payload.data;
       // state.grid.data[action.payload.address.row][action.payload.address.col] =
-      //   {...state.grid.data[action.payload.address.row][action.payload.address.col],
-      //   ...action.payload.data};
+      //   action.payload.data;
+      state.grid.data[action.payload.address.row][action.payload.address.col] =
+      {
+        ...state.grid.data[action.payload.address.row][action.payload.address.col],
+        ...action.payload.data
+      };
+    },
+    setIsFocus(state, action) {
+      state.isFocus = action.payload;
     },
     setTest(state, action) {
       console.log(action.payload);

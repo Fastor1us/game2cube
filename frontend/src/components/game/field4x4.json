@@ -1,6 +1,6 @@
 {
   "id": 1,
-  "fieldSize": 5,
+  "fieldSize": 4,
   "fields": [
     [
       {
@@ -24,13 +24,6 @@
         "sequenceNumber": null,
         "focus" : false
       }, 
-      {
-        "color": null,
-        "step": false,
-        "belong": "0",
-        "sequenceNumber": null,
-        "focus" : false
-      },
       {
         "color": null,
         "step": false,
@@ -67,13 +60,6 @@
         "belong": "0",
         "sequenceNumber": null,
         "focus" : false
-      },
-      {
-        "color": null,
-        "step": false,
-        "belong": "0",
-        "sequenceNumber": null,
-        "focus" : false
       }
     ],
     [
@@ -104,13 +90,6 @@
         "belong": "0",
         "sequenceNumber": null,
         "focus" : false
-      },
-      {
-        "color": null,
-        "step": false,
-        "belong": "0",
-        "sequenceNumber": null,
-        "focus" : false
       }
     ],
     [
@@ -135,50 +114,6 @@
         "sequenceNumber": null,
         "focus" : false
       }, 
-      {
-        "color": null,
-        "step": false,
-        "belong": "0",
-        "sequenceNumber": null,
-        "focus" : false
-      },
-      {
-        "color": null,
-        "step": false,
-        "belong": "0",
-        "sequenceNumber": null,
-        "focus" : false
-      }
-    ],
-    [
-      {
-        "color": null,
-        "step": false,
-        "belong": "0",
-        "sequenceNumber": null,
-        "focus" : false
-      }, 
-      {
-        "color": null,
-        "step": false,
-        "belong": "0",
-        "sequenceNumber": null,
-        "focus" : false
-      }, 
-      {
-        "color": null,
-        "step": false,
-        "belong": "0",
-        "sequenceNumber": null,
-        "focus" : false
-      }, 
-      {
-        "color": null,
-        "step": false,
-        "belong": "0",
-        "sequenceNumber": null,
-        "focus" : false
-      },
       {
         "color": null,
         "step": false,

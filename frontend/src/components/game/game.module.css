@@ -4,7 +4,6 @@
   padding: 0;
   display: grid;
   gap: 0;
-  grid-template-columns: repeat(4, 1fr);
   /* gap: 1px; */
   /* background-color: darkcyan; */
   border: 1px solid grey;
@@ -12,4 +11,17 @@
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+  position: relative;
+}
+
+.gameGrid4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.gameGrid5 {
+  grid-template-columns: repeat(5, 1fr);
+}
+
+.gameGrid6 {
+  grid-template-columns: repeat(6, 1fr);
 }

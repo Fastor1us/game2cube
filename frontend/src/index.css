@@ -1,3 +1,7 @@
+:root {
+  --cell-size: 70px;
+}
+
 @font-face {
   font-family: 'MyFont';
   src: url('./fonts/Agbalumo-Regular.ttf') format('truetype');

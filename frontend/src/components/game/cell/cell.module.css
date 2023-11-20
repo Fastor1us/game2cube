@@ -1,12 +1,13 @@
 .cell {
-  width: 80px;
-  height: 80px;
+  width: var(--cell-size);
+  height: var(--cell-size);
   display: flex;
   justify-content: center;
   align-items: center;
   box-sizing: border-box;
   position: relative;
   border: 1px solid grey;
+  /* position: absolute; */
 }
 
 .emptyCell {
@@ -23,6 +24,21 @@
   transform: scale(.75);
 }
 
+.focus {
+  transform: scale(.9);
+  outline: calc(0.05 * var(--cell-size)) solid grey;
+}
+
+/* .focus::before {
+  position: absolute;
+  box-sizing: border-box;
+  content: "";
+  width: var(--cell-size);
+  height: var(--cell-size);
+  z-index: 999;
+  border: 3px dotted white;
+} */
+
 .mainCell::before {
   position: absolute;
   content: "1";
@@ -36,6 +52,7 @@
   transform: scale(.75);
   background-color: rgb(250 234 214 / 80%);
 }
+
 
 
 .red {
