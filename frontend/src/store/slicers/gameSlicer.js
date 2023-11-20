@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { collectCustomHooksForSignature } from 'react-refresh';
 
 const initialState = {
   isWatching: false,
@@ -48,6 +49,9 @@ const gameSlicer = createSlice({
       // state.grid.data[action.payload.address.row][action.payload.address.col] =
       //   {...state.grid.data[action.payload.address.row][action.payload.address.col],
       //   ...action.payload.data};
+    },
+    setTest(state, action) {
+      console.log(action.payload);
     }
   }
 });
@@ -56,7 +60,8 @@ export const {
   setGridData,
   setIsWatching,
   setCurrCellParams,
-  setCellState
+  setCellState,
+  setTest
 } = gameSlicer.actions;
 
 export default gameSlicer.reducer;

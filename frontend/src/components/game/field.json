@@ -5,120 +5,120 @@
     [
       {
         "color": "none",
-        "state": "emptyCell",
+        "step": false,
         "belong": "0",
-        "extra1" : "none",
+        "sequenceNumber": "none",
         "extra2" : "none"
       }, 
       {
         "color": "none",
-        "state": "emptyCell",
+        "step": false,
         "belong": "0",
-        "extra1" : "none",
+        "sequenceNumber": "none",
         "extra2" : "none"
       }, 
       {
         "color": "none",
-        "state": "emptyCell",
+        "step": false,
         "belong": "0",
-        "extra1" : "none",
+        "sequenceNumber": "none",
         "extra2" : "none"
       }, 
       {
         "color": "none",
-        "state": "emptyCell",
+        "step": false,
         "belong": "0",
-        "extra1" : "none",
+        "sequenceNumber": "none",
         "extra2" : "none"
       }
     ],
     [
       {
         "color": "none",
-        "state": "emptyCell",
+        "step": false,
         "belong": "0",
-        "extra1" : "none",
+        "sequenceNumber": "none",
         "extra2" : "none"
       }, 
       {
         "color": "red",
-        "state": "mainCell",
+        "step": false,
         "belong": "1",
-        "sequenceNumber" : "1",
+        "sequenceNumber": 1,
         "extra2" : "none"
       }, 
       {
         "color": "none",
-        "state": "emptyCell",
+        "step": false,
         "belong": "0",
-        "extra1" : "none",
+        "sequenceNumber": "none",
         "extra2" : "none"
       }, 
       {
         "color": "none",
-        "state": "emptyCell",
+        "step": false,
         "belong": "0",
-        "extra1" : "none",
+        "sequenceNumber": "none",
         "extra2" : "none"
       }
     ],
     [
       {
         "color": "none",
-        "state": "emptyCell",
+        "step": false,
         "belong": "0",
-        "extra1" : "none",
+        "sequenceNumber": "none",
         "extra2" : "none"
       },        
       {
         "color": "none",
-        "state": "emptyCell",
+        "step": false,
         "belong": "0",
-        "extra1" : "none",
+        "sequenceNumber": "none",
         "extra2" : "none"
       }, 
       {
         "color": "none",
-        "state": "emptyCell",
+        "step": false,
         "belong": "0",
-        "extra1" : "none",
+        "sequenceNumber": "none",
         "extra2" : "none"
       }, 
       {
         "color": "none",
-        "state": "emptyCell",
+        "step": false,
         "belong": "0",
-        "extra1" : "none",
+        "sequenceNumber": "none",
         "extra2" : "none"
       }
     ],
     [
       {
         "color": "none",
-        "state": "emptyCell",
+        "step": false,
         "belong": "0",
-        "extra1" : "none",
+        "sequenceNumber": "none",
         "extra2" : "none"
       }, 
       {
         "color": "none",
-        "state": "emptyCell",
+        "step": false,
         "belong": "0",
-        "extra1" : "none",
+        "sequenceNumber": "none",
         "extra2" : "none"
       }, 
       {
         "color": "none",
-        "state": "emptyCell",
+        "step": false,
         "belong": "0",
-        "extra1" : "none",
+        "sequenceNumber": "none",
         "extra2" : "none"
       }, 
       {
         "color": "none",
-        "state": "emptyCell",
+        "step": false,
         "belong": "0",
-        "extra1" : "none",
+        "sequenceNumber": "none",
         "extra2" : "none"
       }
     ]

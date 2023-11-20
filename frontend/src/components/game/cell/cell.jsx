@@ -15,25 +15,36 @@ const Cell = React.memo((props) => {
         col: props.col,
       }));
     }
-    ref.current.addEventListener('mouseover', handleMouseOver);
+    ref.current.addEventListener('mouseenter', handleMouseOver);
     return () => {
-      ref.current.removeEventListener('mouseover', handleMouseOver);
+      ref.current.removeEventListener('mouseenter', handleMouseOver);
     };
   }, []);
 
   return (
     <li
       ref={ref}
-      className={`
-        ${[
-          styles.cell,
-          styles[props.state],
-          props.color !== 'none' && styles[props.color],
-          props.color !== 'none' && styles.filledCell,
-        ].filter(Boolean).join(' ')}
-      `}
+      className={`${[
+        styles.cell,
+        // styles[props.state],
+        props.sequenceNumber === 1 && styles.mainCell,
+        props.color === 'none' && styles.emptyCell,
+        props.color !== 'none' && !props.step && styles[props.color],
+        props.color !== 'none' && !props.step && styles.filledCell,
+        props.step && styles.emptyCell,
+      ].filter(Boolean).join(' ')}`}
     >
-      { }
+      {props.step &&
+        <div
+          className={`${[
+            styles.cell,
+            styles.step,
+            styles.filledCell,
+            styles[props.color],
+          ].filter(Boolean).join(' ')}`}
+        >
+        </div>
+      }
     </li>
   );
 });

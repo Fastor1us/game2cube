@@ -19,7 +19,7 @@
   border-style: outset;
 }
 
-.halfwayCell {
+.step {
   transform: scale(.75);
 }
 
