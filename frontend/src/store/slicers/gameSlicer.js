@@ -33,16 +33,23 @@ const gameSlicer = createSlice({
         state.prevCoords = initialState.prevCoords;
       }
     },
-    setCurrCellParams(state, action) {
+    setCellCoords(state, action) {
       // записываем данные о предыдущей ячейке в prevCoords
       if (state.isWatching) {
         state.prevCoords.row = state.currCoords.row;
         state.prevCoords.col = state.currCoords.col;
       }
-
       // записываем данные о текущей ячейке в currCoords
       state.currCoords.row = action.payload.row;
       state.currCoords.col = action.payload.col;
+    },
+    setCurrCellCoords(state, action) {
+      state.currCoords.row = action.payload.row;
+      state.currCoords.col = action.payload.col;
+    },
+    setPrevCellCoords(state, action) {
+      state.prevCoords.row = action.payload.row;
+      state.prevCoords.col = action.payload.col;
     },
     setCellState(state, action) {
       // state.grid.data[action.payload.address.row][action.payload.address.col] =
@@ -52,9 +59,7 @@ const gameSlicer = createSlice({
         ...state.grid.data[action.payload.address.row][action.payload.address.col],
         ...action.payload.data
       };
-    },
-    setIsFocus(state, action) {
-      state.isFocus = action.payload;
+      state.isFocus = action.payload.data.focus
     },
     setTest(state, action) {
       console.log(action.payload);
@@ -65,7 +70,10 @@ const gameSlicer = createSlice({
 export const {
   setGridData,
   setIsWatching,
-  setCurrCellParams,
+  setCellCoords,
+
+  setCurrCellCoords,
+  setPrevCellCoords,
   setCellState,
   setTest
 } = gameSlicer.actions;

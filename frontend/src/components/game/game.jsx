@@ -34,14 +34,14 @@ export default function Game() {
     }
     const handleMouseUp = () => {
       dispatch(setIsWatching(false));
-      const currCoords = getReduxState().currCoords;
-      dispatch(setCellState({
-        address: { row: currCoords.row, col: currCoords.col },
-        data: { focus: false },
-      }))
+      // const currCoords = getGameState().currCoords;
+      // dispatch(setCellState({
+      //   address: { row: currCoords.row, col: currCoords.col },
+      //   data: { focus: false },
+      // }));
     }
     const handleMouseLeave = () => {
-      getReduxState().isWatching && dispatch(setIsWatching(false));
+      getGameState().isWatching && dispatch(setIsWatching(false));
     }
 
     ref.current.addEventListener('mousedown', handleMouseDown);
@@ -76,6 +76,6 @@ export default function Game() {
   );
 }
 
-function getReduxState() {
+function getGameState() {
   return store.getState().game;
 }

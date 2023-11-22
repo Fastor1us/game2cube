@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
-import { setCurrCellParams, setCellState } from '../../../store/slicers/gameSlicer';
+import { setCellCoords, setIsWatching } from '../../../store/slicers/gameSlicer';
 import store from '../../../store/store';
 import styles from './cell.module.css';
 
@@ -10,25 +10,19 @@ const Cell = React.memo((props) => {
   const ref = useRef();
 
   useEffect(() => {
-    const handleMouseOver = () => {
-      dispatch(setCurrCellParams({
+    const handleMouseEnter = () => {
+      dispatch(setCellCoords({
         row: props.row,
         col: props.col,
       }));
+      // вернулись на поле в ячейку с фокусом при зажатой ЛКМ
+      if (getGameState().isFocus) {
+        dispatch(setIsWatching(true));
+      }
     }
-    const handleMouseLeave = () => {
-
-      const cellData = getGridData()[props.row][props.col];
-      dispatch(setCellState({
-        address: { row: props.row, col: props.col },
-        data: { ...cellData, focus: false }
-      }));
-    }
-    ref.current.addEventListener('mouseenter', handleMouseOver);
-    ref.current.addEventListener('mouseleave', handleMouseLeave);
+    ref.current.addEventListener('mouseenter', handleMouseEnter);
     return () => {
-      ref.current.removeEventListener('mouseenter', handleMouseOver);
-      ref.current.addEventListener('mouseleave', handleMouseLeave);
+      ref.current.removeEventListener('mouseenter', handleMouseEnter);
     };
   }, []);
 
@@ -64,6 +58,10 @@ const Cell = React.memo((props) => {
 
 export default Cell;
 
+
+function getGameState() {
+  return store.getState().game;
+}
 
 function getGridData() {
   return store.getState().game.grid.data;

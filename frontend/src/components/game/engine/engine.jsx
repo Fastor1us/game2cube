@@ -8,7 +8,7 @@ import {
 import {
   setIsWatching,
   setCellState,
-  setIsFocus,
+  setPrevCellCoords,
   setTest
 } from '../../../store/slicers/gameSlicer';
 import store from '../../../store/store';
@@ -32,7 +32,49 @@ export default function Engine() {
 
   // console.log('engine rerender');
 
+  // снимаем фокус с ячейки если вывели мышку за поле удерживая,
+  // а затем отпустив ЛКМ
   useEffect(() => {
+    const handleMouseUp = () => {
+      if (getGameState().isFocus) {
+        // dispatch(setTest(8));
+        dispatch(setCellState({
+          address: findFocusedCellCoords(getGridData()),
+          data: { focus: false },
+        }));
+      }
+    };
+    document.addEventListener('mouseup', handleMouseUp);
+    return () => {
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, []);
+
+  // выключаем фокус с prevCell
+  useEffect(() => {
+    if (prevCellCoords.row !== null) {
+      const prevCellData = getGridData()[prevCellCoords.row][prevCellCoords.col];
+      dispatch(setCellState({
+        address: { row: prevCellCoords.row, col: prevCellCoords.col },
+        data: { ...prevCellData, focus: false },
+      }));
+    }
+  }, [prevCellCoords]);
+
+
+  // основная логика
+  useEffect(() => {
+    // возможность вернуться на поле рядом с ячейкой с фокусом 
+    // после вылета (если ЛКМ осталась зажатой) :
+    if (!isWatching && getGameState().isFocus) {
+      const focusedCellCoords = findFocusedCellCoords(getGridData());
+      if (isNextMoveNearFocusedCell(focusedCellCoords, currCellCoords)) {
+        dispatch(setPrevCellCoords(focusedCellCoords));
+        dispatch(setIsWatching(true));
+      }
+    }
+
+    //
     if (!isWatching) {
       return;
     }
@@ -41,10 +83,11 @@ export default function Engine() {
 
     // выходим, если клик пришелся по пустой ячейке
     if (!currCell.color && prevCellCoords.row === null) {
+      dispatch(setIsWatching(false));
       return;
     }
 
-    // когда было движение мыши, в этом блоке 3 сценария
+    // когда было движение мыши, в этом блоке 2 сценария
     if (prevCellCoords.row !== null) {
       const prevCell = getGridData()[prevCellCoords.row][prevCellCoords.col];
       // 1.
@@ -54,20 +97,14 @@ export default function Engine() {
         return;
       }
       // 2.
-      // выходим, если при движении мыши предыдущая ячейка без цвета
-      // так же выключаем отслеживаение через диспатч
-      if (!prevCell.color) {
-        dispatch(setIsWatching(false));
-        return;
-      }
-      // 3.
       // если двигались "назад" с того же цвета и принадлежности, то чистим пред. ячейку
       if (currCell.color === prevCell.color && currCell.belong === prevCell.belong) {
-        dispatch(setTest(1));
+        // dispatch(setTest(1));
         dispatch(setCellState({
           address: { row: prevCellCoords.row, col: prevCellCoords.col }, data: cellPattern
         }));
         if (currCell.sequenceNumber > 1) {
+          // dispatch(setTest(9));
           dispatch(setCellState({
             address: { row: currCellCoords.row, col: currCellCoords.col },
             data: { step: true, focus: true }
@@ -83,26 +120,22 @@ export default function Engine() {
         if (cell.color === currCell.color &&
           cell.belong === currCell.belong &&
           cell.sequenceNumber > currCell.sequenceNumber) {
-          dispatch(setTest(2));
+          // dispatch(setTest(2));
           dispatch(setCellState({
             address: { row: rowIndex, col: colIndex },
             data: { ...cellPattern }
           }));
         }
       }));
+      let data = { focus: true };
       if (currCell.sequenceNumber > 1) {
-        dispatch(setTest(3));
-        dispatch(setCellState({
-          address: { row: currCellCoords.row, col: currCellCoords.col },
-          data: { step: true, focus: true }
-        }));
-      } else {
-        dispatch(setTest(4));
-        dispatch(setCellState({
-          address: { row: currCellCoords.row, col: currCellCoords.col },
-          data: { focus: true }
-        }));
+        data.step = true;
       }
+      // dispatch(setTest(3));
+      dispatch(setCellState({
+        address: { row: currCellCoords.row, col: currCellCoords.col },
+        data: data
+      }));
     }
 
     // после клика по цветной ячейки и движения мыши
@@ -132,14 +165,14 @@ export default function Engine() {
         const nextSequenceNumber = overload ? overload + 1 : prevCell.sequenceNumber + 1;
         // делаем предыдущую ячейку нормального размера
         if (!overload && prevCell.sequenceNumber > 1) {
-          dispatch(setTest(5));
+          // dispatch(setTest(4));
           dispatch(setCellState({
             address: { row: prevCellCoords.row, col: prevCellCoords.col },
             data: { step: false, }
           }));
         }
         // красим след. ячейку с размером "шаг" 
-        dispatch(setTest(6));
+        // dispatch(setTest(5));
         dispatch(setCellState({
           address: { row: currCellCoords.row, col: currCellCoords.col },
           data: { ...prevCell, step: true, sequenceNumber: nextSequenceNumber, focus: true }
@@ -159,9 +192,47 @@ export default function Engine() {
   return (<></>);
 }
 
+function getGameState() {
+  return store.getState().game;
+}
 
 function getGridData() {
   return store.getState().game.grid.data;
+}
+
+function findFocusedCellCoords(grid) {
+  let result = null;
+  grid.some((row, rowIndex) => {
+    return row.some((cell, colIndex) => {
+      if (cell.focus === true) {
+        result = { row: rowIndex, col: colIndex };
+        return true;
+      } else { return false }
+    });
+  });
+  return result;
+}
+
+function isNextMoveNearFocusedCell(focusedCellCoords, currCellCoords) {
+  if (
+    (
+      currCellCoords.row === focusedCellCoords.row &&
+      currCellCoords.col === focusedCellCoords.col + 1
+    ) || (
+      currCellCoords.row === focusedCellCoords.row &&
+      currCellCoords.col === focusedCellCoords.col - 1
+    ) || (
+      currCellCoords.row === focusedCellCoords.row + 1 &&
+      currCellCoords.col === focusedCellCoords.col
+    ) || (
+      currCellCoords.row === focusedCellCoords.row - 1 &&
+      currCellCoords.col === focusedCellCoords.col
+    )
+  ) {
+    return true;
+  } else {
+    return false;
+  }
 }
 
 function checkMoveOverload(getGridData, currCellCoords, prevCell, minOverloadSize = 2) {
@@ -202,7 +273,7 @@ function clearOverload(getGridData, dispatch, color, belong, sequenceNumber) {
       cell.belong === belong &&
       cell.sequenceNumber > sequenceNumber
     ) {
-      dispatch(setTest(7));
+      // dispatch(setTest(7));
       dispatch(setCellState({
         address: { row: rowIndex, col: colIndex }, data: cellPattern
       }));
