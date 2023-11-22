@@ -55,8 +55,7 @@ export default function Engine() {
     if (prevCellCoords.row !== null) {
       const prevCellData = getGridData()[prevCellCoords.row][prevCellCoords.col];
       dispatch(setCellState({
-        address: { row: prevCellCoords.row, col: prevCellCoords.col },
-        data: { ...prevCellData, focus: false },
+        address: prevCellCoords, data: { ...prevCellData, focus: false },
       }));
     }
   }, [prevCellCoords]);
@@ -64,17 +63,6 @@ export default function Engine() {
 
   // основная логика
   useEffect(() => {
-    // возможность вернуться на поле рядом с ячейкой с фокусом 
-    // после вылета (если ЛКМ осталась зажатой) :
-    if (!isWatching && getGameState().isFocus) {
-      const focusedCellCoords = findFocusedCellCoords(getGridData());
-      if (isNextMoveNearFocusedCell(focusedCellCoords, currCellCoords)) {
-        dispatch(setPrevCellCoords(focusedCellCoords));
-        dispatch(setIsWatching(true));
-      }
-    }
-
-    //
     if (!isWatching) {
       return;
     }
@@ -87,6 +75,29 @@ export default function Engine() {
       return;
     }
 
+    // после клика по полю, но до движения мыши
+    // очищаем все ячейки того же цвета с тем же belong 
+    if (prevCellCoords.row === null) {
+      // dispatch(setTest(2));
+      clearOverload(getGridData, dispatch, currCell.color, currCell.belong,
+        currCell.sequenceNumber);
+      let data = { focus: true };
+      if (currCell.sequenceNumber > 1) {
+        data.step = true;
+      }
+      // dispatch(setTest(3));
+      dispatch(setCellState({
+        address: currCellCoords, data: data
+      }));
+    }
+
+    // если след и пред ячейка разных цветов, то выключаем
+    // if (prevCellCoords.row !== null && currCell.color !== prevCell.color) {
+    //   console.log('yes')
+    //   dispatch(setIsWatching(false));
+    //   return;
+    // }
+
     // когда было движение мыши, в этом блоке 2 сценария
     if (prevCellCoords.row !== null) {
       const prevCell = getGridData()[prevCellCoords.row][prevCellCoords.col];
@@ -94,6 +105,7 @@ export default function Engine() {
       // убираем возмонжость ходить наискосок
       const overload = checkMoveOverload(getGridData, currCellCoords, prevCell, 1);
       if (!overload) {
+        dispatch(setIsWatching(false));
         return;
       }
       // 2.
@@ -101,42 +113,17 @@ export default function Engine() {
       if (currCell.color === prevCell.color && currCell.belong === prevCell.belong) {
         // dispatch(setTest(1));
         dispatch(setCellState({
-          address: { row: prevCellCoords.row, col: prevCellCoords.col }, data: cellPattern
+          address: prevCellCoords, data: cellPattern
         }));
         if (currCell.sequenceNumber > 1) {
           // dispatch(setTest(9));
           dispatch(setCellState({
-            address: { row: currCellCoords.row, col: currCellCoords.col },
-            data: { step: true, focus: true }
+            address: currCellCoords, data: { step: true, focus: true }
           }));
         }
       }
     }
 
-    // после клика по полю, но до движения мыши
-    // очищаем все ячейки того же цвета с тем же belong 
-    if (prevCellCoords.row === null) {
-      getGridData().forEach((row, rowIndex) => row.forEach((cell, colIndex) => {
-        if (cell.color === currCell.color &&
-          cell.belong === currCell.belong &&
-          cell.sequenceNumber > currCell.sequenceNumber) {
-          // dispatch(setTest(2));
-          dispatch(setCellState({
-            address: { row: rowIndex, col: colIndex },
-            data: { ...cellPattern }
-          }));
-        }
-      }));
-      let data = { focus: true };
-      if (currCell.sequenceNumber > 1) {
-        data.step = true;
-      }
-      // dispatch(setTest(3));
-      dispatch(setCellState({
-        address: { row: currCellCoords.row, col: currCellCoords.col },
-        data: data
-      }));
-    }
 
     // после клика по цветной ячейки и движения мыши
     if (prevCellCoords.row !== null) {
@@ -167,14 +154,13 @@ export default function Engine() {
         if (!overload && prevCell.sequenceNumber > 1) {
           // dispatch(setTest(4));
           dispatch(setCellState({
-            address: { row: prevCellCoords.row, col: prevCellCoords.col },
-            data: { step: false, }
+            address: prevCellCoords, data: { step: false, }
           }));
         }
         // красим след. ячейку с размером "шаг" 
         // dispatch(setTest(5));
         dispatch(setCellState({
-          address: { row: currCellCoords.row, col: currCellCoords.col },
+          address: currCellCoords,
           data: { ...prevCell, step: true, sequenceNumber: nextSequenceNumber, focus: true }
         }));
       } else {
@@ -269,7 +255,8 @@ function checkMoveOverload(getGridData, currCellCoords, prevCell, minOverloadSiz
 
 function clearOverload(getGridData, dispatch, color, belong, sequenceNumber) {
   getGridData().forEach((row, rowIndex) => row.forEach((cell, colIndex) => {
-    if (cell.color === color &&
+    if (
+      cell.color === color &&
       cell.belong === belong &&
       cell.sequenceNumber > sequenceNumber
     ) {
@@ -278,5 +265,5 @@ function clearOverload(getGridData, dispatch, color, belong, sequenceNumber) {
         address: { row: rowIndex, col: colIndex }, data: cellPattern
       }));
     }
-  }))
+  }));
 }

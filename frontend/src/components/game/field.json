@@ -18,10 +18,10 @@
         "focus" : false
       }, 
       {
-        "color": null,
+        "color": "green",
         "step": false,
-        "belong": "0",
-        "sequenceNumber": null,
+        "belong": 1,
+        "sequenceNumber": 1,
         "focus" : false
       }, 
       {
@@ -69,12 +69,12 @@
         "focus" : false
       },
       {
-        "color": null,
+        "color": "red",
         "step": false,
-        "belong": "0",
-        "sequenceNumber": null,
+        "belong": "2",
+        "sequenceNumber": 1,
         "focus" : false
-      }
+      } 
     ],
     [
       {
