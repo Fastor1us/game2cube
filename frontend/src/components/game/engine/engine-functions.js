@@ -32,17 +32,17 @@ export function checkMoveOverload(
 }
 
 // цветная входит в главную ячейку, очищаем "хвосты" у вливающегося belong'a
-export function checkMainCellEntryOveload(getGridData, currCellCoords, cellData) {
-  function check(checkingCell) {
-    if (checkingCell.color === cellData.color) {
-      return checkingCell.sequenceNumber;
-    }
-  }
-  const suitableCells = checkAdjucentCells(getGridData, currCellCoords, check);
-  if (suitableCells.length > 1) {
-    return suitableCells.sort((a, b) => a - b)[0];
-  } else { return false }
-}
+// export function checkMainCellEntryOveload(getGridData, currCellCoords, cellData) {
+//   function check(checkingCell) {
+//     if (checkingCell.color === cellData.color) {
+//       return checkingCell.sequenceNumber;
+//     }
+//   }
+//   const suitableCells = checkAdjucentCells(getGridData, currCellCoords, check);
+//   if (suitableCells.length > 1) {
+//     return suitableCells.sort((a, b) => a - b)[0];
+//   } else { return false }
+// }
 
 // находим наикрачайший путь для соединения двух концов одного цвета
 // возвращает объект вида {belong: sequenceNumber}
@@ -90,10 +90,10 @@ export function findShortestPathForLinkingColors(getGridData, color) {
     }
   }
   console.log(encounters);
+  // encounters - массив из двух объектов вида: {belong: sequenceNumber}
   const indexMinPath = encounters.reduce((minIndex, item, currIndex, array) => {
-    const currentSum = item.a + item.b;
-    const minSum = array[minIndex].a + array[minIndex].b;
-
+    const currentSum = item[1] + item[2];
+    const minSum = array[minIndex][1] + array[minIndex][2];
     return currentSum < minSum ? currIndex : minIndex;
   }, 0);
   console.log(indexMinPath);

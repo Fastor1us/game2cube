@@ -14,7 +14,6 @@ import {
 import {
   checkMoveOverload,
   clearOverload,
-  checkMainCellEntryOveload,
   findFocusedCellCoords,
   findSteppedCellCoords,
   setBelongForLinkedCells,
@@ -140,51 +139,13 @@ export default function Engine() {
         currCell.color !== prevCell.color &&
         currCell.sequenceNumber > 1
       ) {
-        //
-      }
-
-      // если подвинулись с цветной ячейки на главную такого же цвета, то
-      // выключаем isWatch = false, убираем лишние "хвосты", устанавливаем belong = 3, 
-      // sequenceNumber = 999, для цветных ячеек того же цвета, у которых sequenceNumber > 1
-      if (
-        currCell.color === prevCell.color &&
-        currCell.belong !== prevCell.belong &&
-        currCell.sequenceNumber === 1
-      ) {
+        // TODO:
         dispatch(setIsWatching(false));
-        // очищаем все ячейки того же цвета с тем же belong
-        clearOverload(getGridData, dispatch, currCell.color, currCell.belong, 1);
-        // ищем все соседcтвующие с currCell ячейки такого же цвета
-        // среди них находим минимальный minSequenceNumber
-        // очищаем все ячейки того же цвета с sequenceNumber > minSequenceNumber
-        const overload = checkMainCellEntryOveload(getGridData, currCellCoords, currCell);
-        if (overload) {
-          clearOverload(getGridData, dispatch, currCell.color,
-            currCell.belong === 1 ? 2 : 1, overload);
-        } else {
-          dispatch(setCellState({
-            address: findSteppedCellCoords(getGridData(), currCell.color),
-            data: { step: false },
-          }));
-        }
-        dispatch(setLinkedColors({ [currCell.color]: true }));
-        setBelongForLinkedCells(getGridData, dispatch, currCell.color);
-        // тут пробегаемся по всем красным ячейкам у которых sequenceNumber > 1
-        // присваиваем им belong = 3, убираем step и фокус
-        //
         return;
+        //
       }
 
-
-
-
-
-
-
-
-
-
-      // если подвинулись с цветной ячейки на цветную (не главную) такого же цвета, то
+      // если подвинулись с цветной ячейки на цветную с другим belong, но такого же цвета, то
       // выключаем isWatch = false, убираем лишние "хвосты", устанавливаем belong = 3, 
       // sequenceNumber = 999, для цветных ячеек того же цвета, у которых sequenceNumber > 1
       if (
@@ -196,17 +157,16 @@ export default function Engine() {
         const overload = findShortestPathForLinkingColors(getGridData, currCell.color);
         clearOverload(getGridData, dispatch, currCell.color, 1, overload[1]);
         clearOverload(getGridData, dispatch, currCell.color, 2, overload[2]);
+        const isSteppedCell = findSteppedCellCoords(getGridData(), currCell.color);
+        isSteppedCell && dispatch(setCellState({
+          address: isSteppedCell,
+          data: { step: false },
+        }));
+        dispatch(setLinkedColors({ [currCell.color]: true }));
+        setBelongForLinkedCells(getGridData, dispatch, currCell.color);
+        dispatch(setIsWatching(false));
+        return;
       }
-
-
-
-
-
-
-
-
-
-
 
       // убираем возмонжость ходить наискосок с цветной на пустую
       // TODO
