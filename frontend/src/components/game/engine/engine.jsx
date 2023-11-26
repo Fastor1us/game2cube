@@ -8,9 +8,18 @@ import {
 import {
   setIsWatching,
   setCellState,
-  setPrevCellCoords,
+  setLinkedColors,
   setTest
 } from '../../../store/slicers/gameSlicer';
+import {
+  checkMoveOverload,
+  clearOverload,
+  checkMainCellEntryOveload,
+  findFocusedCellCoords,
+  findSteppedCellCoords,
+  setBelongForLinkedCells,
+  findShortestPathForLinkingColors
+} from './engine-functions';
 import store from '../../../store/store';
 
 
@@ -18,7 +27,7 @@ import store from '../../../store/store';
 const cellPattern = {
   color: null,
   step: false,
-  belong: '0',
+  belong: null,
   sequenceNumber: null,
   focus: false
 }
@@ -33,7 +42,7 @@ export default function Engine() {
   // console.log('engine rerender');
 
   // снимаем фокус с ячейки если вывели мышку за поле удерживая,
-  // а затем отпустив ЛКМ
+  // а затем отпустили ЛКМ
   useEffect(() => {
     const handleMouseUp = () => {
       if (getGameState().isFocus) {
@@ -61,7 +70,7 @@ export default function Engine() {
   }, [prevCellCoords]);
 
 
-  // основная логика
+  // ================================ основная логика ================================
   useEffect(() => {
     if (!isWatching) {
       return;
@@ -77,38 +86,140 @@ export default function Engine() {
 
     // после клика по полю, но до движения мыши
     // очищаем все ячейки того же цвета с тем же belong 
+    // TODO: на данный момент не учитывается возможность "соединения" концов одного цвета
+    // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     if (prevCellCoords.row === null) {
       // dispatch(setTest(2));
-      clearOverload(getGridData, dispatch, currCell.color, currCell.belong,
-        currCell.sequenceNumber);
-      let data = { focus: true };
-      if (currCell.sequenceNumber > 1) {
-        data.step = true;
+      if (currCell.belong !== 3) {
+        if (getGameState().linkedColors[currCell.color]) {
+          clearOverload(getGridData, dispatch, currCell.color, 3, 1);
+          dispatch(setLinkedColors({ [currCell.color]: false }));
+        } else {
+          clearOverload(getGridData, dispatch, currCell.color, currCell.belong,
+            currCell.sequenceNumber);
+          let data = { focus: true };
+          if (currCell.sequenceNumber > 1) {
+            data.step = true;
+          }
+          // dispatch(setTest(3));
+          dispatch(setCellState({
+            address: currCellCoords, data: data
+          }));
+        }
+      } else {
+        // TODO
+        // логика разбития соединённого цвета
+        // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        // заглушка
+        clearOverload(getGridData, dispatch, currCell.color, 3, 1);
+        dispatch(setLinkedColors({ [currCell.color]: false }));
+        dispatch(setIsWatching(false));
       }
-      // dispatch(setTest(3));
-      dispatch(setCellState({
-        address: currCellCoords, data: data
-      }));
     }
 
-    // если след и пред ячейка разных цветов, то выключаем
-    // if (prevCellCoords.row !== null && currCell.color !== prevCell.color) {
-    //   console.log('yes')
-    //   dispatch(setIsWatching(false));
-    //   return;
-    // }
 
-    // когда было движение мыши, в этом блоке 2 сценария
+    // ===============================================================================
     if (prevCellCoords.row !== null) {
+      // если подвинулись с цветной ячейки на главную другого цвета, то
+      // выключаем isWatch = false, выходим
       const prevCell = getGridData()[prevCellCoords.row][prevCellCoords.col];
-      // 1.
-      // убираем возмонжость ходить наискосок
-      const overload = checkMoveOverload(getGridData, currCellCoords, prevCell, 1);
-      if (!overload) {
+      if (
+        currCell.color !== null &&
+        currCell.color !== prevCell.color &&
+        currCell.sequenceNumber === 1
+      ) {
         dispatch(setIsWatching(false));
         return;
       }
-      // 2.
+
+      // TODO:
+      // если подвинулись с цветной ячейки на ячейку другого цвета, то
+      // разрываем ячейку другого цвета (два варианта, если belong=1|2 и belong=3)
+      if (
+        currCell.color !== null &&
+        currCell.color !== prevCell.color &&
+        currCell.sequenceNumber > 1
+      ) {
+        //
+      }
+
+      // если подвинулись с цветной ячейки на главную такого же цвета, то
+      // выключаем isWatch = false, убираем лишние "хвосты", устанавливаем belong = 3, 
+      // sequenceNumber = 999, для цветных ячеек того же цвета, у которых sequenceNumber > 1
+      if (
+        currCell.color === prevCell.color &&
+        currCell.belong !== prevCell.belong &&
+        currCell.sequenceNumber === 1
+      ) {
+        dispatch(setIsWatching(false));
+        // очищаем все ячейки того же цвета с тем же belong
+        clearOverload(getGridData, dispatch, currCell.color, currCell.belong, 1);
+        // ищем все соседcтвующие с currCell ячейки такого же цвета
+        // среди них находим минимальный minSequenceNumber
+        // очищаем все ячейки того же цвета с sequenceNumber > minSequenceNumber
+        const overload = checkMainCellEntryOveload(getGridData, currCellCoords, currCell);
+        if (overload) {
+          clearOverload(getGridData, dispatch, currCell.color,
+            currCell.belong === 1 ? 2 : 1, overload);
+        } else {
+          dispatch(setCellState({
+            address: findSteppedCellCoords(getGridData(), currCell.color),
+            data: { step: false },
+          }));
+        }
+        dispatch(setLinkedColors({ [currCell.color]: true }));
+        setBelongForLinkedCells(getGridData, dispatch, currCell.color);
+        // тут пробегаемся по всем красным ячейкам у которых sequenceNumber > 1
+        // присваиваем им belong = 3, убираем step и фокус
+        //
+        return;
+      }
+
+
+
+
+
+
+
+
+
+
+      // если подвинулись с цветной ячейки на цветную (не главную) такого же цвета, то
+      // выключаем isWatch = false, убираем лишние "хвосты", устанавливаем belong = 3, 
+      // sequenceNumber = 999, для цветных ячеек того же цвета, у которых sequenceNumber > 1
+      if (
+        currCell.color === prevCell.color &&
+        currCell.belong !== prevCell.belong
+      ) {
+        // запускаем функцию "нахождение наикрачайшего пути"
+        console.log('запуск нахождения наикрачайшего пути');
+        const overload = findShortestPathForLinkingColors(getGridData, currCell.color);
+        clearOverload(getGridData, dispatch, currCell.color, 1, overload[1]);
+        clearOverload(getGridData, dispatch, currCell.color, 2, overload[2]);
+      }
+
+
+
+
+
+
+
+
+
+
+
+      // убираем возмонжость ходить наискосок с цветной на пустую
+      // TODO
+      // сценарий с цветной на свой (другой belong)/другой цвет наискосок
+      // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      if (currCell.color) {
+        const overload = checkMoveOverload(getGridData, currCellCoords, prevCell, 1);
+        if (!overload) {
+          dispatch(setIsWatching(false));
+          return;
+        }
+      }
+
       // если двигались "назад" с того же цвета и принадлежности, то чистим пред. ячейку
       if (currCell.color === prevCell.color && currCell.belong === prevCell.belong) {
         // dispatch(setTest(1));
@@ -122,16 +233,13 @@ export default function Engine() {
           }));
         }
       }
-    }
 
-
-    // после клика по цветной ячейки и движения мыши
-    if (prevCellCoords.row !== null) {
-      // если двигались с "цветной" ячейки
-      const prevCell = getGridData()[prevCellCoords.row][prevCellCoords.col];
+      // ===============================================================================
+      // ============================  ПОКРАСКА ЯЧЕЙКИ =================================
+      // ===============================================================================
       // если ячейка куда попали без цвета
       if (!currCell.color) {
-        // перед покраской смотрим нет ли сосодних ячеек такого же цвета и пренадлежности
+        // перед покраской смотрим нет ли соседних ячеек такого же цвета и пренадлежности
         // если нет, то просто красим
         // смотрим четыре напрвления - сверху, справа, снизу, слева
         // находим минимальный sequenceNumber, след ячейка будет sequenceNumber + 1
@@ -164,14 +272,8 @@ export default function Engine() {
           data: { ...prevCell, step: true, sequenceNumber: nextSequenceNumber, focus: true }
         }));
       } else {
-        // после клика по цветной ячейки и движения мыши
-        // если попали по цветной ячейке
-        // -------------------------------------------------------------------------------
-        // ВАЖНО! выше в коде уже реализован функционал: (поиск по setTest(1)) -----------
-        // если двигались "назад" с того же цвета и принадлежности, то чистим пред. ячейку
         // -------------------------------------------------------------------------------
       }
-
     }
   }, [isWatching, currCellCoords, prevCellCoords]);
 
@@ -186,84 +288,7 @@ function getGridData() {
   return store.getState().game.grid.data;
 }
 
-function findFocusedCellCoords(grid) {
-  let result = null;
-  grid.some((row, rowIndex) => {
-    return row.some((cell, colIndex) => {
-      if (cell.focus === true) {
-        result = { row: rowIndex, col: colIndex };
-        return true;
-      } else { return false }
-    });
-  });
-  return result;
-}
-
-function isNextMoveNearFocusedCell(focusedCellCoords, currCellCoords) {
-  if (
-    (
-      currCellCoords.row === focusedCellCoords.row &&
-      currCellCoords.col === focusedCellCoords.col + 1
-    ) || (
-      currCellCoords.row === focusedCellCoords.row &&
-      currCellCoords.col === focusedCellCoords.col - 1
-    ) || (
-      currCellCoords.row === focusedCellCoords.row + 1 &&
-      currCellCoords.col === focusedCellCoords.col
-    ) || (
-      currCellCoords.row === focusedCellCoords.row - 1 &&
-      currCellCoords.col === focusedCellCoords.col
-    )
-  ) {
-    return true;
-  } else {
-    return false;
-  }
-}
-
-function checkMoveOverload(getGridData, currCellCoords, prevCell, minOverloadSize = 2) {
-  // функция должна вернуть минимальный sequenceNumber если их больше одного рядом
-  // с currCell и вернуть false если найдена только одно совподение
-  const gridData = getGridData();
-  const gridSize = gridData.length;
-  const { row, col } = currCellCoords;
-  const currColor = prevCell.color;
-  const currBelong = prevCell.belong;
-  const sequenceNumberWillBe = prevCell.sequenceNumber + 1;
-  const suitableCells = [];
-  function check(checkingCell) {
-    if (checkingCell.color === currColor &&
-      checkingCell.belong === currBelong &&
-      checkingCell.sequenceNumber < sequenceNumberWillBe
-    ) {
-      suitableCells.push(checkingCell.sequenceNumber);
-    }
-  }
-  // смотрим вверх
-  row - 1 >= 0 && check(gridData[row - 1][col]);
-  // смотрим вправо
-  col + 1 !== gridSize && check(gridData[row][col + 1]);
-  // смотрим вниз
-  row + 1 !== gridSize && check(gridData[row + 1][col]);
-  // смотрим влево
-  col - 1 >= 0 && check(gridData[row][col - 1]);
-
-  if (suitableCells.length >= minOverloadSize) {
-    return suitableCells.sort((a, b) => a - b)[0];
-  } else { return false }
-}
-
-function clearOverload(getGridData, dispatch, color, belong, sequenceNumber) {
-  getGridData().forEach((row, rowIndex) => row.forEach((cell, colIndex) => {
-    if (
-      cell.color === color &&
-      cell.belong === belong &&
-      cell.sequenceNumber > sequenceNumber
-    ) {
-      // dispatch(setTest(7));
-      dispatch(setCellState({
-        address: { row: rowIndex, col: colIndex }, data: cellPattern
-      }));
-    }
-  }));
-}
+// TODO:
+// вынести check в отдельную функцию и передавать её в качестве колбека?
+// оставить основную логику на проверку хода в четырёх нарправлениях
+// добавить больше настроек для гибкости

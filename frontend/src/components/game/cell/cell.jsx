@@ -16,14 +16,14 @@ const Cell = React.memo((props) => {
 
   useEffect(() => {
     const handleMouseEnter = () => {
-      console.log('handleMouseEnter');
+      // console.log('handleMouseEnter');
       dispatch(setCellCoords({
         row: props.row,
         col: props.col,
       }));
       // вернулись на поле в ячейку с фокусом при зажатой ЛКМ
       if (!getGameState().isWatching && getGameState().isFocus) {
-        console.log('вернулись на поле в ячейку с фокусом при зажатой ЛКМ');
+        // console.log('вернулись на поле в ячейку с фокусом при зажатой ЛКМ');
         // если адрес ячейки с фокусом равен адресу текущей ячейки, то
         // включаем setIsWatching и прерываем функцию
         const focusedCellCoords = findFocusedCellCoords(getGridData());
@@ -32,7 +32,7 @@ const Cell = React.memo((props) => {
           focusedCellCoords.row === props.row &&
           focusedCellCoords.col === props.col
         ) {
-          console.log('1');
+          // console.log('1');
           dispatch(setIsWatching(true));
           return;
         }
@@ -43,7 +43,7 @@ const Cell = React.memo((props) => {
           getGridData()[focusedCellCoords.row][focusedCellCoords.col].color !==
           getGridData()[props.row][props.col].color
         ) {
-          console.log('2');
+          // console.log('2');
           dispatch(setCellState({
             address: focusedCellCoords,
             data: { focus: false },

@@ -6,35 +6,72 @@
       {
         "color": null,
         "step": false,
-        "belong": "0",
+        "belong": null,
         "sequenceNumber": null,
         "focus" : false
       }, 
       {
-        "color": null,
-        "step": false,
-        "belong": "0",
-        "sequenceNumber": null,
-        "focus" : false
-      }, 
-      {
-        "color": "green",
+        "color": "red",
         "step": false,
         "belong": 1,
         "sequenceNumber": 1,
         "focus" : false
-      }, 
+      },
       {
         "color": null,
         "step": false,
-        "belong": "0",
+        "belong": null,
         "sequenceNumber": null,
         "focus" : false
       },
       {
         "color": null,
         "step": false,
-        "belong": "0",
+        "belong": null,
+        "sequenceNumber": null,
+        "focus" : false
+      },
+      {
+        "color": "red",
+        "step": false,
+        "belong": 2,
+        "sequenceNumber": 1,
+        "focus" : false
+      }
+    ],
+    [
+      {
+        "color": null,
+        "step": false,
+        "belong": null,
+        "sequenceNumber": null,
+        "focus" : false
+      }, 
+      {
+        "color": null,
+        "step": false,
+        "belong": null,
+        "sequenceNumber": null,
+        "focus" : false
+      }, 
+      {
+        "color": null,
+        "step": false,
+        "belong": null,
+        "sequenceNumber": null,
+        "focus" : false
+      }, 
+      {
+        "color": null,
+        "step": false,
+        "belong": null,
+        "sequenceNumber": null,
+        "focus" : false
+      },
+      {
+        "color": null,
+        "step": false,
+        "belong": null,
         "sequenceNumber": null,
         "focus" : false
       }
@@ -43,72 +80,35 @@
       {
         "color": null,
         "step": false,
-        "belong": "0",
-        "sequenceNumber": null,
-        "focus" : false
-      }, 
-      {
-        "color": "red",
-        "step": false,
-        "belong": "1",
-        "sequenceNumber": 1,
-        "focus" : false
-      }, 
-      {
-        "color": null,
-        "step": false,
-        "belong": "0",
-        "sequenceNumber": null,
-        "focus" : false
-      }, 
-      {
-        "color": null,
-        "step": false,
-        "belong": "0",
-        "sequenceNumber": null,
-        "focus" : false
-      },
-      {
-        "color": "red",
-        "step": false,
-        "belong": "2",
-        "sequenceNumber": 1,
-        "focus" : false
-      } 
-    ],
-    [
-      {
-        "color": null,
-        "step": false,
-        "belong": "0",
+        "belong": null,
         "sequenceNumber": null,
         "focus" : false
       },        
       {
         "color": null,
         "step": false,
-        "belong": "0",
+        "belong": null,
         "sequenceNumber": null,
         "focus" : false
       }, 
       {
         "color": null,
         "step": false,
-        "belong": "0",
+        "belong": null,
         "sequenceNumber": null,
         "focus" : false
       }, 
       {
         "color": null,
         "step": false,
-        "belong": "0",
+        "belong": null,
         "sequenceNumber": null,
         "focus" : false
       },
       {
         "color": null,
         "step": false,
-        "belong": "0",
+        "belong": null,
         "sequenceNumber": null,
         "focus" : false
       }
@@ -117,35 +117,35 @@
       {
         "color": null,
         "step": false,
-        "belong": "0",
+        "belong": null,
         "sequenceNumber": null,
         "focus" : false
       }, 
       {
         "color": null,
         "step": false,
-        "belong": "0",
+        "belong": null,
         "sequenceNumber": null,
         "focus" : false
       }, 
       {
         "color": null,
         "step": false,
-        "belong": "0",
+        "belong": null,
         "sequenceNumber": null,
         "focus" : false
       }, 
       {
         "color": null,
         "step": false,
-        "belong": "0",
+        "belong": null,
         "sequenceNumber": null,
         "focus" : false
       },
       {
         "color": null,
         "step": false,
-        "belong": "0",
+        "belong": null,
         "sequenceNumber": null,
         "focus" : false
       }
@@ -154,35 +154,35 @@
       {
         "color": null,
         "step": false,
-        "belong": "0",
+        "belong": null,
         "sequenceNumber": null,
         "focus" : false
       }, 
       {
         "color": null,
         "step": false,
-        "belong": "0",
+        "belong": null,
         "sequenceNumber": null,
         "focus" : false
       }, 
       {
         "color": null,
         "step": false,
-        "belong": "0",
+        "belong": null,
         "sequenceNumber": null,
         "focus" : false
       }, 
       {
         "color": null,
         "step": false,
-        "belong": "0",
+        "belong": null,
         "sequenceNumber": null,
         "focus" : false
       },
       {
         "color": null,
         "step": false,
-        "belong": "0",
+        "belong": null,
         "sequenceNumber": null,
         "focus" : false
       }

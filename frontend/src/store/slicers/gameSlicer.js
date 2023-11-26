@@ -4,6 +4,7 @@ import { collectCustomHooksForSignature } from 'react-refresh';
 const initialState = {
   isWatching: false,
   isFocus: false,
+  linkedColors: {},
   currCoords: {
     row: null,
     col: null
@@ -13,7 +14,7 @@ const initialState = {
     col: null
   },
   grid: {
-    size: 4,
+    size: 5,
     data: [],
   }
 };
@@ -59,7 +60,11 @@ const gameSlicer = createSlice({
         ...state.grid.data[action.payload.address.row][action.payload.address.col],
         ...action.payload.data
       };
-      state.isFocus = action.payload.data.focus
+      state.isFocus = action.payload.data.focus || false;
+    },
+    setLinkedColors(state, action) {
+      const entries = Object.entries(action.payload);
+      state.linkedColors[entries[0][0]] = entries[0][1];
     },
     setTest(state, action) {
       console.log(action.payload);
@@ -71,10 +76,10 @@ export const {
   setGridData,
   setIsWatching,
   setCellCoords,
-
   setCurrCellCoords,
   setPrevCellCoords,
   setCellState,
+  setLinkedColors,
   setTest
 } = gameSlicer.actions;
 
