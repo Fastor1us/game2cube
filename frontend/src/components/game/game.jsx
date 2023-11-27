@@ -7,6 +7,7 @@ import {
   setCellState
 } from '../../store/slicers/gameSlicer';
 import data from './field.json';
+import GameStatus from './game-status/game-status.jsx';
 import Engine from './engine/engine.jsx';
 import Cell from './cell/cell.jsx';
 import styles from './game.module.css';
@@ -72,6 +73,7 @@ export default function Game() {
           })
         })}
       </ul>
+      <GameStatus />
     </section>
   );
 }

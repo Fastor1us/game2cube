@@ -3,12 +3,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   isWatchingSelector,
   currCoordsSelector,
-  prevCoordsSelector
+  prevCoordsSelector,
+  linkedColorsSelector,
+  isCompletedSelector
 } from '../../../store/selectors/gameSelectors';
 import {
   setIsWatching,
   setCellState,
   setLinkedColors,
+  setIsComplited,
   setTest
 } from '../../../store/slicers/gameSlicer';
 import {
@@ -37,6 +40,8 @@ export default function Engine() {
   const isWatching = useSelector(isWatchingSelector);
   const currCellCoords = useSelector(currCoordsSelector);
   const prevCellCoords = useSelector(prevCoordsSelector);
+  const linkedColors = useSelector(linkedColorsSelector);
+  const isComplited = useSelector(isCompletedSelector);
 
   // console.log('engine rerender');
 
@@ -60,22 +65,52 @@ export default function Engine() {
 
   // выключаем фокус с prevCell
   useEffect(() => {
-    if (prevCellCoords.row !== null) {
+    if (isComplited) {
+      return;
+    }
+    if (prevCellCoords.row !== null && isWatching) {
       const prevCellData = getGridData()[prevCellCoords.row][prevCellCoords.col];
       dispatch(setCellState({
         address: prevCellCoords, data: { ...prevCellData, focus: false },
       }));
     }
-  }, [prevCellCoords]);
+  }, [prevCellCoords, isWatching, isComplited]);
+
+  // следим за прохождением уровня
+  useEffect(() => {
+    if (Object.keys(linkedColors).length === 0) {
+      return;
+    }
+    for (let key in linkedColors) {
+      if (linkedColors[key] === false) {
+        return;
+      }
+    }
+    if (
+      !getGridData().every((row) => {
+        return row.every((cell) => {
+          return cell.color && (cell.sequenceNumber === 1 || !cell.step);
+        });
+      })
+    ) {
+      return;
+    }
+    dispatch(setIsComplited(true));
+  }, [linkedColors])
 
 
   // ================================ основная логика ================================
   useEffect(() => {
+    if (isComplited) {
+      return;
+    }
+
     if (!isWatching) {
       return;
     }
 
-    const currCell = getGridData()[currCellCoords.row][currCellCoords.col];
+    let currCell = Object.assign({},
+      getGridData()[currCellCoords.row][currCellCoords.col]);
 
     // выходим, если клик пришелся по пустой ячейке
     if (!currCell.color && prevCellCoords.row === null) {
@@ -83,10 +118,8 @@ export default function Engine() {
       return;
     }
 
-    // после клика по полю, но до движения мыши
-    // очищаем все ячейки того же цвета с тем же belong 
-    // TODO: на данный момент не учитывается возможность "соединения" концов одного цвета
-    // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    // после клика по полю, но до движения мыши очищаем все ячейки того же цвета
+    // с тем же belong, или с belong === 3 в случае соединённого цвета
     if (prevCellCoords.row === null) {
       // dispatch(setTest(2));
       if (currCell.belong !== 3) {
@@ -119,9 +152,9 @@ export default function Engine() {
 
     // ===============================================================================
     if (prevCellCoords.row !== null) {
+      const prevCell = getGridData()[prevCellCoords.row][prevCellCoords.col];
       // если подвинулись с цветной ячейки на главную другого цвета, то
       // выключаем isWatch = false, выходим
-      const prevCell = getGridData()[prevCellCoords.row][prevCellCoords.col];
       if (
         currCell.color !== null &&
         currCell.color !== prevCell.color &&
@@ -131,18 +164,40 @@ export default function Engine() {
         return;
       }
 
-      // TODO:
       // если подвинулись с цветной ячейки на ячейку другого цвета, то
-      // разрываем ячейку другого цвета (два варианта, если belong=1|2 и belong=3)
+      // разрываем ячейку другого цвета. Два варианта: для соединённого и не соед. цветов
       if (
         currCell.color !== null &&
         currCell.color !== prevCell.color &&
         currCell.sequenceNumber > 1
       ) {
-        // TODO:
-        dispatch(setIsWatching(false));
-        return;
-        //
+        // попали в соединённый цвет
+        if (getGameState().linkedColors[currCell.color]) {
+          clearOverload(getGridData, dispatch, currCell.color, 3, 1);
+          dispatch(setLinkedColors({ [currCell.color]: false }));
+        } else {
+          // попали в не соединённый цвет  
+          clearOverload(getGridData, dispatch, currCell.color,
+            currCell.belong, currCell.sequenceNumber - 1);
+          // делаем у отрезанного хвоста последнюю ячейку step (если не главная)
+          if (currCell.sequenceNumber - 1 > 1) {
+            getGridData().find((row, rowIndex) => {
+              return row.find((cell, colIndex) => {
+                if (
+                  cell.color === currCell.color &&
+                  cell.sequenceNumber === currCell.sequenceNumber - 1
+                ) {
+                  dispatch(setCellState({
+                    address: { row: rowIndex, col: colIndex }, data: { step: true }
+                  }));
+                  return true;
+                }
+              })
+            })
+          }
+        }
+        // убираем цвет текущей ячейки для работы логики ниже (по покраске)
+        currCell.color = null;
       }
 
       // если подвинулись с цветной ячейки на цветную с другим belong, но такого же цвета, то
@@ -153,7 +208,7 @@ export default function Engine() {
         currCell.belong !== prevCell.belong
       ) {
         // запускаем функцию "нахождение наикрачайшего пути"
-        console.log('запуск нахождения наикрачайшего пути');
+        // console.log('запуск нахождения наикрачайшего пути');
         const overload = findShortestPathForLinkingColors(getGridData, currCell.color);
         clearOverload(getGridData, dispatch, currCell.color, 1, overload[1]);
         clearOverload(getGridData, dispatch, currCell.color, 2, overload[2]);
@@ -199,6 +254,7 @@ export default function Engine() {
       // ===============================================================================
       // если ячейка куда попали без цвета
       if (!currCell.color) {
+        // console.log('ячейка куда попали без цвета');
         // перед покраской смотрим нет ли соседних ячеек такого же цвета и пренадлежности
         // если нет, то просто красим
         // смотрим четыре напрвления - сверху, справа, снизу, слева
@@ -235,7 +291,7 @@ export default function Engine() {
         // -------------------------------------------------------------------------------
       }
     }
-  }, [isWatching, currCellCoords, prevCellCoords]);
+  }, [isWatching, currCellCoords, prevCellCoords, isComplited]);
 
   return (<></>);
 }

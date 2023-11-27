@@ -7,7 +7,6 @@
   box-sizing: border-box;
   position: relative;
   border: 1px solid grey;
-  /* position: absolute; */
 }
 
 .emptyCell {
@@ -29,19 +28,8 @@
   outline: calc(0.05 * var(--cell-size)) solid grey;
 }
 
-/* .focus::before {
-  position: absolute;
-  box-sizing: border-box;
-  content: "";
-  width: var(--cell-size);
-  height: var(--cell-size);
-  z-index: 999;
-  border: 3px dotted white;
-} */
-
 .mainCell::before {
   position: absolute;
-  content: "1";
   display: flex;
   justify-content: center;
   align-items: center;
@@ -53,20 +41,48 @@
   background-color: rgb(250 234 214 / 80%);
 }
 
+.mainCellLinked::before {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 50px;
+  font-weight: bolder;
+  height: 100%;
+  width: 100%;
+  transform: scale(.75);
+  color: white;
+  /* background-color: rgb(250 234 214 / 80%); */
+}
 
+.main-blue::before {
+  content: '1';
+}
+
+.main-green::before {
+  content: '2';
+}
+
+.main-gray::before {
+  content: '3';
+}
+
+.main-red::before {
+  content: '4';
+}
 
 .red {
   background-color: red;
 }
 
 .blue {
-  background-color: blue;
+  background-color: RoyalBlue;
 }
 
 .green {
-  background-color: green;
+  background-color: ForestGreen;
 }
 
-.yellow {
-  background-color: yellow;
+.gray {
+  background-color: Gray;
 }

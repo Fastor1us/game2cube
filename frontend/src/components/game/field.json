@@ -4,13 +4,6 @@
   "fields": [
     [
       {
-        "color": null,
-        "step": false,
-        "belong": null,
-        "sequenceNumber": null,
-        "focus" : false
-      }, 
-      {
         "color": "red",
         "step": false,
         "belong": 1,
@@ -23,6 +16,13 @@
         "belong": null,
         "sequenceNumber": null,
         "focus" : false
+      }, 
+      {
+        "color": null,
+        "step": false,
+        "belong": null,
+        "sequenceNumber": null,
+        "focus" : false
       },
       {
         "color": null,
@@ -32,33 +32,33 @@
         "focus" : false
       },
       {
-        "color": "red",
+        "color": "blue",
         "step": false,
-        "belong": 2,
+        "belong": 1,
         "sequenceNumber": 1,
         "focus" : false
       }
     ],
     [
       {
-        "color": null,
+        "color": "green",
         "step": false,
-        "belong": null,
-        "sequenceNumber": null,
+        "belong": 1,
+        "sequenceNumber": 1,
+        "focus" : false
+      },
+      {
+        "color": "gray",
+        "step": false,
+        "belong": 1,
+        "sequenceNumber": 1,
         "focus" : false
       }, 
       {
-        "color": null,
+        "color": "blue",
         "step": false,
-        "belong": null,
-        "sequenceNumber": null,
-        "focus" : false
-      }, 
-      {
-        "color": null,
-        "step": false,
-        "belong": null,
-        "sequenceNumber": null,
+        "belong": 2,
+        "sequenceNumber": 1,
         "focus" : false
       }, 
       {
@@ -99,10 +99,10 @@
         "focus" : false
       }, 
       {
-        "color": null,
+        "color": "red",
         "step": false,
-        "belong": null,
-        "sequenceNumber": null,
+        "belong": 2,
+        "sequenceNumber": 1,
         "focus" : false
       },
       {
@@ -152,10 +152,10 @@
     ],
     [
       {
-        "color": null,
+        "color": "green",
         "step": false,
-        "belong": null,
-        "sequenceNumber": null,
+        "belong": 2,
+        "sequenceNumber": 1,
         "focus" : false
       }, 
       {
@@ -180,10 +180,10 @@
         "focus" : false
       },
       {
-        "color": null,
+        "color": "gray",
         "step": false,
-        "belong": null,
-        "sequenceNumber": null,
+        "belong": 2,
+        "sequenceNumber": 1,
         "focus" : false
       }
     ]

@@ -4,6 +4,7 @@ import { collectCustomHooksForSignature } from 'react-refresh';
 const initialState = {
   isWatching: false,
   isFocus: false,
+  isCompleted: false,
   linkedColors: {},
   currCoords: {
     row: null,
@@ -66,6 +67,9 @@ const gameSlicer = createSlice({
       const entries = Object.entries(action.payload);
       state.linkedColors[entries[0][0]] = entries[0][1];
     },
+    setIsComplited(state, action) {
+      state.isCompleted = action.payload;
+    },
     setTest(state, action) {
       console.log(action.payload);
     }
@@ -80,6 +84,7 @@ export const {
   setPrevCellCoords,
   setCellState,
   setLinkedColors,
+  setIsComplited,
   setTest
 } = gameSlicer.actions;
 

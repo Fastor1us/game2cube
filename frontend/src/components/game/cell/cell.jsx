@@ -1,11 +1,12 @@
 import React, { useEffect, useRef } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   setCellCoords,
   setCellState,
   setPrevCellCoords,
   setIsWatching
 } from '../../../store/slicers/gameSlicer';
+import { linkedColorSelector } from '../../../store/selectors/gameSelectors';
 import store from '../../../store/store';
 import styles from './cell.module.css';
 
@@ -13,6 +14,8 @@ import styles from './cell.module.css';
 const Cell = React.memo((props) => {
   const dispatch = useDispatch();
   const ref = useRef();
+
+  const isMainCellLinked = useSelector(linkedColorSelector(props.color));
 
   useEffect(() => {
     const handleMouseEnter = () => {
@@ -54,7 +57,7 @@ const Cell = React.memo((props) => {
         const currCellCoords = { row: props.row, col: props.col };
         if (isNextMoveNearFocusedCell(focusedCellCoords, currCellCoords)) {
           dispatch(setPrevCellCoords(focusedCellCoords));
-          console.log('3');
+          // console.log('3');
           dispatch(setIsWatching(true));
         } else {
           dispatch(setCellState({
@@ -76,7 +79,9 @@ const Cell = React.memo((props) => {
         className={`${[
           styles.cell,
           // styles[props.state],
-          props.sequenceNumber === 1 && styles.mainCell,
+          props.sequenceNumber === 1 && !isMainCellLinked && styles.mainCell,
+          props.sequenceNumber === 1 && styles[`main-${props.color}`],
+          isMainCellLinked && styles.mainCellLinked,
           props.focus && styles.focus,
           !props.color && styles.emptyCell,
           props.color && !props.step && styles[props.color],

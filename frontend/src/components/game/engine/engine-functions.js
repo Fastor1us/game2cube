@@ -66,7 +66,7 @@ export function findShortestPathForLinkingColors(getGridData, color) {
     .map(i => i.sort((a, b) => a.sequenceNumber - b.sequenceNumber));
   // теперь решаем по какому belong'у будем двигаться в поисках наикрачайшего пути
   const shortestBelong = colorBelongsData[0].length <= colorBelongsData[1].length ? 0 : 1;
-  console.log(colorBelongsData[shortestBelong]);
+  // console.log(colorBelongsData[shortestBelong]);
   function check(checkingCell) {
     // console.log('check');
     // console.log(checkingCell);
@@ -89,15 +89,15 @@ export function findShortestPathForLinkingColors(getGridData, color) {
       });
     }
   }
-  console.log(encounters);
+  // console.log(encounters);
   // encounters - массив из двух объектов вида: {belong: sequenceNumber}
   const indexMinPath = encounters.reduce((minIndex, item, currIndex, array) => {
     const currentSum = item[1] + item[2];
     const minSum = array[minIndex][1] + array[minIndex][2];
     return currentSum < minSum ? currIndex : minIndex;
   }, 0);
-  console.log(indexMinPath);
-  console.log(encounters[indexMinPath]);
+  // console.log(indexMinPath);
+  // console.log(encounters[indexMinPath]);
   return encounters[indexMinPath];
 }
 
