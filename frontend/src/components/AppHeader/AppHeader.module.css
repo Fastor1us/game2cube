@@ -33,12 +33,28 @@
   text-decoration: underline;
 }
 
-/* .menuLogo {
+.menuLogo {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-} */
+}
+
+.logo {
+  height: 70px;
+  width: 70px;
+}
+
+.avatar {
+  height: 55px;
+  width: 55px;
+  border-radius: 50%;
+}
+
+.arrowDown {
+  height: 55px;
+  width: 30px;
+}
 
 /* Стили для мобильных устройств */
 @media (min-width: 425px) and (max-width: 767px) {
@@ -52,7 +68,7 @@
 @media (min-width: 768px) and (max-width: 1023px) {
   .navPanel {
     max-width: 700px;
-    font-size: 25px;
+    font-size: 24px;
   }
 }
 
@@ -60,7 +76,7 @@
 @media (min-width: 1024px) and (max-width: 1439px) {
   .navPanel {
     max-width: 900px;
-    font-size: 30px;
+    font-size: 26px;
   }
 }
 
@@ -68,6 +84,22 @@
 @media (min-width: 1440px) {
   .navPanel {
     max-width: 960px;
-    font-size: 32px;
+    font-size: 34px;
+  }
+
+  .logo {
+    height: 84px;
+    width: 84px;
+  }
+
+  .avatar {
+    height: 60px;
+    width: 60px;
+    border-radius: 50%;
+  }
+
+  .arrowDown {
+    height: 60px;
+    width: 32px;
   }
 }

@@ -1,0 +1,10 @@
+.footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+
+  padding: 20px 0;
+  background-color: var(--background-header-color);
+
+  color: white;
+}

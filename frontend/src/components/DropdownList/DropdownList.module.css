@@ -1,0 +1,41 @@
+.dropdownList {
+  position: relative;
+  cursor: pointer;
+  z-index: 100;
+}
+
+.navList {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  /* display: flex;
+  justify-content: space-between;
+  position: relative;
+  align-items: center;
+  gap: 40px; */
+
+  border: 1px solid black;
+}
+
+.navItem {
+  padding: 10px;
+  width: 100px;
+  border-bottom: 1px solid black;
+  background-color: gray;
+}
+
+.navList:last-of-type {
+  border-bottom: none;
+}
+
+.link {
+  color: white;
+  text-decoration: none;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
