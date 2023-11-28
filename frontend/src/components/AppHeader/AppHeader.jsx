@@ -7,7 +7,7 @@ import svgLogo from '../../image/logo.svg';
 import svgAvatar from '../../image/avatar.svg';
 import svgArrowDown from '../../image/arrow-down.svg';
 
-import styles from './AppHeader.module.css'
+import styles from './AppHeader.module.css';
 
 
 export default function AppHeader() {

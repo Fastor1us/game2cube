@@ -46,14 +46,14 @@
 }
 
 .avatar {
-  height: 55px;
-  width: 55px;
+  height: 45px;
+  width: 45px;
   border-radius: 50%;
 }
 
 .arrowDown {
-  height: 55px;
-  width: 30px;
+  height: 45px;
+  width: 25px;
 }
 
 /* Стили для мобильных устройств */
@@ -93,13 +93,13 @@
   }
 
   .avatar {
-    height: 60px;
-    width: 60px;
+    height: 54px;
+    width: 54px;
     border-radius: 50%;
   }
 
   .arrowDown {
-    height: 60px;
-    width: 32px;
+    height: 54px;
+    width: 30px;
   }
 }
