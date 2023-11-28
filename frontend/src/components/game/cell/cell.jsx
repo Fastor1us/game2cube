@@ -8,7 +8,7 @@ import {
 } from '../../../store/slicers/gameSlicer';
 import { linkedColorSelector } from '../../../store/selectors/gameSelectors';
 import store from '../../../store/store';
-import styles from './cell.module.css';
+import styles from './Cell.module.css';
 
 
 const Cell = React.memo((props) => {
@@ -69,7 +69,7 @@ const Cell = React.memo((props) => {
     }
     ref.current.addEventListener('mouseenter', handleMouseEnter);
     return () => {
-      ref.current.removeEventListener('mouseenter', handleMouseEnter);
+      ref.current && ref.current.removeEventListener('mouseenter', handleMouseEnter);
     };
   }, []);
 

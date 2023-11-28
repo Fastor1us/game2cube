@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Game from '../../components/game/game.jsx';
+import Game from '../../components/Game/Game.jsx';
 
 
 export default function GamePage() {

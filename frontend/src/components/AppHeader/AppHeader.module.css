@@ -1,0 +1,73 @@
+.header {
+  width: 100vw;
+  padding: 20px 0;
+  background-color: var(--background-header-color);
+}
+
+.navPanel {
+  margin: auto;
+}
+
+.navList {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  /* flex-grow: 1; */
+  justify-content: space-between;
+  position: relative;
+  align-items: center;
+  gap: 40px;
+}
+
+.link {
+  color: white;
+  text-decoration: none;
+}
+
+/* .navItem:last-of-type {
+  margin-left: auto;
+} */
+
+.link:hover {
+  text-decoration: underline;
+}
+
+/* .menuLogo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+} */
+
+/* Стили для мобильных устройств */
+@media (min-width: 425px) and (max-width: 767px) {
+  .navPanel {
+    max-width: 400px;
+    font-size: 24px;
+  }
+}
+
+/* Стили для мобильных устройств */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .navPanel {
+    max-width: 700px;
+    font-size: 25px;
+  }
+}
+
+/* Стили для планшетов */
+@media (min-width: 1024px) and (max-width: 1439px) {
+  .navPanel {
+    max-width: 900px;
+    font-size: 30px;
+  }
+}
+
+/* Стили для десктопов */
+@media (min-width: 1440px) {
+  .navPanel {
+    max-width: 960px;
+    font-size: 32px;
+  }
+}

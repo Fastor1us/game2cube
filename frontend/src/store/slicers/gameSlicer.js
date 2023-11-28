@@ -70,6 +70,9 @@ const gameSlicer = createSlice({
     setIsComplited(state, action) {
       state.isCompleted = action.payload;
     },
+    setResetStateToInitial(state) {
+      Object.assign(state, initialState);
+    },
     setTest(state, action) {
       console.log(action.payload);
     }
@@ -85,6 +88,7 @@ export const {
   setCellState,
   setLinkedColors,
   setIsComplited,
+  setResetStateToInitial,
   setTest
 } = gameSlicer.actions;
 

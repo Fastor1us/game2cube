@@ -1,16 +1,16 @@
 import React, { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import store from '../../store/store';
+import store from '../../store/store.js';
 import {
   setGridData,
   setIsWatching,
   setCellState
-} from '../../store/slicers/gameSlicer';
+} from '../../store/slicers/gameSlicer.js';
 import data from './field.json';
-import GameStatus from './game-status/game-status.jsx';
-import Engine from './engine/engine.jsx';
-import Cell from './cell/cell.jsx';
-import styles from './game.module.css';
+import GameStatus from './GameStatus/GameStatus.jsx';
+import Engine from './Engine/Engine.jsx';
+import Cell from './Cell/Cell.jsx';
+import styles from './Game.module.css';
 
 
 export default function Game() {
@@ -50,9 +50,9 @@ export default function Game() {
     ref.current.addEventListener('mouseleave', handleMouseLeave);
 
     return () => {
-      ref.current.removeEventListener('mousedown', handleMouseDown);
-      ref.current.removeEventListener('mouseup', handleMouseUp);
-      ref.current.removeEventListener('mouseleave', handleMouseLeave);
+      ref.current && ref.current.removeEventListener('mousedown', handleMouseDown);
+      ref.current && ref.current.removeEventListener('mouseup', handleMouseUp);
+      ref.current && ref.current.removeEventListener('mouseleave', handleMouseLeave);
     };
   }, []);
 

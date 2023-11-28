@@ -1,15 +1,15 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
 
-import styles from './layout.module.css';
+import AppHeader from '../AppHeader/AppHeader';
+
+import styles from './Layout.module.css';
 
 
 export default function Layout() {
   return (
     <>
-      <header>
-        тут будет шапка
-      </header>
+      <AppHeader />
 
       <main className={styles.main}>
         <Outlet />

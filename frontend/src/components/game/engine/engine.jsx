@@ -12,6 +12,7 @@ import {
   setCellState,
   setLinkedColors,
   setIsComplited,
+  setResetStateToInitial,
   setTest
 } from '../../../store/slicers/gameSlicer';
 import {
@@ -292,6 +293,13 @@ export default function Engine() {
       }
     }
   }, [isWatching, currCellCoords, prevCellCoords, isComplited]);
+
+  // Блок размонтирования. Сбрасываем изменяемые состояния
+  useEffect(() => {
+    return () => {
+      dispatch(setResetStateToInitial());
+    }
+  }, []);
 
   return (<></>);
 }

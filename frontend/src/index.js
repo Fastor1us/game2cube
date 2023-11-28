@@ -8,6 +8,7 @@ import App from './app.jsx';
 import store from './store/store.js';
 
 import './index.css';
+import './normalize.css';
 
 
 const root = ReactDOM.createRoot(document.getElementById('app'));
