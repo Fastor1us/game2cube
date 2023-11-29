@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useForm } from '../../utils/hooks/use-form';
 import { userAPI } from '../../utils/api/user-api';
 import styles from './RegisterPage.module.css';
@@ -11,72 +11,97 @@ export default function RegisterPage() {
     email: 'fewgwer3@ya.ru',
     password: '12345',
     passwordConfirmation: '12345',
+    confirmationCode: '',
   });
 
-  // const [register, { data, isLoading, isSuccess, isError }] =
-  // userAPI.endpoints.postOrderInfo.useMutation();
+  const [register, { data, isLoading, isSuccess, isError }] =
+    userAPI.endpoints.register.useMutation();
 
-  const onSubmit = (e) => {
+
+  // заблокировать кнопку "зарегистрироваться"
+  // разблокировать её по условиям - корректная заполненность всех полей
+  const onRegisterSubmit = useCallback((e) => {
     e.preventDefault();
+    register({
+      username: values.username,
+      email: values.email,
+      password: values.password,
+    });
+  }, [values]);
 
-    if (values.password === values.passwordConfirmation) {
-      axios
-        .post('http://localhost:3001/register', {
-          username: values.username,
-          email: values.email,
-          password: values.password,
-        })
-        .then((response) => {
-          console.log(response.data);
-        })
-        .catch((e) => {
-          if (e.response.status === 409) {
-            console.error('Error:', e.response.data.error);
-          } else {
-            console.log('Упс, что-то пошло не так...');
-            console.error('Error:', e);
-          }
-        });
-    }
+  const onConfirmationSubmit = useCallback((e) => {
+    e.preventDefault();
+    axios
+      .post('http://localhost:3001/user/registrationConfirm', {
+        username: values.username,
+        email: values.email,
+        confirmationCode: values.confirmationCode,
+      })
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((e) => {
+        console.error('Error:', e);
+      });
+  }, [values]);
 
-    // axios
-    //   .get('http://localhost:3001/users')
-    //   .then((response) => {
-    //     console.log(response.data);
-    //   });
-  }
+  return (<>
+    {!isSuccess && (
+      <form
+        className={styles.registerForm}
+        onSubmit={onRegisterSubmit}
+      >
+        <label htmlFor="username">
+          Никнейм:
+        </label>
+        <input type="text" id="username" name='username'
+          onChange={handleChange} value={values.username} />
 
-  return (
-    <form onSubmit={onSubmit} className={styles.registerForm}>
-      <label htmlFor="username">
-        Никнейм:
-      </label>
-      <input type="text" id="username" name='username'
-        onChange={handleChange} value={values.username} />
+        <label htmlFor="email">
+          Email:
+        </label>
+        <input type="email" id="email" name='email'
+          onChange={handleChange} value={values.email} />
 
-      <label htmlFor="email">
-        Email:
-      </label>
-      <input type="email" id="email" name='email'
-        onChange={handleChange} value={values.email} />
+        <label htmlFor="password">
+          Пароль:
+        </label>
+        <input type="password" id="password" name='password'
+          onChange={handleChange} value={values.password} />
 
-      <label htmlFor="password">
-        Пароль:
-      </label>
-      <input type="password" id="password" name='password'
-        onChange={handleChange} value={values.password} />
-
-      <label htmlFor="passwordConfirmation">
-        Повторите пароль:
-      </label>
-      <input type="password" id="passwordConfirmation"
-        name='passwordConfirmation' onChange={handleChange}
-        value={values.passwordConfirmation} />
+        <label htmlFor="passwordConfirmation">
+          Повторите пароль:
+        </label>
+        <input type="password" id="passwordConfirmation"
+          name='passwordConfirmation' onChange={handleChange}
+          value={values.passwordConfirmation} />
 
 
-      <button type="submit" className={styles.registerButton}>
-        Register
-      </button>
-    </form>
-  );
+        <button type="submit" className={styles.registerButton}>
+          Register
+        </button>
+      </form>
+    )}
+    {isSuccess && (
+      <form
+        className={styles.registerForm}
+        onSubmit={onConfirmationSubmit}
+      >
+        <label htmlFor="confirmationCode">
+          Код из письма:
+        </label>
+        <input type="text" id="confirmationCode"
+          name='confirmationCode' onChange={handleChange}
+          value={values.confirmationCode} />
+        <button type="submit" className={styles.registerButton}>
+          Отправить код
+        </button>
+      </form>
+    )}
+    {isError && (
+      <div>
+        Ошибка регистрации
+      </div>
+    )}
+  </>);
 }
