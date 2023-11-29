@@ -22,25 +22,25 @@ app.get('/users', (req, res) => {
   res.status(200).json('ответ на GET запрос по URL /users');
 });
 
-// const pool = new Pool({
-//   user: 'postgres',
-//   host: 'localhost',
-//   database: 'postgres',
-//   password: 'elephant-DB',
-//   port: 5432,
-// });
+const pool = new Pool({
+  user: 'postgres',
+  host: 'localhost',
+  database: 'postgres',
+  password: 'elephant-DB',
+  port: 5432,
+});
 
-// app.get('/users', async (req, res) => {
-//   try {
-//     const usersQuery = 'SELECT * FROM game10cube.users';
-//     const { rows: users } = await pool.query(usersQuery);
+app.get('/users', async (req, res) => {
+  try {
+    const usersQuery = 'SELECT * FROM game10cube.users';
+    const { rows: users } = await pool.query(usersQuery);
 
-//     res.json(users);
-//   } catch (error) {
-//     console.error('Ошибка при получении данных о пользователях:', error);
-//     res.status(500).json({ error: 'Ошибка сервера' });
-//   }
-// });
+    res.json(users);
+  } catch (error) {
+    console.error('Ошибка при получении данных о пользователях:', error);
+    res.status(500).json({ error: 'Ошибка сервера' });
+  }
+});
 
 // Serve the files on port 3000.
 app.listen(3000, () => {

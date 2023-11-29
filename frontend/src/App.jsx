@@ -19,6 +19,7 @@ export default function App() {
         {/* <Route index element={<GamePage />} /> */}
         <Route index element={<RegisterPage />} />
         <Route path='/login' element={<LoginPage />} />
+        <Route path='/game' element={<GamePage />} />
         <Route path='/create-level' element={<CreateLevelPage />} />
         <Route path='/about' element={<AboutPage />} />
         <Route path='*' element={<NotFoundPage />} />
