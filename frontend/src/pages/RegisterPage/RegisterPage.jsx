@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useForm } from '../../utils/hooks/use-form';
 import { userAPI } from '../../utils/api/user-api';
 import styles from './RegisterPage.module.css';
@@ -14,12 +14,9 @@ export default function RegisterPage() {
     confirmationCode: '',
   });
 
-  const [register, { data, isLoading, isSuccess, isError }] =
-    userAPI.endpoints.register.useMutation();
-
-
-  // заблокировать кнопку "зарегистрироваться"
-  // разблокировать её по условиям - корректная заполненность всех полей
+  const [register, { error: regError, data: regData,
+    isLoading: regIsLoading, isSuccess: regIsSuccess,
+    isError: regIsError }] = userAPI.useRegisterMutation();
   const onRegisterSubmit = useCallback((e) => {
     e.preventDefault();
     register({
@@ -28,25 +25,40 @@ export default function RegisterPage() {
       password: values.password,
     });
   }, [values]);
+  useEffect(() => {
+    // success
+    regData && console.log('data:', regData);
+    // error
+    regError && console.log('error status:', regError.status);
+    regError && console.log('error data:', regError.data);
+  }, [regData, regIsSuccess, regIsError]);
 
+  const [confirmRegistration, { error: confirmError,
+    data: confirmData, isLoading: confirmIsLoading,
+    isSuccess: confirmIsSuccess, isError: confirmIsError }] =
+    userAPI.useConfirmRegistrationMutation();
   const onConfirmationSubmit = useCallback((e) => {
     e.preventDefault();
-    axios
-      .post('http://localhost:3001/user/registrationConfirm', {
-        username: values.username,
-        email: values.email,
-        confirmationCode: values.confirmationCode,
-      })
-      .then((response) => {
-        console.log(response);
-      })
-      .catch((e) => {
-        console.error('Error:', e);
-      });
+    confirmRegistration({
+      username: values.username,
+      email: values.email,
+      password: values.password,
+      confirmationCode: values.confirmationCode,
+    });
   }, [values]);
+  useEffect(() => {
+    // success
+    confirmData && console.log('data:', confirmData);
+    confirmData && localStorage.setItem('token', confirmData.token);
+    // TODO
+    // диспатч состояния в redux.user.auth = true
+    // error
+    confirmError && console.log('error status:', confirmError.status);
+    confirmError && console.log('error data:', confirmError.data);
+  }, [confirmData, confirmIsSuccess, confirmIsError]);
 
   return (<>
-    {!isSuccess && (
+    {!regIsSuccess && (
       <form
         className={styles.registerForm}
         onSubmit={onRegisterSubmit}
@@ -76,13 +88,17 @@ export default function RegisterPage() {
           name='passwordConfirmation' onChange={handleChange}
           value={values.passwordConfirmation} />
 
-
         <button type="submit" className={styles.registerButton}>
           Register
         </button>
       </form>
     )}
-    {isSuccess && (
+    {regIsError && (
+      <div>
+        Ошибка: {regError.data.error}
+      </div>
+    )}
+    {regIsSuccess && (<>
       <form
         className={styles.registerForm}
         onSubmit={onConfirmationSubmit}
@@ -97,11 +113,11 @@ export default function RegisterPage() {
           Отправить код
         </button>
       </form>
-    )}
-    {isError && (
-      <div>
-        Ошибка регистрации
-      </div>
-    )}
+      {confirmIsError && (
+        <div>
+          Ошибка: {confirmError.data.error}
+        </div>
+      )}
+    </>)}
   </>);
 }

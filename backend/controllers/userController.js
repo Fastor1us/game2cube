@@ -29,27 +29,22 @@ exports.registerUser = async (req, res) => {
     // 2) что имя пользователя не занято (таблица users)
     const usernameExists = await userService.checkUserExists('username', username);
     if (Object.keys(usernameExists).length > 0) {
-      res.status(409).json({ error: 'Имя пользователя уже занято' });
+      res.status(409).json({ error: 'Данное имя пользователя уже занято' });
       return;
     }
-    // 3) если в таблице registration есть запись с таким email, то удаляем её
+    // 3) проверяем есть ли в таблице registration запись с переданным email
     const emailRegistrationCodeExists = await userService.checkEmailRegistrationsExist(email);
     if (Object.keys(emailRegistrationCodeExists).length > 0) {
-      // удаляем запись с таким email из таблицы registration
-      const res = await userService.deleteRegistrationByEmail(email);
+      // если есть, то удаляем запись
+      await userService.deleteRegistrationRecord(email);
     }
-    // если всё ок, то создаем запись в таблицу registration
+    // если всё ок, то создаем новую запись
     const confirmationCode = Math.floor(1000 + Math.random() * 9000);
-
-    await userService.createRegistrationCode(username, email, password, confirmationCode);
-
+    await userService.createRegistrationRecord(username, email, password, confirmationCode);
     // после записи отправляем письмо на указанную почту с кодом подтвержения
-
-    // TODO
-    // await userService.sendConfirmationEmail(email, confirmationCode);
-
+    await userService.sendConfirmationEmail(email, confirmationCode);
     // если всё прошло успешно, то отправлаяем ответ клиенту с уведомлением отправки кода на почту
-    res.status(200).json('Успешно. Ответ на POST запрос по URL user/register');
+    res.status(200).json('Успешно. POST - user/register');
   } catch (error) {
     console.error('Ошибка при получении данных о пользователях:', error);
     res.status(500).json({ error: 'Ошибка сервера' });
@@ -58,7 +53,7 @@ exports.registerUser = async (req, res) => {
 };
 
 exports.registrationConfirm = async (req, res) => {
-  const { username, email, confirmationCode } = req.body;
+  const { username, email, password, confirmationCode } = req.body;
   try {
     // перед проверкой кода подтверждения проверяем, что
     // 1) что email не занят (таблица users)
@@ -74,14 +69,21 @@ exports.registrationConfirm = async (req, res) => {
       return;
     }
     // 3) проверяем совпадает ли переданный код подтверждения с кодом из таблицы registration
-    console.log('confirmationCode:', confirmationCode);
     const emailRegistrationCodeExists =
-      await userService.checkConfirmationCodeExist(confirmationCode);
+      await userService.checkConfirmationCode(email, confirmationCode);
     if (Object.keys(emailRegistrationCodeExists).length > 0) {
-      console.log(emailRegistrationCodeExists);
+      // тут делаем запись в таблицу users
+      const { nanoid } = require('@reduxjs/toolkit');
+      const token = nanoid();
+      await userService.createUsersRecord(username, email, password, token);
+      // затем удаляем запись из таблицы registration
+      await userService.deleteRegistrationRecord(email);
+      res.status(200).json({ token });
+    } else {
+      // возвращаем сообщение о том, что код не подходит
+      res.status(409).json({ error: 'Неверный код подтверждения' });
+      return;
     }
-    res.json(emailRegistrationCodeExists);
-    // res.status(200).json('Успешно. Ответ на POST запрос по URL user/registrationConfirm');
   } catch (error) {
     console.error('Ошибка при получении данных о пользователях:', error);
     res.status(500).json({ error: 'Ошибка сервера' });

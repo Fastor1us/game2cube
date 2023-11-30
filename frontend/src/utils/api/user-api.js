@@ -8,10 +8,17 @@ export const userAPI = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: API_URL }),
   endpoints: (builder) => ({
     register: builder.mutation({
-      query: (credentials) => ({
+      query: ({ username, email, password }) => ({
         url: '/register',
         method: 'POST',
-        body: credentials,
+        body: { username, email, password },
+      }),
+    }),
+    confirmRegistration: builder.mutation({
+      query: ({ username, email, password, confirmationCode }) => ({
+        url: '/registrationConfirm',
+        method: 'POST',
+        body: { username, email, password, confirmationCode },
       }),
     }),
     login: builder.mutation({

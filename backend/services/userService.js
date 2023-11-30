@@ -31,10 +31,11 @@ const checkEmailRegistrationsExist = async (email) => {
 }
 
 
-const checkConfirmationCodeExist = async (confirmationCode) => {
+const checkConfirmationCode = async (email, confirmationCode) => {
   const code = Number(confirmationCode);
   const testQuery = `SELECT * FROM game2cube.registration
-                     WHERE confirmation_code = ${code}`;
+                     WHERE email = '${email}' AND 
+                     confirmation_code = ${code}`;
   const { rows } = await pool.query(testQuery);
   return rows;
 }
@@ -43,7 +44,7 @@ const checkConfirmationCodeExist = async (confirmationCode) => {
  * Deletes a registration record from the game2cube.registration table based on the specified email.
  * @param {string} email - The email to match for deletion.
  */
-const deleteRegistrationByEmail = async (email) => {
+const deleteRegistrationRecord = async (email) => {
   const deleteQuery = {
     text: 'DELETE FROM game2cube.registration WHERE email = $1',
     values: [email],
@@ -52,7 +53,7 @@ const deleteRegistrationByEmail = async (email) => {
 }
 
 
-const createRegistrationCode
+const createRegistrationRecord
   = async (username, email, password, confirmationCode) => {
     const insertQuery = {
       text: `INSERT INTO 
@@ -63,54 +64,45 @@ const createRegistrationCode
     return await pool.query(insertQuery)
   }
 
+const createUsersRecord
+  = async (username, email, password, token) => {
+    const insertQuery = {
+      text: `INSERT INTO 
+      game2cube.users(username, email, password, token)
+      VALUES($1, $2, $3, $4)`,
+      values: [username, email, password, token],
+    };
+    return await pool.query(insertQuery)
+  }
 
 const nodemailer = require('nodemailer');
 const sendConfirmationEmail = async (email, confirmationCode) => {
   const transporter = nodemailer.createTransport({
-    // pool: true,
-    host: 'smtp.yandex.ru',
-    port: 465,
-    secure: true,
-    // port: 587,
+    host: 'smtp.gmail.com',
+    // secure: true,
+    port: 587,
     auth: {
-      user: 'fewgwer3@yandex.ru',
-      pass: 'tpqjotxqkrxoxene',
+      user: 'fireday6@gmail.com',
+      pass: 'jdnl ciaz jlsm ddki',
     },
   });
-
   const mailOptions = {
-    from: 'fewgwer3@yandex.ru',
+    from: 'game2cube <fireday6@gmail.com>',
     to: email,
     subject: 'Подтверждение регистрации',
     text: `Ваш код подтверждения: ${confirmationCode}`,
   };
-
   return await transporter.sendMail(mailOptions);
 };
-
-// return transporter.sendMail(mailOptions, function (error, info) {
-//   if (error) {
-//     console.log('Error:', error);
-//   } else {
-//     console.log('Email sent:', info.response);
-//   }
-// });
-
-// const info = await transporter.sendMail(message)
-
-// if (info.response.substr(0, 3) == '250') {
-//   return `Письмо успешно отправлено на адрес ${email}!`
-// }
-
-// return `Ошибка отправки письма на адрес ${email}!`
 
 
 module.exports = {
   checkUserExists,
   getUsers,
   checkEmailRegistrationsExist,
-  checkConfirmationCodeExist,
-  deleteRegistrationByEmail,
-  createRegistrationCode,
+  checkConfirmationCode,
+  createRegistrationRecord,
+  deleteRegistrationRecord,
+  createUsersRecord,
   sendConfirmationEmail,
 };
