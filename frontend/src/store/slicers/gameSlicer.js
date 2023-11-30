@@ -1,5 +1,4 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { collectCustomHooksForSignature } from 'react-refresh';
 
 const initialState = {
   isWatching: false,

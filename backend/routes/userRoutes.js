@@ -4,11 +4,13 @@ const router = express.Router();
 const userController = require('../controllers/userController');
 
 
-router.get('/', userController.getUser);
+router.post('/register', userController.register);
 
-router.get('/users', userController.getUsers);
+router.post('/authentication', userController.authentication);
 
-router.post('/register', userController.registerUser);
+// router.post('/logout', userController.logout);
+
+router.post('/login', userController.login);
 
 router.post('/registrationConfirm', userController.registrationConfirm);
 

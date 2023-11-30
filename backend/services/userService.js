@@ -1,12 +1,5 @@
 // services/userService.js
-const { Pool } = require('pg');
-const pool = new Pool({
-  user: 'postgres',
-  host: 'localhost',
-  database: 'postgres',
-  password: 'elephant-DB',
-  port: 5432,
-});
+const pool = require('../db/pool');
 
 
 const checkUserExists = async (field, value) => {
@@ -16,12 +9,22 @@ const checkUserExists = async (field, value) => {
   return rows;
 };
 
-
-const getUsers = async () => {
-  const testQuery = 'SELECT * FROM game2cube.users';
+const getUserRecordByEmailAndPass = async (email, password) => {
+  const testQuery = `SELECT * FROM game2cube.users
+                     WHERE email = '${email}' AND 
+                     password = '${password}'`;
   const { rows } = await pool.query(testQuery);
   return rows;
 };
+
+const getUserRecordByToken = async (token) => {
+  const testQuery = `SELECT * FROM game2cube.users
+                     WHERE token = '${token}'`;
+  const { rows } = await pool.query(testQuery);
+  return rows;
+};
+
+
 
 const checkEmailRegistrationsExist = async (email) => {
   const testQuery = `SELECT * FROM game2cube.registration
@@ -98,7 +101,8 @@ const sendConfirmationEmail = async (email, confirmationCode) => {
 
 module.exports = {
   checkUserExists,
-  getUsers,
+  getUserRecordByEmailAndPass,
+  getUserRecordByToken,
   checkEmailRegistrationsExist,
   checkConfirmationCode,
   createRegistrationRecord,

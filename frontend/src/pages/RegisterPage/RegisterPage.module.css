@@ -1,7 +1,11 @@
+.title {
+  margin-top: 40px;
+}
+
 .registerForm {
   display: flex;
   flex-direction: column;
-  margin-top: 40px;
+  margin-top: 10px;
   gap: 10px;
 }
 

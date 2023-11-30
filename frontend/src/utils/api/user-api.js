@@ -22,10 +22,17 @@ export const userAPI = createApi({
       }),
     }),
     login: builder.mutation({
-      query: (credentials) => ({
+      query: ({ email, password }) => ({
         url: '/login',
         method: 'POST',
-        body: credentials,
+        body: { email, password },
+      }),
+    }),
+    authentication: builder.mutation({
+      query: ({ token }) => ({
+        url: '/authentication',
+        method: 'POST',
+        body: { token },
       }),
     }),
     logout: builder.mutation({

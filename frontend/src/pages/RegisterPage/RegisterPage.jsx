@@ -58,7 +58,10 @@ export default function RegisterPage() {
   }, [confirmData, confirmIsSuccess, confirmIsError]);
 
   return (<>
-    {!regIsSuccess && (
+    {!regIsSuccess && (<>
+      <h2 className={styles.title}>
+        Форма регистрации
+      </h2>
       <form
         className={styles.registerForm}
         onSubmit={onRegisterSubmit}
@@ -92,13 +95,16 @@ export default function RegisterPage() {
           Register
         </button>
       </form>
-    )}
+    </>)}
     {regIsError && (
       <div>
         Ошибка: {regError.data.error}
       </div>
     )}
     {regIsSuccess && (<>
+      <h2 className={styles.title}>
+        Код подтверждения
+      </h2>
       <form
         className={styles.registerForm}
         onSubmit={onConfirmationSubmit}
