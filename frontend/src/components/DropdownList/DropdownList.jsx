@@ -3,6 +3,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import styles from './DropdownList.module.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { resetUserData } from '../../store/slicers/userSlicer';
+import { isAuthSelector } from '../../store/selectors/userSelectors';
 
 
 export default function DropdownList(prop) {
@@ -10,7 +11,7 @@ export default function DropdownList(prop) {
   const navigate = useNavigate();
   const [shouldShowDropdownList, setShouldShowDropdownList] = useState(false);
 
-  const isAuth = useSelector(state => state.user.auth);
+  const isAuth = useSelector(isAuthSelector);
 
   const handleClick = () => {
     setShouldShowDropdownList(!shouldShowDropdownList);

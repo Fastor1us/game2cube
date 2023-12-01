@@ -1,16 +1,18 @@
 import React, { useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout/Layout';
-// import HomePage from './pages/home-page/home-page';
+import HomePage from './pages/HomePage/HomePage';
 import GamePage from './pages/GamePage/GamePage';
 import RegisterPage from './pages/RegisterPage/RegisterPage';
 import LoginPage from './pages/LoginPage/LoginPage';
+import ProfilePage from './pages/ProfilePage/ProfilePage';
 import CreateLevelPage from './pages/CreateLevelPage/CreateLevelPage';
 import AboutPage from './pages/AboutPage/AboutPage';
 import NotFoundPage from './pages/NotFoundPage/NotFoundPage';
 import { useDispatch } from 'react-redux';
 import { setUserData } from './store/slicers/userSlicer';
 import { userAPI } from './utils/api/user-api';
+import { OnlyAuth, OnlyUnAuth } from './components/ProtectedRoute';
 
 
 export default function App() {
@@ -21,27 +23,28 @@ export default function App() {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    if (token) {
-      // TODO
-      // стучимся на сервер, отправляем токен, получаем ответ
-      authentication({ token });
-      // 200 - имя и почту, или ошибку
-      // если 200, диспатчим имя, почту и auth=true в redux.user
-    }
+    token && authentication({ token });
   }, []);
 
   useEffect(() => {
-    data && dispatch(setUserData({ ...data, auth: true }));
+    data && dispatch(setUserData({ ...data, isAuth: true }));
     error && console.log('Ошибка аутентификации:', error);
   }, [data, error]);
 
   return (
     <Routes>
       <Route path='/' element={<Layout />}>
-        {/* <Route index element={<HomePage />} /> */}
-        <Route index element={<GamePage />} />
-        <Route path='/registration' element={<RegisterPage />} />
-        <Route path='/login' element={<LoginPage />} />
+        {/* <Route index element={<GamePage />} /> */}
+        <Route index element={<HomePage />} />
+        <Route path='/registration' element={
+          <OnlyUnAuth component={<RegisterPage />} />}
+        />
+        <Route path='/login' element={
+          <OnlyUnAuth component={<LoginPage />} />}
+        />
+        <Route path='/profile' element={
+          <OnlyAuth component={<ProfilePage />} />}
+        />
         <Route path='/game' element={<GamePage />} />
         <Route path='/create-level' element={<CreateLevelPage />} />
         <Route path='/about' element={<AboutPage />} />

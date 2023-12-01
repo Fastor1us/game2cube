@@ -14,7 +14,6 @@ const initialState = {
     col: null
   },
   grid: {
-    size: 5,
     data: [],
   }
 };

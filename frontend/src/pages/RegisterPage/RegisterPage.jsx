@@ -3,9 +3,14 @@ import { useForm } from '../../utils/hooks/use-form';
 import { userAPI } from '../../utils/api/user-api';
 import styles from './RegisterPage.module.css';
 import axios from 'axios';
+import { setUserData } from '../../store/slicers/userSlicer';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 
 export default function RegisterPage() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { values, handleChange } = useForm({
     username: 'fastorius',
     email: 'fewgwer3@ya.ru',
@@ -47,12 +52,14 @@ export default function RegisterPage() {
     });
   }, [values]);
   useEffect(() => {
-    // success
-    confirmData && console.log('data:', confirmData);
+    // confirmData && console.log('data:', confirmData);
     confirmData && localStorage.setItem('token', confirmData.token);
-    // TODO
-    // диспатч состояния в redux.user.auth = true
-    // error
+    confirmData && dispatch(setUserData({
+      username: data.username,
+      email: data.email,
+      isAuth: true
+    }));
+    confirmData && navigate('/');
     confirmError && console.log('error status:', confirmError.status);
     confirmError && console.log('error data:', confirmError.data);
   }, [confirmData, confirmIsSuccess, confirmIsError]);
@@ -92,14 +99,14 @@ export default function RegisterPage() {
           value={values.passwordConfirmation} />
 
         <button type="submit" className={styles.registerButton}>
-          Register
+          Зарегистрироваться
         </button>
       </form>
     </>)}
     {regIsError && (
-      <div>
+      <p>
         Ошибка: {regError.data.error}
-      </div>
+      </p>
     )}
     {regIsSuccess && (<>
       <h2 className={styles.title}>
@@ -120,9 +127,9 @@ export default function RegisterPage() {
         </button>
       </form>
       {confirmIsError && (
-        <div>
+        <p>
           Ошибка: {confirmError.data.error}
-        </div>
+        </p>
       )}
     </>)}
   </>);

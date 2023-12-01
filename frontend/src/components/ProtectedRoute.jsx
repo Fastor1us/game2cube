@@ -1,13 +1,13 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import { useLocation, Navigate } from 'react-router-dom';
+import { isAuthSelector } from '../store/selectors/userSelectors';
 
 
 const Protected = ({ onlyUnAuth = false, component }) => {
   const location = useLocation();
-  // TODO
-  // после localStorage.getItem('token') проверяем стоит ли флаг true
-  // в сторе redux.user.auth , если да, то isAuth = true
-  const isAuth = localStorage.getItem('token');
+
+  const isAuth = useSelector(isAuthSelector);
 
   if (onlyUnAuth && isAuth) {
     const { from } = location.state || { from: { pathname: "/" } };
