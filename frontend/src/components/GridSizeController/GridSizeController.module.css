@@ -1,0 +1,34 @@
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.input::-webkit-inner-spin-button,
+.input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.input {
+  width: 60px;
+  height: 40px;
+  font-size: 32px;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.button {
+  width: 30px;
+  height: 40px;
+  font-size: 20px;
+  box-sizing: border-box;
+}
+
+.buttonDecrement {
+  border-radius: 10px 0 0 10px;
+}
+
+.buttonIncrement {
+  border-radius: 0 10px 10px 0;
+}

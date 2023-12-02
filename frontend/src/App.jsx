@@ -6,7 +6,7 @@ import GamePage from './pages/GamePage/GamePage';
 import RegisterPage from './pages/RegisterPage/RegisterPage';
 import LoginPage from './pages/LoginPage/LoginPage';
 import ProfilePage from './pages/ProfilePage/ProfilePage';
-import CreateLevelPage from './pages/CreateLevelPage/CreateLevelPage';
+import CreateLevelsPage from './pages/CreateLevelsPage/CreateLevelsPage';
 import AboutPage from './pages/AboutPage/AboutPage';
 import NotFoundPage from './pages/NotFoundPage/NotFoundPage';
 import { useDispatch } from 'react-redux';
@@ -46,7 +46,7 @@ export default function App() {
           <OnlyAuth component={<ProfilePage />} />}
         />
         <Route path='/game' element={<GamePage />} />
-        <Route path='/create-level' element={<CreateLevelPage />} />
+        <Route path='/create-level' element={<CreateLevelsPage />} />
         <Route path='/about' element={<AboutPage />} />
         <Route path='*' element={<NotFoundPage />} />
       </Route>

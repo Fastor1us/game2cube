@@ -11,7 +11,7 @@ import {
   setIsWatching,
   setCellState,
   setLinkedColors,
-  setIsComplited,
+  setIsCompleted,
   setResetStateToInitial,
   setTest
 } from '../../../store/slicers/gameSlicer';
@@ -42,7 +42,7 @@ export default function Engine() {
   const currCellCoords = useSelector(currCoordsSelector);
   const prevCellCoords = useSelector(prevCoordsSelector);
   const linkedColors = useSelector(linkedColorsSelector);
-  const isComplited = useSelector(isCompletedSelector);
+  const isCompleted = useSelector(isCompletedSelector);
 
   // console.log('engine rerender');
 
@@ -66,7 +66,7 @@ export default function Engine() {
 
   // выключаем фокус с prevCell
   useEffect(() => {
-    if (isComplited) {
+    if (isCompleted) {
       return;
     }
     if (prevCellCoords.row !== null && isWatching) {
@@ -75,7 +75,7 @@ export default function Engine() {
         address: prevCellCoords, data: { ...prevCellData, focus: false },
       }));
     }
-  }, [prevCellCoords, isWatching, isComplited]);
+  }, [prevCellCoords, isWatching, isCompleted]);
 
   // следим за прохождением уровня
   useEffect(() => {
@@ -96,13 +96,13 @@ export default function Engine() {
     ) {
       return;
     }
-    dispatch(setIsComplited(true));
+    dispatch(setIsCompleted(true));
   }, [linkedColors])
 
 
   // ================================ основная логика ================================
   useEffect(() => {
-    if (isComplited) {
+    if (isCompleted) {
       return;
     }
 
@@ -292,14 +292,17 @@ export default function Engine() {
         // -------------------------------------------------------------------------------
       }
     }
-  }, [isWatching, currCellCoords, prevCellCoords, isComplited]);
+  }, [isWatching, currCellCoords, prevCellCoords, isCompleted]);
 
+  // TODO:
+  // скорее всего будет не нужен, т.к. после прохождения уровня будет загружаться новый
+  //
   // Блок размонтирования. Сбрасываем изменяемые состояния
-  useEffect(() => {
-    return () => {
-      dispatch(setResetStateToInitial());
-    }
-  }, []);
+  // useEffect(() => {
+  //   return () => {
+  //     dispatch(setResetStateToInitial());
+  //   }
+  // }, []);
 
   return (<></>);
 }

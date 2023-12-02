@@ -4,12 +4,12 @@ import { isCompletedSelector } from '../../../store/selectors/gameSelectors';
 
 
 export default function GameStatus() {
-  const isComplited = useSelector(isCompletedSelector);
+  const isCompleted = useSelector(isCompletedSelector);
 
   return (
     <>
-      {!isComplited && <div>Играем...</div>}
-      {isComplited && <div>Победа</div>}
+      {!isCompleted && <div>Играем...</div>}
+      {isCompleted && <div>Победа</div>}
     </>
   );
 }

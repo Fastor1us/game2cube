@@ -71,6 +71,11 @@
   content: '4';
 }
 
+.main-purple::before {
+  content: '5';
+}
+
+
 .red {
   background-color: FireBrick;
 }
@@ -85,4 +90,8 @@
 
 .gray {
   background-color: Gray;
+}
+
+.purple {
+  background-color: DarkOrchid;
 }

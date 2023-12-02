@@ -18,67 +18,65 @@ const Cell = React.memo((props) => {
   const isMainCellLinked = useSelector(linkedColorSelector(props.color));
 
   useEffect(() => {
-    const handleMouseEnter = () => {
-      // console.log('handleMouseEnter');
-      dispatch(setCellCoords({
-        row: props.row,
-        col: props.col,
-      }));
-      // вернулись на поле в ячейку с фокусом при зажатой ЛКМ
-      if (!getGameState().isWatching && getGameState().isFocus) {
-        // console.log('вернулись на поле в ячейку с фокусом при зажатой ЛКМ');
-        // если адрес ячейки с фокусом равен адресу текущей ячейки, то
-        // включаем setIsWatching и прерываем функцию
-        const focusedCellCoords = findFocusedCellCoords(getGridData());
-        if (
-          focusedCellCoords &&
-          focusedCellCoords.row === props.row &&
-          focusedCellCoords.col === props.col
-        ) {
-          // console.log('1');
-          dispatch(setIsWatching(true));
-          return;
-        }
-        // если цвет ячейки с фокусом не равен цвету текущей ячейки, то
-        // выключаем фокус и прерываем функцию
-        if (
-          getGridData()[props.row][props.col].color &&
-          getGridData()[focusedCellCoords.row][focusedCellCoords.col].color !==
-          getGridData()[props.row][props.col].color
-        ) {
-          // console.log('2');
-          dispatch(setCellState({
-            address: focusedCellCoords,
-            data: { focus: false },
-          }));
-          return;
-        }
-        // если адрес ячейки с фокусом не равен адресу текущей ячейки, то
-        const currCellCoords = { row: props.row, col: props.col };
-        if (isNextMoveNearFocusedCell(focusedCellCoords, currCellCoords)) {
-          dispatch(setPrevCellCoords(focusedCellCoords));
-          // console.log('3');
-          dispatch(setIsWatching(true));
-        } else {
-          dispatch(setCellState({
-            address: focusedCellCoords,
-            data: { focus: false },
-          }));
+    if (!props.isCreatingMode && !props.isCellOutsideGame) {
+      const handleMouseEnter = () => {
+        // console.log('handleMouseEnter');
+        dispatch(setCellCoords({
+          row: props.row,
+          col: props.col,
+        }));
+        // вернулись на поле в ячейку с фокусом при зажатой ЛКМ
+        if (!getGameState().isWatching && getGameState().isFocus) {
+          // console.log('вернулись на поле в ячейку с фокусом при зажатой ЛКМ');
+          // если адрес ячейки с фокусом равен адресу текущей ячейки, то
+          // включаем setIsWatching и прерываем функцию
+          const focusedCellCoords = findFocusedCellCoords(getGridData());
+          if (
+            focusedCellCoords &&
+            focusedCellCoords.row === props.row &&
+            focusedCellCoords.col === props.col
+          ) {
+            dispatch(setIsWatching(true));
+            return;
+          }
+          // если цвет ячейки с фокусом не равен цвету текущей ячейки, то
+          // выключаем фокус и прерываем функцию
+          if (
+            getGridData()[props.row][props.col].color &&
+            getGridData()[focusedCellCoords.row][focusedCellCoords.col].color !==
+            getGridData()[props.row][props.col].color
+          ) {
+            dispatch(setCellState({
+              address: focusedCellCoords,
+              data: { focus: false },
+            }));
+            return;
+          }
+          // если адрес ячейки с фокусом не равен адресу текущей ячейки, то
+          const currCellCoords = { row: props.row, col: props.col };
+          if (isNextMoveNearFocusedCell(focusedCellCoords, currCellCoords)) {
+            dispatch(setPrevCellCoords(focusedCellCoords));
+            dispatch(setIsWatching(true));
+          } else {
+            dispatch(setCellState({
+              address: focusedCellCoords,
+              data: { focus: false },
+            }));
+          }
         }
       }
+      ref.current.addEventListener('mouseenter', handleMouseEnter);
+      return () => {
+        ref.current && ref.current.removeEventListener('mouseenter', handleMouseEnter);
+      };
     }
-    ref.current.addEventListener('mouseenter', handleMouseEnter);
-    return () => {
-      ref.current && ref.current.removeEventListener('mouseenter', handleMouseEnter);
-    };
-  }, []);
+  }, [props.isCreatingMode]);
 
   return (
     <li ref={ref} >
       <div
         className={`${[
           styles.cell,
-          // styles[props.state],
           props.sequenceNumber === 1 && !isMainCellLinked && styles.mainCell,
           props.sequenceNumber === 1 && styles[`main-${props.color}`],
           isMainCellLinked && styles.mainCellLinked,
@@ -104,6 +102,11 @@ const Cell = React.memo((props) => {
     </li>
   );
 });
+
+Cell.defaultProps = {
+  isCreatingMode: false,
+  isCellOutsideGame: false,
+}
 
 export default Cell;
 
