@@ -52,7 +52,6 @@
   width: 100%;
   transform: scale(.75);
   color: white;
-  /* background-color: rgb(250 234 214 / 80%); */
 }
 
 .main-blue::before {
@@ -75,6 +74,10 @@
   content: '5';
 }
 
+.main-yellow::before {
+  content: '6';
+}
+
 
 .red {
   background-color: FireBrick;
@@ -94,4 +97,8 @@
 
 .purple {
   background-color: DarkOrchid;
+}
+
+.yellow {
+  background-color: Goldenrod;
 }

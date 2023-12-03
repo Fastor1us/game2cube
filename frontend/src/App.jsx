@@ -13,6 +13,8 @@ import { useDispatch } from 'react-redux';
 import { setUserData } from './store/slicers/userSlicer';
 import { userAPI } from './utils/api/user-api';
 import { OnlyAuth, OnlyUnAuth } from './components/ProtectedRoute';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 
 
 export default function App() {
@@ -32,24 +34,26 @@ export default function App() {
   }, [data, error]);
 
   return (
-    <Routes>
-      <Route path='/' element={<Layout />}>
-        {/* <Route index element={<GamePage />} /> */}
-        <Route index element={<HomePage />} />
-        <Route path='/registration' element={
-          <OnlyUnAuth component={<RegisterPage />} />}
-        />
-        <Route path='/login' element={
-          <OnlyUnAuth component={<LoginPage />} />}
-        />
-        <Route path='/profile' element={
-          <OnlyAuth component={<ProfilePage />} />}
-        />
-        <Route path='/game' element={<GamePage />} />
-        <Route path='/create-level' element={<CreateLevelsPage />} />
-        <Route path='/about' element={<AboutPage />} />
-        <Route path='*' element={<NotFoundPage />} />
-      </Route>
-    </Routes>
+    <DndProvider backend={HTML5Backend}>
+      <Routes>
+        <Route path='/' element={<Layout />}>
+          {/* <Route index element={<GamePage />} /> */}
+          <Route index element={<HomePage />} />
+          <Route path='/registration' element={
+            <OnlyUnAuth component={<RegisterPage />} />}
+          />
+          <Route path='/login' element={
+            <OnlyUnAuth component={<LoginPage />} />}
+          />
+          <Route path='/profile' element={
+            <OnlyAuth component={<ProfilePage />} />}
+          />
+          <Route path='/game' element={<GamePage />} />
+          <Route path='/create-level' element={<CreateLevelsPage />} />
+          <Route path='/about' element={<AboutPage />} />
+          <Route path='*' element={<NotFoundPage />} />
+        </Route>
+      </Routes>
+    </DndProvider>
   );
 }

@@ -11,14 +11,14 @@ import store from '../../../store/store';
 import styles from './Cell.module.css';
 
 
-const Cell = React.memo((props) => {
+const Cell = React.forwardRef((props, ref) => {
   const dispatch = useDispatch();
-  const ref = useRef();
+  const innerRef = useRef();
 
   const isMainCellLinked = useSelector(linkedColorSelector(props.color));
 
   useEffect(() => {
-    if (!props.isCreatingMode && !props.isCellOutsideGame) {
+    if (!props.isCellOutsideGame && !props.isCreatingMode) {
       const handleMouseEnter = () => {
         // console.log('handleMouseEnter');
         dispatch(setCellCoords({
@@ -65,16 +65,16 @@ const Cell = React.memo((props) => {
           }
         }
       }
-      ref.current.addEventListener('mouseenter', handleMouseEnter);
+      innerRef.current.addEventListener('mouseenter', handleMouseEnter);
       return () => {
-        ref.current && ref.current.removeEventListener('mouseenter', handleMouseEnter);
+        innerRef.current && innerRef.current.removeEventListener('mouseenter', handleMouseEnter);
       };
     }
-  }, [props.isCreatingMode]);
+  }, []);
 
   return (
-    <li ref={ref} >
-      <div
+    <li ref={innerRef} style={props.styles || null}>
+      <div ref={ref || null}
         className={`${[
           styles.cell,
           props.sequenceNumber === 1 && !isMainCellLinked && styles.mainCell,

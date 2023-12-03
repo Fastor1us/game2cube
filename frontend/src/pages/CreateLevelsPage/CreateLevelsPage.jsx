@@ -1,13 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import Game from '../../components/Game/Game.jsx';
-import data from './field.json';
 import { useDispatch, useSelector } from 'react-redux';
-import { setGridData } from '../../store/slicers/gameSlicer.js';
+import { setCellState, setGridData } from '../../store/slicers/gameSlicer.js';
 import GridSizeController
   from '../../components/GridSizeController/GridSizeController.jsx';
 import { isAuthSelector } from '../../store/selectors/userSelectors.js';
-import Cell from '../../components/Game/Cell/Cell.jsx';
+import { gridDataSelector } from '../../store/selectors/gameSelectors.js';
+import OuterDonorCell from '../../utils/HOC/OuterDonorCell.jsx';
+import InnerDonorCell from '../../utils/HOC/InnerDonorCell.jsx';
+import RecipientCell from '../../utils/HOC/RecipientCell.jsx';
 import styles from './CreateLevelsPage.module.css';
+import { NavLink } from 'react-router-dom';
+import { useDrop } from 'react-dnd';
+
 
 const cellPattern = {
   color: null,
@@ -17,9 +22,8 @@ const cellPattern = {
   focus: false
 }
 
-const arrMainCellsColors = [
-  'blue', 'green', 'gray', 'red', 'purple'
-]
+const arrCellsColors =
+  ['blue', 'green', 'gray', 'red', 'purple', 'yellow'];
 
 
 export default function CreatingLevelsPage() {
@@ -29,26 +33,48 @@ export default function CreatingLevelsPage() {
 
   const isAuth = useSelector(isAuthSelector);
 
+  const fields = useSelector(gridDataSelector);
+
   useEffect(() => {
-    // const { fields } = data;
     const fields = Array.from(Array(gridSize),
       () => Array(gridSize).fill(cellPattern));
     dispatch(setGridData(fields));
   }, [gridSize]);
 
+  const [, dropRef] = useDrop({
+    accept: 'cell',
+    drop: (item) => {
+      if (item.isInner) {
+        dispatch(setCellState({
+          address: item.address,
+          data: {
+            color: null,
+            sequenceNumber: null,
+          }
+        }));
+      }
+    },
+  });
+
   return (
-    <>
+    <section className={styles.container} ref={dropRef}>
       <h1>Страница создания уровней</h1>
-      {!isAuth && <p>
-        Что бы сохранить уровень вы должны быть авторизированны
-      </p>}
+      {!isAuth && (<>
+        <p>
+          Что бы сохранить уровень вы должны быть авторизированны.
+        </p>
+        <p>
+          <NavLink to='/login'>Войти</NavLink>
+        </p>
+      </>)}
       {isAuth && <p>
         Для сохранения уровеня, после его создания, уровень необходимо пройти,
         тогда кнопка "сохранить" станет активна
       </p>}
       <ul className={styles.creatingCellsList}>
-        {arrMainCellsColors.slice(0, gridSize - 1).map((strColor, index) => {
-          return <Cell key={index} color={strColor}
+        {arrCellsColors.slice(0, gridSize).map((strColor, index) => {
+          return <OuterDonorCell
+            key={index} color={strColor} sequenceNumber={1}
             {...{ isCreatingMode, isCellOutsideGame: true }} />
         })}
       </ul>
@@ -64,7 +90,32 @@ export default function CreatingLevelsPage() {
           кнопка сохранения уровня
         </button>
       </section>
-      <Game isCreatingMode={isCreatingMode} />
-    </>
+
+      {isCreatingMode &&
+        <ul
+          className={`${[
+            styles.gameField,
+            styles[`gameGrid${fields.length}`],
+          ].join(' ')}`}
+        >
+          {fields.map((_, row) => {
+            return _.map((item, col) => {
+              const Cell = item.sequenceNumber ?
+                InnerDonorCell : RecipientCell;
+              return <Cell
+                {...item}
+                key={row + '' + col}
+                address={{ row, col }}
+                isCreatingMode={true}
+              />
+            });
+          })}
+        </ul>
+      }
+
+      {!isCreatingMode &&
+        <Game isCreatingMode={isCreatingMode} />
+      }
+    </section>
   );
 }
