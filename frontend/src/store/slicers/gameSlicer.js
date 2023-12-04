@@ -23,7 +23,10 @@ const gameSlicer = createSlice({
   initialState,
   reducers: {
     setGridData(state, action) {
+      // console.log('setGridData');
+      // console.log('state.grid.data', state.grid.data);
       state.grid.data = action.payload;
+      // console.log('state.grid.data', state.grid.data);
     },
     setIsWatching(state, action) {
       state.isWatching = action.payload;
@@ -62,8 +65,12 @@ const gameSlicer = createSlice({
       state.isFocus = action.payload.data.focus || false;
     },
     setLinkedColors(state, action) {
-      const entries = Object.entries(action.payload);
-      state.linkedColors[entries[0][0]] = entries[0][1];
+      if (Object.keys(action.payload).length === 0) {
+        state.linkedColors = initialState.linkedColors;
+      } else {
+        const entries = Object.entries(action.payload);
+        state.linkedColors[entries[0][0]] = entries[0][1];
+      }
     },
     setIsCompleted(state, action) {
       state.isCompleted = action.payload;

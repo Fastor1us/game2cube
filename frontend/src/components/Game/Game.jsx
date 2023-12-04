@@ -1,15 +1,19 @@
 import React, { useCallback, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import store from '../../store/store.js';
-import { setIsWatching } from '../../store/slicers/gameSlicer.js';
+import {
+  setIsCompleted,
+  setIsWatching,
+  setLinkedColors
+} from '../../store/slicers/gameSlicer.js';
 import GameStatus from './GameStatus/GameStatus.jsx';
 import Engine from './Engine/Engine.jsx';
 import Cell from './Cell/Cell.jsx';
 import styles from './Game.module.css';
 import { gridDataSelector } from '../../store/selectors/gameSelectors.js';
+import { getGameState } from '../../utils/utils.js';
 
 
-function Game() {
+export default function Game() {
   const ref = useRef();
   const dispatch = useDispatch();
 
@@ -39,6 +43,15 @@ function Game() {
     };
   }, []);
 
+  useEffect(() => {
+    dispatch(setIsCompleted(false));
+    dispatch(setLinkedColors({}));
+    return () => {
+      dispatch(setIsCompleted(false));
+      dispatch(setLinkedColors({}));
+    }
+  }, []);
+
   return (
     <section className={styles.gameSection}>
       {<Engine />}
@@ -59,10 +72,4 @@ function Game() {
       {<GameStatus />}
     </section>
   );
-}
-
-export default Game;
-
-function getGameState() {
-  return store.getState().game;
 }

@@ -23,17 +23,8 @@ import {
   setBelongForLinkedCells,
   findShortestPathForLinkingColors
 } from './engine-functions';
-import store from '../../../store/store';
-
-
-// TODO патерн будем получать от сервера
-const cellPattern = {
-  color: null,
-  step: false,
-  belong: null,
-  sequenceNumber: null,
-  focus: false
-}
+import { getGameState, getGridData } from '../../../utils/utils';
+import { cellPattern } from '../../../utils/constants';
 
 
 export default function Engine() {
@@ -94,6 +85,28 @@ export default function Engine() {
         });
       })
     ) {
+      return;
+    }
+    // проверяем, нет ли не соединённых цветов, или только одной главной ячейки
+    // tech = objMainCellsCollorsAndItsAmount - объект вида {color: amount, ...}
+    const tech = getGridData().reduce((acc, row) => {
+      row.forEach((cell) => {
+        if (cell.sequenceNumber === 1) {
+          if (!acc[cell.color]) {
+            acc[cell.color] = 1;
+          } else {
+            acc[cell.color] += 1;
+          }
+        }
+      });
+      return acc;
+    }, {});
+    // проверяем, у всех ли главных ячеек есть пара
+    if (!Object.values(tech).every((value) => value === 2)) {
+      return;
+    }
+    // проверяем, у всех ли цветов есть "хвосты"
+    if (!Object.keys(tech).every((key) => linkedColors[key])) {
       return;
     }
     dispatch(setIsCompleted(true));
@@ -300,22 +313,12 @@ export default function Engine() {
   // Блок размонтирования. Сбрасываем изменяемые состояния
   // useEffect(() => {
   //   return () => {
+  //     console.log(getGridData());
+  //     console.log('unmounting...');
   //     dispatch(setResetStateToInitial());
+  //     console.log(getGridData());
   //   }
   // }, []);
 
   return (<></>);
 }
-
-function getGameState() {
-  return store.getState().game;
-}
-
-function getGridData() {
-  return store.getState().game.grid.data;
-}
-
-// TODO:
-// вынести check в отдельную функцию и передавать её в качестве колбека?
-// оставить основную логику на проверку хода в четырёх нарправлениях
-// добавить больше настроек для гибкости

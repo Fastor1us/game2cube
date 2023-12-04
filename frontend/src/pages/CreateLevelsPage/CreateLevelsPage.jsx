@@ -1,26 +1,25 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import Game from '../../components/Game/Game.jsx';
 import { useDispatch, useSelector } from 'react-redux';
-import { setCellState, setGridData } from '../../store/slicers/gameSlicer.js';
+import {
+  setCellState,
+  setGridData,
+  setIsCompleted,
+  setLinkedColors,
+  setResetStateToInitial
+} from '../../store/slicers/gameSlicer.js';
 import GridSizeController
   from '../../components/GridSizeController/GridSizeController.jsx';
 import { isAuthSelector } from '../../store/selectors/userSelectors.js';
-import { gridDataSelector } from '../../store/selectors/gameSelectors.js';
+import { gridDataSelector, isCompletedSelector } from '../../store/selectors/gameSelectors.js';
 import OuterDonorCell from '../../utils/HOC/OuterDonorCell.jsx';
 import InnerDonorCell from '../../utils/HOC/InnerDonorCell.jsx';
 import RecipientCell from '../../utils/HOC/RecipientCell.jsx';
 import styles from './CreateLevelsPage.module.css';
 import { NavLink } from 'react-router-dom';
 import { useDrop } from 'react-dnd';
+import { cellPattern } from '../../utils/constants.js';
 
-
-const cellPattern = {
-  color: null,
-  step: false,
-  belong: null,
-  sequenceNumber: null,
-  focus: false
-}
 
 const arrCellsColors =
   ['blue', 'green', 'gray', 'red', 'purple', 'yellow'];
@@ -30,15 +29,47 @@ export default function CreatingLevelsPage() {
   const dispatch = useDispatch();
   const [gridSize, setGridSize] = useState(4);
   const [isCreatingMode, setIsCreatingMode] = useState(true);
+  const [isMounted, setIsMounted] = useState(false);
 
   const isAuth = useSelector(isAuthSelector);
-
   const fields = useSelector(gridDataSelector);
+  const isCompleted = useSelector(isCompletedSelector);
 
-  useEffect(() => {
+  const resetGrid = useCallback(() => {
     const fields = Array.from(Array(gridSize),
       () => Array(gridSize).fill(cellPattern));
     dispatch(setGridData(fields));
+  }, [gridSize]);
+
+  const handleResetBtn = useCallback(() => {
+    resetGrid();
+    setIsCreatingMode(true);
+  }, []);
+
+  useEffect(() => {
+    resetGrid();
+  }, [gridSize]);
+
+  useEffect(() => {
+    if (isCreatingMode) {
+      isMounted &&
+        fields.forEach((row, rowIndex) => {
+          row.forEach((cell, colIndex) => {
+            if (cell.color && cell.sequenceNumber > 1) {
+              dispatch(setCellState({
+                address: { row: rowIndex, col: colIndex },
+                data: cellPattern
+              }));
+            }
+          });
+        });
+      setIsMounted(true);
+    }
+  }, [isCreatingMode]);
+
+  useEffect(() => {
+    dispatch(setLinkedColors({}));
+    dispatch(setIsCompleted(false));
   }, [gridSize]);
 
   const [, dropRef] = useDrop({
@@ -80,8 +111,8 @@ export default function CreatingLevelsPage() {
       </ul>
       <section style={{ display: 'flex', flexDirection: 'column' }}>
         <GridSizeController {...{ gridSize, setGridSize }} />
-        <button>
-          кнопка рефреша уровня
+        <button onClick={handleResetBtn}>
+          очистить поле
         </button>
         <button onClick={() => setIsCreatingMode(!isCreatingMode)}>
           включение/выключение режима прохождения уровня

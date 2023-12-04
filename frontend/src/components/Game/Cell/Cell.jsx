@@ -7,7 +7,7 @@ import {
   setIsWatching
 } from '../../../store/slicers/gameSlicer';
 import { linkedColorSelector } from '../../../store/selectors/gameSelectors';
-import store from '../../../store/store';
+import { getGameState, getGridData } from '../../../utils/utils';
 import styles from './Cell.module.css';
 
 
@@ -110,14 +110,6 @@ Cell.defaultProps = {
 
 export default Cell;
 
-
-function getGameState() {
-  return store.getState().game;
-}
-
-function getGridData() {
-  return store.getState().game.grid.data;
-}
 
 function findFocusedCellCoords(grid) {
   let result = null;

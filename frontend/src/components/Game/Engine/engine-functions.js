@@ -1,13 +1,5 @@
 import { setCellState } from '../../../store/slicers/gameSlicer.js';
-
-// TODO: cellPattern
-const cellPattern = {
-  color: null,
-  step: false,
-  belong: null,
-  sequenceNumber: null,
-  focus: false
-}
+import { cellPattern } from '../../../utils/constants.js';
 
 
 // функция смотрим четыре напрвления - сверху, справа, снизу, слева от currCellCoords
