@@ -8,12 +8,12 @@ export default function GridSizeController({
 }) {
   const onButtonClick = (e) => {
     e.target.name === 'increment' ?
-      (gridSize + 1 < 7 && setGridSize(gridSize + 1)) :
+      (gridSize + 1 < 8 && setGridSize(gridSize + 1)) :
       (gridSize - 1 > 3 && setGridSize(gridSize - 1));
   }
 
   const onInputChange = (e) => {
-    (e.target.value > 3 && e.target.value < 7) ?
+    (e.target.value > 3 && e.target.value < 8) ?
       setGridSize(Number(e.target.value)) : setGridSize(gridSize);
   }
 
@@ -32,7 +32,7 @@ export default function GridSizeController({
       <button type='button'
         className={`${styles.button} ${styles.buttonIncrement}`}
         name='increment' onClick={onButtonClick}
-        disabled={gridSize === 6}
+        disabled={gridSize === 7}
       >
         +
       </button>

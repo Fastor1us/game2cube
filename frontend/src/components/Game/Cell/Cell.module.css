@@ -13,6 +13,10 @@
   background-color: antiquewhite;
 }
 
+.blockedCell {
+  background-color: rgba(255, 0, 0, 0.5);
+}
+
 .filledCell {
   border: 1px solid rgba(0, 0, 0, 0.5);
   border-width: 6px;
@@ -78,9 +82,8 @@
   content: '6';
 }
 
-
-.red {
-  background-color: FireBrick;
+.main-orange::before {
+  content: '7';
 }
 
 .blue {
@@ -95,10 +98,18 @@
   background-color: Gray;
 }
 
+.red {
+  background-color: Crimson;
+}
+
 .purple {
   background-color: DarkOrchid;
 }
 
 .yellow {
   background-color: Goldenrod;
+}
+
+.orange {
+  background-color: Coral;
 }

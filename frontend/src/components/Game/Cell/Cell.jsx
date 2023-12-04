@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { forwardRef, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   setCellCoords,
@@ -11,7 +11,7 @@ import { getGameState, getGridData } from '../../../utils/utils';
 import styles from './Cell.module.css';
 
 
-const Cell = React.forwardRef((props, ref) => {
+const Cell = forwardRef((props, ref) => {
   const dispatch = useDispatch();
   const innerRef = useRef();
 
@@ -74,7 +74,7 @@ const Cell = React.forwardRef((props, ref) => {
 
   return (
     <li ref={innerRef} style={props.styles || null}>
-      <div ref={ref || null}
+      < div ref={ref || null}
         className={`${[
           styles.cell,
           props.sequenceNumber === 1 && !isMainCellLinked && styles.mainCell,
@@ -82,12 +82,14 @@ const Cell = React.forwardRef((props, ref) => {
           isMainCellLinked && styles.mainCellLinked,
           props.focus && styles.focus,
           !props.color && styles.emptyCell,
+          props.isBlocked && styles.blockedCell,
           props.color && !props.step && styles[props.color],
           props.color && !props.step && styles.filledCell,
           props.step && styles.emptyCell,
         ].filter(Boolean).join(' ')}`}
       >
-        {props.step &&
+        {
+          props.step &&
           <div
             className={`${[
               styles.cell,
@@ -98,8 +100,8 @@ const Cell = React.forwardRef((props, ref) => {
           >
           </div>
         }
-      </div>
-    </li>
+      </div >
+    </li >
   );
 });
 

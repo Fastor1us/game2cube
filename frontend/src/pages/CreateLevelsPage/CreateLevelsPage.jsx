@@ -22,7 +22,7 @@ import { cellPattern } from '../../utils/constants.js';
 
 
 const arrCellsColors =
-  ['blue', 'green', 'gray', 'red', 'purple', 'yellow'];
+  ['blue', 'green', 'gray', 'red', 'purple', 'yellow', 'orange'];
 
 
 export default function CreatingLevelsPage() {
@@ -74,13 +74,14 @@ export default function CreatingLevelsPage() {
 
   const [, dropRef] = useDrop({
     accept: 'cell',
-    drop: (item) => {
-      if (item.isInner) {
+    drop: (item, monitor) => {
+      if (!monitor.didDrop() && item.isInner) {
         dispatch(setCellState({
           address: item.address,
           data: {
             color: null,
             sequenceNumber: null,
+            belong: null,
           }
         }));
       }

@@ -13,7 +13,6 @@ import {
   setLinkedColors,
   setIsCompleted,
   setResetStateToInitial,
-  setTest
 } from '../../../store/slicers/gameSlicer';
 import {
   checkMoveOverload,
@@ -21,7 +20,8 @@ import {
   findFocusedCellCoords,
   findSteppedCellCoords,
   setBelongForLinkedCells,
-  findShortestPathForLinkingColors
+  findShortestPathForLinkingColors,
+  isMoveAdjacent
 } from './engine-functions';
 import { getGameState, getGridData } from '../../../utils/utils';
 import { cellPattern } from '../../../utils/constants';
@@ -42,7 +42,6 @@ export default function Engine() {
   useEffect(() => {
     const handleMouseUp = () => {
       if (getGameState().isFocus) {
-        // dispatch(setTest(8));
         dispatch(setCellState({
           address: findFocusedCellCoords(getGridData()),
           data: { focus: false },
@@ -135,7 +134,6 @@ export default function Engine() {
     // после клика по полю, но до движения мыши очищаем все ячейки того же цвета
     // с тем же belong, или с belong === 3 в случае соединённого цвета
     if (prevCellCoords.row === null) {
-      // dispatch(setTest(2));
       if (currCell.belong !== 3) {
         if (getGameState().linkedColors[currCell.color]) {
           clearOverload(getGridData, dispatch, currCell.color, 3, 1);
@@ -147,7 +145,6 @@ export default function Engine() {
           if (currCell.sequenceNumber > 1) {
             data.step = true;
           }
-          // dispatch(setTest(3));
           dispatch(setCellState({
             address: currCellCoords, data: data
           }));
@@ -241,22 +238,18 @@ export default function Engine() {
       // TODO
       // сценарий с цветной на свой (другой belong)/другой цвет наискосок
       // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-      if (currCell.color) {
-        const overload = checkMoveOverload(getGridData, currCellCoords, prevCell, 1);
-        if (!overload) {
-          dispatch(setIsWatching(false));
-          return;
-        }
+      if (!isMoveAdjacent(prevCellCoords, currCellCoords)) {
+        console.log('сработал ход наискосок, блокируем');
+        dispatch(setIsWatching(false));
+        return;
       }
 
       // если двигались "назад" с того же цвета и принадлежности, то чистим пред. ячейку
       if (currCell.color === prevCell.color && currCell.belong === prevCell.belong) {
-        // dispatch(setTest(1));
         dispatch(setCellState({
           address: prevCellCoords, data: cellPattern
         }));
         if (currCell.sequenceNumber > 1) {
-          // dispatch(setTest(9));
           dispatch(setCellState({
             address: currCellCoords, data: { step: true, focus: true }
           }));
@@ -290,13 +283,11 @@ export default function Engine() {
         const nextSequenceNumber = overload ? overload + 1 : prevCell.sequenceNumber + 1;
         // делаем предыдущую ячейку нормального размера
         if (!overload && prevCell.sequenceNumber > 1) {
-          // dispatch(setTest(4));
           dispatch(setCellState({
             address: prevCellCoords, data: { step: false, }
           }));
         }
         // красим след. ячейку с размером "шаг" 
-        // dispatch(setTest(5));
         dispatch(setCellState({
           address: currCellCoords,
           data: { ...prevCell, step: true, sequenceNumber: nextSequenceNumber, focus: true }

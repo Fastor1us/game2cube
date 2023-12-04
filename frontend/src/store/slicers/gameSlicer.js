@@ -78,9 +78,6 @@ const gameSlicer = createSlice({
     setResetStateToInitial(state) {
       Object.assign(state, initialState);
     },
-    setTest(state, action) {
-      console.log(action.payload);
-    }
   }
 });
 
@@ -94,7 +91,6 @@ export const {
   setLinkedColors,
   setIsCompleted,
   setResetStateToInitial,
-  setTest
 } = gameSlicer.actions;
 
 export default gameSlicer.reducer;

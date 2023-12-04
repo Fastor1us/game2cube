@@ -117,7 +117,6 @@ export function clearOverload(getGridData, dispatch, color, belong, sequenceNumb
       cell.belong === belong &&
       cell.sequenceNumber > sequenceNumber
     ) {
-      // dispatch(setTest(7));
       dispatch(setCellState({
         address: { row: rowIndex, col: colIndex }, data: cellPattern
       }));
@@ -158,4 +157,17 @@ function findSpecificCellCoords(grid, property, color = false) {
     });
   });
   return result;
+}
+
+export function isMoveAdjacent(prevCellCoords, currCellCoords) {
+  return (
+    (currCellCoords.row === prevCellCoords.row + 1 &&
+      currCellCoords.col === prevCellCoords.col) ||
+    (currCellCoords.row === prevCellCoords.row - 1 &&
+      currCellCoords.col === prevCellCoords.col) ||
+    (currCellCoords.row === prevCellCoords.row &&
+      currCellCoords.col === prevCellCoords.col + 1) ||
+    (currCellCoords.row === prevCellCoords.row &&
+      currCellCoords.col === prevCellCoords.col - 1)
+  );
 }
