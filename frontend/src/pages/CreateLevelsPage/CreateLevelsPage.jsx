@@ -118,7 +118,7 @@ export default function CreatingLevelsPage() {
         <button onClick={() => setIsCreatingMode(!isCreatingMode)}>
           включение/выключение режима прохождения уровня
         </button>
-        <button disabled>
+        <button disabled={isAuth && !isCompleted}>
           кнопка сохранения уровня
         </button>
       </section>

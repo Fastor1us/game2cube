@@ -2,7 +2,6 @@ import React, { useCallback, useEffect } from 'react';
 import { useForm } from '../../utils/hooks/use-form';
 import { userAPI } from '../../utils/api/user-api';
 import styles from './RegisterPage.module.css';
-import axios from 'axios';
 import { setUserData } from '../../store/slicers/userSlicer';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -55,8 +54,8 @@ export default function RegisterPage() {
     // confirmData && console.log('data:', confirmData);
     confirmData && localStorage.setItem('token', confirmData.token);
     confirmData && dispatch(setUserData({
-      username: data.username,
-      email: data.email,
+      username: confirmData.username,
+      email: confirmData.email,
       isAuth: true
     }));
     confirmData && navigate('/');
@@ -98,7 +97,10 @@ export default function RegisterPage() {
           name='passwordConfirmation' onChange={handleChange}
           value={values.passwordConfirmation} />
 
-        <button type="submit" className={styles.registerButton}>
+        <button type="submit"
+          className={styles.registerButton}
+          disabled={regIsLoading}
+        >
           Зарегистрироваться
         </button>
       </form>
@@ -122,7 +124,10 @@ export default function RegisterPage() {
         <input type="text" id="confirmationCode"
           name='confirmationCode' onChange={handleChange}
           value={values.confirmationCode} />
-        <button type="submit" className={styles.registerButton}>
+        <button type="submit"
+          className={styles.registerButton}
+          disabled={confirmIsLoading}
+        >
           Отправить код
         </button>
       </form>
