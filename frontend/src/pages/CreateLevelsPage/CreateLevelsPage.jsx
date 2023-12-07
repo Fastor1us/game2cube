@@ -5,8 +5,7 @@ import {
   setCellState,
   setGridData,
   setIsCompleted,
-  setLinkedColors,
-  setResetStateToInitial
+  setLinkedColors
 } from '../../store/slicers/gameSlicer.js';
 import GridSizeController
   from '../../components/GridSizeController/GridSizeController.jsx';
@@ -16,13 +15,9 @@ import OuterDonorCell from '../../utils/HOC/OuterDonorCell.jsx';
 import InnerDonorCell from '../../utils/HOC/InnerDonorCell.jsx';
 import RecipientCell from '../../utils/HOC/RecipientCell.jsx';
 import styles from './CreateLevelsPage.module.css';
-import { NavLink } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useDrop } from 'react-dnd';
 import { cellPattern } from '../../utils/constants.js';
-
-
-const arrCellsColors =
-  ['blue', 'green', 'gray', 'red', 'purple', 'yellow', 'orange'];
 
 
 export default function CreatingLevelsPage() {
@@ -96,7 +91,11 @@ export default function CreatingLevelsPage() {
           Что бы сохранить уровень вы должны быть авторизированны.
         </p>
         <p>
-          <NavLink to='/login'>Войти</NavLink>
+          <Link to={{
+            pathname: '/login', state: { from: location.pathname }
+          }}>
+            Войти
+          </Link>
         </p>
       </>)}
       {isAuth && <p>
@@ -104,9 +103,9 @@ export default function CreatingLevelsPage() {
         тогда кнопка "сохранить" станет активна
       </p>}
       <ul className={styles.creatingCellsList}>
-        {arrCellsColors.slice(0, gridSize).map((strColor, index) => {
+        {new Array(gridSize).fill(0).map((_, index) => {
           return <OuterDonorCell
-            key={index} color={strColor} sequenceNumber={1}
+            key={index} color={index + 1} sequenceNumber={1}
             {...{ isCreatingMode, isCellOutsideGame: true }} />
         })}
       </ul>
@@ -118,7 +117,7 @@ export default function CreatingLevelsPage() {
         <button onClick={() => setIsCreatingMode(!isCreatingMode)}>
           включение/выключение режима прохождения уровня
         </button>
-        <button disabled={isAuth && !isCompleted}>
+        <button disabled={!isAuth && !isCompleted}>
           кнопка сохранения уровня
         </button>
       </section>

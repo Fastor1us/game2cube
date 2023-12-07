@@ -1,13 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import styles from './DropdownList.module.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { resetUserData } from '../../store/slicers/userSlicer';
 import { isAuthSelector } from '../../store/selectors/userSelectors';
+import svgAvatar from '../../image/avatar.svg';
+import svgAvatarActive from '../../image/avatar-active.svg';
+import svgArrowDown from '../../image/arrow-down.svg';
+import svgArrowDownActive from '../../image/arrow-down-active.svg';
 
 
-export default function DropdownList(prop) {
+export default function DropdownList() {
   const dispatch = useDispatch();
+  const location = useLocation();
   const navigate = useNavigate();
   const [shouldShowDropdownList, setShouldShowDropdownList] = useState(false);
 
@@ -20,11 +25,10 @@ export default function DropdownList(prop) {
   const logout = () => {
     localStorage.removeItem('token');
     dispatch(resetUserData());
-    navigate('/');
   }
 
   const login = () => {
-    navigate('/login');
+    navigate('/login', { state: { from: location } });
   }
 
   useEffect(() => {
@@ -51,7 +55,12 @@ export default function DropdownList(prop) {
 
   return (
     <section onClick={handleClick} className={styles.dropdownList}>
-      {prop.children}
+      <img src={
+        shouldShowDropdownList ? svgAvatarActive : svgAvatar
+      } alt="Profile" className={styles.avatar} />
+      <img src={
+        shouldShowDropdownList ? svgArrowDownActive : svgArrowDown
+      } alt="Profile" className={styles.arrowDown} />
       {shouldShowDropdownList && (
         // <ul style={{ position: 'absolute', top: '100%', right: 0 }}>
         <ul className={styles.navList}>

@@ -58,58 +58,58 @@
   color: white;
 }
 
-.main-blue::before {
+.main-1::before {
   content: '1';
 }
 
-.main-green::before {
+.main-2::before {
   content: '2';
 }
 
-.main-gray::before {
+.main-3::before {
   content: '3';
 }
 
-.main-red::before {
+.main-4::before {
   content: '4';
 }
 
-.main-purple::before {
+.main-5::before {
   content: '5';
 }
 
-.main-yellow::before {
+.main-6::before {
   content: '6';
 }
 
-.main-orange::before {
+.main-7::before {
   content: '7';
 }
 
-.blue {
+.color-1 {
   background-color: RoyalBlue;
 }
 
-.green {
+.color-2 {
   background-color: ForestGreen;
 }
 
-.gray {
+.color-3 {
   background-color: Gray;
 }
 
-.red {
+.color-4 {
   background-color: Crimson;
 }
 
-.purple {
+.color-5 {
   background-color: DarkOrchid;
 }
 
-.yellow {
+.color-6 {
   background-color: Goldenrod;
 }
 
-.orange {
+.color-7 {
   background-color: Coral;
 }

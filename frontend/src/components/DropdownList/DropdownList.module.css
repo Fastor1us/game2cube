@@ -33,10 +33,25 @@
 }
 
 .link {
-  color: white;
+  color: #FFEFD5;
   text-decoration: none;
+}
+
+.active {
+  color: white;
 }
 
 .link:hover {
   text-decoration: underline;
+}
+
+.avatar {
+  height: 45px;
+  width: 45px;
+  border-radius: 50%;
+}
+
+.arrowDown {
+  height: 45px;
+  width: 25px;
 }

@@ -4,11 +4,12 @@ import { userAPI } from '../../utils/api/user-api';
 import styles from './RegisterPage.module.css';
 import { setUserData } from '../../store/slicers/userSlicer';
 import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 
 export default function RegisterPage() {
   const dispatch = useDispatch();
+  const location = useLocation();
   const navigate = useNavigate();
   const { values, handleChange } = useForm({
     username: 'fastorius',
@@ -58,7 +59,8 @@ export default function RegisterPage() {
       email: confirmData.email,
       isAuth: true
     }));
-    confirmData && navigate('/');
+    (confirmData && location.state?.from) ?
+      navigate(location.state.from) : navigate(-1);
     confirmError && console.log('error status:', confirmError.status);
     confirmError && console.log('error data:', confirmError.data);
   }, [confirmData, confirmIsSuccess, confirmIsError]);

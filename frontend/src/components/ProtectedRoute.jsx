@@ -6,8 +6,9 @@ import { isAuthSelector } from '../store/selectors/userSelectors';
 
 const Protected = ({ onlyUnAuth = false, component }) => {
   const location = useLocation();
-
   const isAuth = useSelector(isAuthSelector);
+
+  if (!isAuth && localStorage.getItem('token')) { return; }
 
   if (onlyUnAuth && isAuth) {
     const { from } = location.state || { from: { pathname: "/" } };

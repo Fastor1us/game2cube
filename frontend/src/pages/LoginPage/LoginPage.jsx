@@ -4,11 +4,34 @@ import styles from './LoginPage.module.css';
 import { userAPI } from '../../utils/api/user-api';
 import { useDispatch } from 'react-redux';
 import { setUserData } from '../../store/slicers/userSlicer';
-import { useNavigate, NavLink } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 
 
 export default function LoginPage() {
+
+  return (
+    <>
+      <h1>AAAAAAAAAAAAAAAAAAAAAAAAAAA</h1>
+      <h1>AAAAAAAAAAAAAAAAAAAAAAAAAAA</h1>
+      <h1>AAAAAAAAAAAAAAAAAAAAAAAAAAA</h1>
+      <h1>AAAAAAAAAAAAAAAAAAAAAAAAAAA</h1>
+      <h1>AAAAAAAAAAAAAAAAAAAAAAAAAAA</h1>
+      <h1>AAAAAAAAAAAAAAAAAAAAAAAAAAA</h1>
+      <h1>AAAAAAAAAAAAAAAAAAAAAAAAAAA</h1>
+      <h1>AAAAAAAAAAAAAAAAAAAAAAAAAAA</h1>
+      <h1>AAAAAAAAAAAAAAAAAAAAAAAAAAA</h1>
+      <h1>AAAAAAAAAAAAAAAAAAAAAAAAAAA</h1>
+      <h1>AAAAAAAAAAAAAAAAAAAAAAAAAAA</h1>
+      <h1>AAAAAAAAAAAAAAAAAAAAAAAAAAA</h1>
+    </>
+  );
+}
+
+
+function tgfxgdf() {
+  // export default function LoginPage() {
   const dispatch = useDispatch();
+  const location = useLocation();
   const navigate = useNavigate();
   const { values, handleChange } = useForm({
     email: 'fewgwer3@ya.ru',
@@ -30,7 +53,7 @@ export default function LoginPage() {
       email: data.email,
       isAuth: true
     }));
-    data && navigate('/');
+    data && navigate(-1);
     error && console.log('error:', error);
   }, [data, error]);
 
@@ -65,9 +88,16 @@ export default function LoginPage() {
     )}
     <p>
       {'Нет аккаунта? '}
-      <NavLink to='/registration' className={styles.link}>
+      <Link to='/registration' className={styles.link}>
+        {/* <Link className={styles.link}
+        to={{
+          pathname: '/registration',
+          state: { from: location.state?.from || '/' },
+          replace: location.state?.from ? true : false
+        }}
+      > */}
         Зарегистрироваться
-      </NavLink>
+      </Link>
     </p>
   </>);
 }

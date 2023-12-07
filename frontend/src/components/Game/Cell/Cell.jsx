@@ -83,7 +83,7 @@ const Cell = forwardRef((props, ref) => {
           props.focus && styles.focus,
           !props.color && styles.emptyCell,
           props.isBlocked && styles.blockedCell,
-          props.color && !props.step && styles[props.color],
+          props.color && !props.step && styles[`color-${props.color}`],
           props.color && !props.step && styles.filledCell,
           props.step && styles.emptyCell,
         ].filter(Boolean).join(' ')}`}
@@ -95,7 +95,7 @@ const Cell = forwardRef((props, ref) => {
               styles.cell,
               styles.step,
               styles.filledCell,
-              styles[props.color],
+              styles[`color-${props.color}`],
             ].filter(Boolean).join(' ')}`}
           >
           </div>
