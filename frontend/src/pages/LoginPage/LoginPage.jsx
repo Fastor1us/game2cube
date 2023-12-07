@@ -8,28 +8,6 @@ import { useNavigate, Link, useLocation } from 'react-router-dom';
 
 
 export default function LoginPage() {
-
-  return (
-    <>
-      <h1>AAAAAAAAAAAAAAAAAAAAAAAAAAA</h1>
-      <h1>AAAAAAAAAAAAAAAAAAAAAAAAAAA</h1>
-      <h1>AAAAAAAAAAAAAAAAAAAAAAAAAAA</h1>
-      <h1>AAAAAAAAAAAAAAAAAAAAAAAAAAA</h1>
-      <h1>AAAAAAAAAAAAAAAAAAAAAAAAAAA</h1>
-      <h1>AAAAAAAAAAAAAAAAAAAAAAAAAAA</h1>
-      <h1>AAAAAAAAAAAAAAAAAAAAAAAAAAA</h1>
-      <h1>AAAAAAAAAAAAAAAAAAAAAAAAAAA</h1>
-      <h1>AAAAAAAAAAAAAAAAAAAAAAAAAAA</h1>
-      <h1>AAAAAAAAAAAAAAAAAAAAAAAAAAA</h1>
-      <h1>AAAAAAAAAAAAAAAAAAAAAAAAAAA</h1>
-      <h1>AAAAAAAAAAAAAAAAAAAAAAAAAAA</h1>
-    </>
-  );
-}
-
-
-function tgfxgdf() {
-  // export default function LoginPage() {
   const dispatch = useDispatch();
   const location = useLocation();
   const navigate = useNavigate();
@@ -37,6 +15,10 @@ function tgfxgdf() {
     email: 'fewgwer3@ya.ru',
     password: '12345',
   });
+
+  useEffect(() => {
+    console.log('location:', location);
+  }, [location]);
 
   const [login, { error, data }] = userAPI.useLoginMutation();
   const onSubmit = useCallback((e) => {
@@ -88,16 +70,13 @@ function tgfxgdf() {
     )}
     <p>
       {'Нет аккаунта? '}
-      <Link to='/registration' className={styles.link}>
-        {/* <Link className={styles.link}
-        to={{
-          pathname: '/registration',
-          state: { from: location.state?.from || '/' },
-          replace: location.state?.from ? true : false
-        }}
-      > */}
+      <Link className={styles.link}
+        to='/registration'
+        state={{ from: location.state?.from || '/' }}
+        replace={location.state?.from ? true : false}
+      >
         Зарегистрироваться
       </Link>
-    </p>
+    </p >
   </>);
 }

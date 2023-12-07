@@ -10,18 +10,22 @@ import {
 import GridSizeController
   from '../../components/GridSizeController/GridSizeController.jsx';
 import { isAuthSelector } from '../../store/selectors/userSelectors.js';
-import { gridDataSelector, isCompletedSelector } from '../../store/selectors/gameSelectors.js';
+import {
+  gridDataSelector,
+  isCompletedSelector
+} from '../../store/selectors/gameSelectors.js';
 import OuterDonorCell from '../../utils/HOC/OuterDonorCell.jsx';
 import InnerDonorCell from '../../utils/HOC/InnerDonorCell.jsx';
 import RecipientCell from '../../utils/HOC/RecipientCell.jsx';
 import styles from './CreateLevelsPage.module.css';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useDrop } from 'react-dnd';
 import { cellPattern } from '../../utils/constants.js';
 
 
 export default function CreatingLevelsPage() {
   const dispatch = useDispatch();
+  const location = useLocation();
   const [gridSize, setGridSize] = useState(4);
   const [isCreatingMode, setIsCreatingMode] = useState(true);
   const [isMounted, setIsMounted] = useState(false);
@@ -91,17 +95,18 @@ export default function CreatingLevelsPage() {
           Что бы сохранить уровень вы должны быть авторизированны.
         </p>
         <p>
-          <Link to={{
-            pathname: '/login', state: { from: location.pathname }
-          }}>
+          <Link to='/login' state={{ from: location.pathname }}>
             Войти
           </Link>
         </p>
-      </>)}
-      {isAuth && <p>
-        Для сохранения уровеня, после его создания, уровень необходимо пройти,
-        тогда кнопка "сохранить" станет активна
-      </p>}
+      </>)
+      }
+      {
+        isAuth && <p>
+          Для сохранения уровеня, после его создания, уровень необходимо пройти,
+          тогда кнопка "сохранить" станет активна
+        </p>
+      }
       <ul className={styles.creatingCellsList}>
         {new Array(gridSize).fill(0).map((_, index) => {
           return <OuterDonorCell
@@ -122,7 +127,8 @@ export default function CreatingLevelsPage() {
         </button>
       </section>
 
-      {isCreatingMode &&
+      {
+        isCreatingMode &&
         <ul
           className={`${[
             styles.gameField,
@@ -144,9 +150,10 @@ export default function CreatingLevelsPage() {
         </ul>
       }
 
-      {!isCreatingMode &&
+      {
+        !isCreatingMode &&
         <Game isCreatingMode={isCreatingMode} />
       }
-    </section>
+    </section >
   );
 }
