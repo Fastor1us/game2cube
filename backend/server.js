@@ -1,5 +1,6 @@
 const express = require('express');
 const userRoutes = require('./routes/userRoutes');
+const gameRoutes = require('./routes/gameRoutes');
 const serverData = require('../server_data.js');
 
 const port = 3001;
@@ -18,8 +19,10 @@ app.use(
 );
 
 // ==========================================================
-// ==================== USER ROUTES =========================
+// ==================== USER ROUTE ==========================
 app.use('/user', userRoutes);
+// ==================== GANE ROUTE ==========================
+app.use('/game', gameRoutes);
 // ==========================================================
 
 app.listen(port, () => {

@@ -10,7 +10,7 @@ router.post('/authentication', userController.authentication);
 
 router.post('/login', userController.login);
 
-router.post('/registrationConfirm', userController.registrationConfirm);
+router.post('/registration-confirm', userController.registrationConfirm);
 
 
 module.exports = router;

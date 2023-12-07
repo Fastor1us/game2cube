@@ -12,7 +12,7 @@ export default function RegisterPage() {
   const location = useLocation();
   const navigate = useNavigate();
   const { values, handleChange } = useForm({
-    username: 'fastorius',
+    username: 'admin',
     email: 'fewgwer3@ya.ru',
     password: '12345',
     passwordConfirmation: '12345',

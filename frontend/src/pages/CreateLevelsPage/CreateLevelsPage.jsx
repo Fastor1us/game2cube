@@ -21,6 +21,7 @@ import styles from './CreateLevelsPage.module.css';
 import { Link, useLocation } from 'react-router-dom';
 import { useDrop } from 'react-dnd';
 import { cellPattern } from '../../utils/constants.js';
+import { gameAPI } from '../../utils/api/game-api.js';
 
 
 export default function CreatingLevelsPage() {
@@ -40,10 +41,31 @@ export default function CreatingLevelsPage() {
     dispatch(setGridData(fields));
   }, [gridSize]);
 
-  const handleResetBtn = useCallback(() => {
+  const handleReset = useCallback(() => {
     resetGrid();
     setIsCreatingMode(true);
   }, []);
+
+  const handleSave = () => {
+    add({
+      token: localStorage.getItem('token'),
+      data: {
+        size: gridSize,
+        cells: fields.reduce((acc, row, rowIndex) => {
+          row.forEach((cell, colIndex) => {
+            if (cell.color && cell.sequenceNumber > 1) {
+              acc.push({
+                address: { row: rowIndex, col: colIndex },
+                number: cell.color
+              });
+            }
+          });
+          return acc;
+        }, [])
+      }
+
+    });
+  }
 
   useEffect(() => {
     resetGrid();
@@ -70,6 +92,14 @@ export default function CreatingLevelsPage() {
     dispatch(setLinkedColors({}));
     dispatch(setIsCompleted(false));
   }, [gridSize]);
+
+  const [add, { error, data, isLoading }] =
+    gameAPI.useAddMutation();
+
+  useEffect(() => {
+    data && console.log('data', data);
+    error && console.log('error', error);
+  }, [error, data, isLoading]);
 
   const [, dropRef] = useDrop({
     accept: 'cell',
@@ -116,13 +146,15 @@ export default function CreatingLevelsPage() {
       </ul>
       <section style={{ display: 'flex', flexDirection: 'column' }}>
         <GridSizeController {...{ gridSize, setGridSize }} />
-        <button onClick={handleResetBtn}>
+        <button onClick={handleReset}>
           очистить поле
         </button>
         <button onClick={() => setIsCreatingMode(!isCreatingMode)}>
           включение/выключение режима прохождения уровня
         </button>
-        <button disabled={!isAuth && !isCompleted}>
+        <button onClick={handleSave}
+          disabled={!isAuth || !isCompleted || isLoading}
+        >
           кнопка сохранения уровня
         </button>
       </section>
