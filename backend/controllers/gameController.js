@@ -3,8 +3,6 @@ const pool = require('../db/pool');
 
 exports.add = async (req, res) => {
   const { token, data } = req.body;
-  console.log('token', token);
-  console.log('data', data);
 
   // делаем запись об уровне в levels
   const { rows: [{ id }] } = await pool.query(`
@@ -12,8 +10,6 @@ exports.add = async (req, res) => {
     VALUES ((SELECT id FROM game2cube.users WHERE token = $1), $2)
     RETURNING id
   `, [token, data.size]);
-
-  console.log('id', id);
 
   // делаем запись игровых ячеек в cells
   const cellsValues = data.cells.map((_, index) =>
@@ -26,9 +22,54 @@ exports.add = async (req, res) => {
     acc.push(id, cell.address.row, cell.address.col, cell.number);
     return acc;
   }, []);
-  console.log('cellsQuery', cellsQuery);
-  console.log('cellsParams', cellsParams);
   await pool.query(cellsQuery, cellsParams);
 
   res.status(200).json({ token, data });
 }
+
+
+exports.get = async (req, res) => {
+  const { user, size, main } = req.query;
+  // const tech = [{ user }, { size }, { main }];
+  // console.log('arguments we got:', tech.reduce((acc, item) => {
+  //   if (item) { acc[Object.keys(item)[0]] = Object.values(item)[0] }
+  //   return acc;
+  // }, {}));
+  console.log('user', user);
+  console.log('size', size);
+  console.log('test', main);
+
+  if (main) {
+    // Получаем все уровни пользователя
+    const levelsResult = await pool.query(`
+      SELECT l.id, l.size FROM game2cube.levels AS l
+      JOIN game2cube.users AS u ON l.user_id = u.id
+      WHERE u.username = 'admin'
+    `);
+    console.log('levelsResult', levelsResult);
+    // Получаем все ячейки для каждого уровня
+    const levelsWithCells = await Promise.all(
+      levelsResult.rows.map(async (level) => {
+        const cellsResult = await pool.query(`
+          SELECT c.row, c.col, c.number FROM game2cube.cells AS c
+          WHERE c.level_id = $1
+        `, [level.id]);
+        return {
+          size: level.size,
+          cells: cellsResult.rows
+        };
+      }));
+    res.json({
+      username: user,
+      levels: levelsWithCells
+    });
+    return;
+  }
+
+  res.json('дошли до конца эендпоинта /game/get');
+}
+
+// const { rows: levels } = await pool.query(`
+//   SELECT * FROM game2cube.levels
+//   WHERE user_id = (SELECT id FROM game2cube.users WHERE token = $1)
+// `, [token]);

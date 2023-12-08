@@ -78,8 +78,8 @@ function isNearCellWithSameColor(
   getGridData, currCellCoords, cellData) {
   let check;
   if (cellData.isInner) {
-    console.log('move from inner');
-    console.log('cellData', cellData);
+    // console.log('move from inner');
+    // console.log('cellData', cellData);
     check = (checkingCell) => {
       if ((checkingCell !== null && checkingCell.belong !== cellData.belong) &&
         checkingCell.color === cellData.color) { return 'true' }

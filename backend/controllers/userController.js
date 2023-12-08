@@ -38,6 +38,7 @@ exports.register = async (req, res) => {
   }
 };
 
+
 exports.registrationConfirm = async (req, res) => {
   const { username, email, password, confirmationCode } = req.body;
   try {
@@ -95,6 +96,7 @@ exports.login = async (req, res) => {
     res.status(500).json({ error: 'Ошибка сервера' });
   }
 }
+
 
 exports.authentication = async (req, res) => {
   const { token } = req.body;

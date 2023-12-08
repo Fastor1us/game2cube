@@ -1,5 +1,7 @@
 export const gameSelector = state => state.game;
 
+export const levelsSelector = state => gameSelector(state).levels;
+
 export const isWatchingSelector = state => gameSelector(state).isWatching;
 
 export const linkedColorsSelector = state => gameSelector(state).linkedColors;

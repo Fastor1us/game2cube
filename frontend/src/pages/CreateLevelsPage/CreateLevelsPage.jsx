@@ -53,7 +53,7 @@ export default function CreatingLevelsPage() {
         size: gridSize,
         cells: fields.reduce((acc, row, rowIndex) => {
           row.forEach((cell, colIndex) => {
-            if (cell.color && cell.sequenceNumber > 1) {
+            if (cell.sequenceNumber === 1) {
               acc.push({
                 address: { row: rowIndex, col: colIndex },
                 number: cell.color
@@ -63,7 +63,6 @@ export default function CreatingLevelsPage() {
           return acc;
         }, [])
       }
-
     });
   }
 
@@ -182,10 +181,7 @@ export default function CreatingLevelsPage() {
         </ul>
       }
 
-      {
-        !isCreatingMode &&
-        <Game isCreatingMode={isCreatingMode} />
-      }
+      {!isCreatingMode && <Game />}
     </section >
   );
 }

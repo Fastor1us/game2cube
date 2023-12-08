@@ -15,7 +15,8 @@ const initialState = {
   },
   grid: {
     data: [],
-  }
+  },
+  levels: [],
 };
 
 const gameSlicer = createSlice({
@@ -75,9 +76,9 @@ const gameSlicer = createSlice({
     setIsCompleted(state, action) {
       state.isCompleted = action.payload;
     },
-    setResetStateToInitial(state) {
-      Object.assign(state, initialState);
-    },
+    setLevels(state, action) {
+      state.levels = action.payload;
+    }
   }
 });
 
@@ -90,7 +91,7 @@ export const {
   setCellState,
   setLinkedColors,
   setIsCompleted,
-  setResetStateToInitial,
+  setLevels,
 } = gameSlicer.actions;
 
 export default gameSlicer.reducer;

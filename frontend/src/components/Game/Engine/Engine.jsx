@@ -12,7 +12,6 @@ import {
   setCellState,
   setLinkedColors,
   setIsCompleted,
-  setResetStateToInitial,
 } from '../../../store/slicers/gameSlicer';
 import {
   checkMoveOverload,
@@ -297,19 +296,6 @@ export default function Engine() {
       }
     }
   }, [isWatching, currCellCoords, prevCellCoords, isCompleted]);
-
-  // TODO:
-  // скорее всего будет не нужен, т.к. после прохождения уровня будет загружаться новый
-  //
-  // Блок размонтирования. Сбрасываем изменяемые состояния
-  // useEffect(() => {
-  //   return () => {
-  //     console.log(getGridData());
-  //     console.log('unmounting...');
-  //     dispatch(setResetStateToInitial());
-  //     console.log(getGridData());
-  //   }
-  // }, []);
 
   return (<></>);
 }

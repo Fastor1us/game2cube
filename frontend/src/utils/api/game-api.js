@@ -14,5 +14,21 @@ export const gameAPI = createApi({
         body: { token, data },
       }),
     }),
+    get: builder.mutation({
+      query: (params) => ({
+        url: '/get',
+        method: 'GET',
+        params,
+      }),
+    }),
   }),
 });
+
+// get: builder.mutation({
+//   query: (params) => ({
+//     url: `/get${Object.keys(params).length > 0 ? ('?' +
+//       Object.entries(params).map((param) => `${param[0]}=${param[1]}`).join('&')
+//     ) : ''}`,
+//     method: 'GET',
+//   }),
+// })

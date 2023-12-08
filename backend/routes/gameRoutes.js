@@ -1,14 +1,12 @@
 const express = require('express');
 const router = express.Router();
 
-const userController = require('../controllers/gameController');
-
-// get или post?
-// router.get('/user', userController.add);
-
-router.post('/add', userController.add);
+const gameController = require('../controllers/gameController');
 
 
+router.post('/add', gameController.add);
+
+router.get('/get', gameController.get);
 
 
 module.exports = router;
