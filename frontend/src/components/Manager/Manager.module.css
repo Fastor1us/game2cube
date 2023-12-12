@@ -1,0 +1,15 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.headerItem {
+  margin: 0;
+}
+
+.gameContainer {
+  height: calc(var(--cell-size) * 6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

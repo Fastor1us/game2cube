@@ -74,7 +74,7 @@ const Cell = forwardRef((props, ref) => {
 
   return (
     <li ref={innerRef} style={props.styles || null}>
-      < div ref={ref || null}
+      <div ref={ref || null}
         className={`${[
           styles.cell,
           props.sequenceNumber === 1 && !isMainCellLinked && styles.mainCell,
@@ -86,6 +86,7 @@ const Cell = forwardRef((props, ref) => {
           props.color && !props.step && styles[`color-${props.color}`],
           props.color && !props.step && styles.filledCell,
           props.step && styles.emptyCell,
+          props.size && styles[`field-size-${props.size}`],
         ].filter(Boolean).join(' ')}`}
       >
         {
@@ -97,8 +98,7 @@ const Cell = forwardRef((props, ref) => {
               styles.filledCell,
               styles[`color-${props.color}`],
             ].filter(Boolean).join(' ')}`}
-          >
-          </div>
+          ></div>
         }
       </div >
     </li >

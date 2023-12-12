@@ -2,10 +2,10 @@ import React from 'react';
 import { NavLink, Link } from 'react-router-dom';
 import DropdownList from '../DropdownList/DropdownList';
 import svgLogo from '../../image/logo.svg';
-import styles from './AppHeader.module.css';
+import styles from './Header.module.css';
 
 
-export default function AppHeader() {
+export default function Header() {
   const { link, active } = styles;
   return (
     <header className={styles.header}>

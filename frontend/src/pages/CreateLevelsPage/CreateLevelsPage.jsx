@@ -67,10 +67,6 @@ export default function CreatingLevelsPage() {
   }
 
   useEffect(() => {
-    resetGrid();
-  }, [gridSize]);
-
-  useEffect(() => {
     if (isCreatingMode) {
       isMounted &&
         fields.forEach((row, rowIndex) => {
@@ -88,6 +84,8 @@ export default function CreatingLevelsPage() {
   }, [isCreatingMode]);
 
   useEffect(() => {
+    setIsCreatingMode(true);
+    resetGrid();
     dispatch(setLinkedColors({}));
     dispatch(setIsCompleted(false));
   }, [gridSize]);
@@ -138,7 +136,7 @@ export default function CreatingLevelsPage() {
       }
       <ul className={styles.creatingCellsList}>
         {new Array(gridSize).fill(0).map((_, index) => {
-          return <OuterDonorCell
+          return <OuterDonorCell size={gridSize}
             key={index} color={index + 1} sequenceNumber={1}
             {...{ isCreatingMode, isCellOutsideGame: true }} />
         })}
@@ -171,7 +169,7 @@ export default function CreatingLevelsPage() {
               const Cell = item.sequenceNumber ?
                 InnerDonorCell : RecipientCell;
               return <Cell
-                {...item}
+                {...item} size={fields.length}
                 key={row + '' + col}
                 address={{ row, col }}
                 isCreatingMode={true}

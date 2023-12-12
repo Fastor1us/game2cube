@@ -65,7 +65,8 @@ export default function Game() {
         {fields.map((_, row) => {
           return _.map((item, col) => {
             return <Cell key={row + '' + col}
-              {...{ row, col }} {...item} />
+              {...{ row, col }} {...item}
+              size={fields.length} />
           });
         })}
       </ul>

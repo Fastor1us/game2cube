@@ -1,0 +1,8 @@
+.levelList {
+  display: flex;
+  cursor: pointer;
+}
+
+.levelItem {
+  padding: 5px 20px;
+}

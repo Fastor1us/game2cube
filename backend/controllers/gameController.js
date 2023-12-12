@@ -1,31 +1,66 @@
-// services/userService.js
 const pool = require('../db/pool');
 
+const gameService = require('../services/gameService');
+
+
+// TODO перенести все await.pool.query в Service 
 exports.add = async (req, res) => {
   const { token, data } = req.body;
-
-  // делаем запись об уровне в levels
-  const { rows: [{ id }] } = await pool.query(`
+  try {
+    // делаем запись об уровне в levels
+    const { rows: [{ id }] } = await pool.query(`
     INSERT INTO game2cube.levels (user_id, size)
     VALUES ((SELECT id FROM game2cube.users WHERE token = $1), $2)
     RETURNING id
   `, [token, data.size]);
 
-  // делаем запись игровых ячеек в cells
-  const cellsValues = data.cells.map((_, index) =>
-    `($${index * 4 + 1}, $${index * 4 + 2}, $${index * 4 + 3}, $${index * 4 + 4})`);
-  const cellsQuery = `
+    // делаем запись игровых ячеек в cells
+    const cellsValues = data.cells.map((_, index) =>
+      `($${index * 4 + 1}, $${index * 4 + 2}, $${index * 4 + 3}, $${index * 4 + 4})`);
+    const cellsQuery = `
     INSERT INTO game2cube.cells (level_id, row, col, number)
     VALUES ${cellsValues.join(', ')}
   `;
-  const cellsParams = data.cells.reduce((acc, cell) => {
-    acc.push(id, cell.address.row, cell.address.col, cell.number);
-    return acc;
-  }, []);
-  await pool.query(cellsQuery, cellsParams);
+    const cellsParams = data.cells.reduce((acc, cell) => {
+      acc.push(id, cell.address.row, cell.address.col, cell.number);
+      return acc;
+    }, []);
+    await pool.query(cellsQuery, cellsParams);
 
-  res.status(200).json({ token, data });
+    res.status(200).json({ token, data });
+  } catch (error) {
+    console.error('Ошибка при создании записи уровня:', error);
+    res.status(500).json({ error: 'Ошибка сервера' });
+    return;
+  }
 }
+
+// exports.add = async (req, res) => {
+//   const { token, data } = req.body;
+
+//   // делаем запись об уровне в levels
+//   const { rows: [{ id }] } = await pool.query(`
+//     INSERT INTO game2cube.levels (user_id, size)
+//     VALUES ((SELECT id FROM game2cube.users WHERE token = $1), $2)
+//     RETURNING id
+//   `, [token, data.size]);
+
+//   // делаем запись игровых ячеек в cells
+//   const cellsValues = data.cells.map((_, index) =>
+//     `($${index * 4 + 1}, $${index * 4 + 2}, $${index * 4 + 3}, $${index * 4 + 4})`);
+//   const cellsQuery = `
+//     INSERT INTO game2cube.cells (level_id, row, col, number)
+//     VALUES ${cellsValues.join(', ')}
+//   `;
+//   const cellsParams = data.cells.reduce((acc, cell) => {
+//     acc.push(id, cell.address.row, cell.address.col, cell.number);
+//     return acc;
+//   }, []);
+//   await pool.query(cellsQuery, cellsParams);
+
+//   res.status(200).json({ token, data });
+// }
+
 
 
 exports.get = async (req, res) => {
@@ -35,18 +70,17 @@ exports.get = async (req, res) => {
   //   if (item) { acc[Object.keys(item)[0]] = Object.values(item)[0] }
   //   return acc;
   // }, {}));
-  console.log('user', user);
-  console.log('size', size);
-  console.log('test', main);
+  // console.log('user', user);
+  // console.log('size', size);
+  // console.log('test', main);
 
   if (main) {
-    // Получаем все уровни пользователя
+    // Получаем все уровни пользователя admin
     const levelsResult = await pool.query(`
       SELECT l.id, l.size FROM game2cube.levels AS l
       JOIN game2cube.users AS u ON l.user_id = u.id
       WHERE u.username = 'admin'
     `);
-    console.log('levelsResult', levelsResult);
     // Получаем все ячейки для каждого уровня
     const levelsWithCells = await Promise.all(
       levelsResult.rows.map(async (level) => {

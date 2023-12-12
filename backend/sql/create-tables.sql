@@ -6,7 +6,6 @@ CREATE TABLE game2cube.registration (
   code smallint
 );
 
-
 CREATE TABLE game2cube.users (
   id SERIAL PRIMARY KEY,
   username varchar(25) UNIQUE,
@@ -29,6 +28,20 @@ CREATE TABLE game2cube.cells (
   number smallint
 );
 
+--======================= внешние ключи =======================
+-- зависимость для каскадного удаления cells.level_id -> levels.id
+ALTER TABLE game2cube.cells
+ADD CONSTRAINT fk_cells_level
+FOREIGN KEY (level_id)
+REFERENCES game2cube.levels(id)
+ON DELETE CASCADE;
+-- зависимость для каскадного удаления levels.user_id -> users.id
+ALTER TABLE game2cube.levels
+ADD CONSTRAINT fk_levels_user
+FOREIGN KEY (user_id)
+REFERENCES game2cube.users(id)
+ON DELETE CASCADE;
+--=============================================================
 
 -- не забываем выдать права для пользователя express:
 GRANT SELECT, UPDATE, INSERT, DELETE ON TABLE game2cube.registration TO express;

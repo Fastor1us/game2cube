@@ -25,6 +25,8 @@
 
 .step {
   transform: scale(.75);
+  width: 100%;
+  height: 100%;
 }
 
 .focus {
@@ -37,7 +39,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 50px;
+  font-size: var(--cell-number-size);
   font-weight: bolder;
   height: 100%;
   width: 100%;
@@ -50,7 +52,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 50px;
+  font-size: var(--cell-number-size);
   font-weight: bolder;
   height: 100%;
   width: 100%;
@@ -112,4 +114,31 @@
 
 .color-7 {
   background-color: Coral;
+}
+
+.field-size-5 {
+  width: calc(var(--cell-size) * 0.9);
+  height: calc(var(--cell-size) * 0.9);
+}
+
+.field-size-5::before {
+  font-size: calc(var(--cell-number-size) * 0.85);
+}
+
+.field-size-6 {
+  width: calc(var(--cell-size) * 0.85);
+  height: calc(var(--cell-size) * 0.85);
+}
+
+.field-size-6::before {
+  font-size: calc(var(--cell-number-size) * 0.8);
+}
+
+.field-size-7 {
+  width: calc(var(--cell-size) * 0.8);
+  height: calc(var(--cell-size) * 0.8);
+}
+
+.field-size-7::before {
+  font-size: calc(var(--cell-number-size) * 0.75);
 }
