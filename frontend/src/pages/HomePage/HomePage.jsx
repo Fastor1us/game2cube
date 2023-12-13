@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { gameAPI } from '../../utils/api/game-api.js';
 import { useDispatch } from 'react-redux';
-import { setLevels } from '../../store/slicers/gameSlicer.js';
+import { setLevels } from '../../store/slicers/managerSlicer.js';
 import Manager from '../../components/Manager/Manager.jsx';
 
 

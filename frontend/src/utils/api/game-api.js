@@ -5,7 +5,16 @@ const API_URL = 'http://localhost:3001/game';
 
 export const gameAPI = createApi({
   reducerPath: 'gameAPI',
-  baseQuery: fetchBaseQuery({ baseUrl: API_URL }),
+  baseQuery: fetchBaseQuery({
+    baseUrl: API_URL,
+    prepareHeaders: (headers) => {
+      headers.set('Content-Type', 'application/json');
+      const token = localStorage.getItem('token');
+      if (token) {
+        headers.set('Authorization', `${token}`);
+      }
+    },
+  }),
   endpoints: (builder) => ({
     add: builder.mutation({
       query: ({ token, data }) => ({
@@ -21,14 +30,19 @@ export const gameAPI = createApi({
         params,
       }),
     }),
+    toggleLike: builder.mutation({
+      query: ({ levelId }) => ({
+        url: '/toggle-like',
+        method: 'POST',
+        body: { levelId },
+      }),
+    }),
+    removeLike: builder.mutation({
+      query: ({ levelId }) => ({
+        url: '/remove-like',
+        method: 'POST',
+        body: { levelId },
+      }),
+    })
   }),
 });
-
-// get: builder.mutation({
-//   query: (params) => ({
-//     url: `/get${Object.keys(params).length > 0 ? ('?' +
-//       Object.entries(params).map((param) => `${param[0]}=${param[1]}`).join('&')
-//     ) : ''}`,
-//     method: 'GET',
-//   }),
-// })

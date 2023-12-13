@@ -6,3 +6,7 @@
 .levelItem {
   padding: 5px 20px;
 }
+
+.active {
+  text-decoration: underline;
+}

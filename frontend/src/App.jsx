@@ -29,7 +29,10 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    data && dispatch(setUserData({ ...data, isAuth: true }));
+    if (data) {
+      dispatch(setUserData({ ...data, isAuth: true }));
+      document.cookie = `token=${localStorage.getItem('token')}`;
+    }
     error && console.log('Ошибка аутентификации:', error);
     error && localStorage.removeItem('token');
   }, [data, error]);

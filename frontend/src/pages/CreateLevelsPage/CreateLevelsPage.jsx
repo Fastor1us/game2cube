@@ -4,8 +4,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   setCellState,
   setGridData,
-  setIsCompleted,
-  setLinkedColors
 } from '../../store/slicers/gameSlicer.js';
 import GridSizeController
   from '../../components/GridSizeController/GridSizeController.jsx';
@@ -35,16 +33,18 @@ export default function CreatingLevelsPage() {
   const fields = useSelector(gridDataSelector);
   const isCompleted = useSelector(isCompletedSelector);
 
-  const resetGrid = useCallback(() => {
+  const resetGrid = () => {
     const fields = Array.from(Array(gridSize),
       () => Array(gridSize).fill(cellPattern));
     dispatch(setGridData(fields));
-  }, [gridSize]);
+  };
 
   const handleReset = useCallback(() => {
-    resetGrid();
     setIsCreatingMode(true);
-  }, []);
+    resetGrid();
+  }, [gridSize]);
+
+  useEffect(() => { handleReset(); }, [gridSize]);
 
   const handleSave = () => {
     add({
@@ -83,14 +83,7 @@ export default function CreatingLevelsPage() {
     }
   }, [isCreatingMode]);
 
-  useEffect(() => {
-    setIsCreatingMode(true);
-    resetGrid();
-    dispatch(setLinkedColors({}));
-    dispatch(setIsCompleted(false));
-  }, [gridSize]);
-
-  const [add, { error, data, isLoading }] =
+  const [add, { error, data, isLoading, isSuccess, isError }] =
     gameAPI.useAddMutation();
 
   useEffect(() => {
@@ -150,36 +143,39 @@ export default function CreatingLevelsPage() {
           включение/выключение режима прохождения уровня
         </button>
         <button onClick={handleSave}
-          disabled={!isAuth || !isCompleted || isLoading}
+          disabled={
+            !isAuth || !isCompleted || isLoading || isError || isSuccess
+          }
         >
           кнопка сохранения уровня
         </button>
       </section>
+      <section className={styles.gameContainer}>
+        {
+          isCreatingMode &&
+          <ul
+            className={`${[
+              styles.gameField,
+              styles[`gameGrid${fields.length}`],
+            ].join(' ')}`}
+          >
+            {fields.map((_, row) => {
+              return _.map((item, col) => {
+                const Cell = item.sequenceNumber ?
+                  InnerDonorCell : RecipientCell;
+                return <Cell
+                  {...item} size={fields.length}
+                  key={row + '' + col}
+                  address={{ row, col }}
+                  isCreatingMode={true}
+                />
+              });
+            })}
+          </ul>
+        }
 
-      {
-        isCreatingMode &&
-        <ul
-          className={`${[
-            styles.gameField,
-            styles[`gameGrid${fields.length}`],
-          ].join(' ')}`}
-        >
-          {fields.map((_, row) => {
-            return _.map((item, col) => {
-              const Cell = item.sequenceNumber ?
-                InnerDonorCell : RecipientCell;
-              return <Cell
-                {...item} size={fields.length}
-                key={row + '' + col}
-                address={{ row, col }}
-                isCreatingMode={true}
-              />
-            });
-          })}
-        </ul>
-      }
-
-      {!isCreatingMode && <Game />}
+        {!isCreatingMode && <Game />}
+      </section>
     </section >
   );
 }

@@ -16,10 +16,6 @@ export default function LoginPage() {
     password: '12345',
   });
 
-  useEffect(() => {
-    console.log('location:', location);
-  }, [location]);
-
   const [login, { error, data }] = userAPI.useLoginMutation();
   const onSubmit = useCallback((e) => {
     e.preventDefault();

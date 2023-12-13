@@ -76,9 +76,6 @@ const gameSlicer = createSlice({
     setIsCompleted(state, action) {
       state.isCompleted = action.payload;
     },
-    setLevels(state, action) {
-      state.levels = action.payload;
-    }
   }
 });
 
@@ -91,7 +88,6 @@ export const {
   setCellState,
   setLinkedColors,
   setIsCompleted,
-  setLevels,
 } = gameSlicer.actions;
 
 export default gameSlicer.reducer;

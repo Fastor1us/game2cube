@@ -5,10 +5,12 @@ import { gameAPI } from '../utils/api/game-api.js';
 
 import gameSlicer from './slicers/gameSlicer.js';
 import userSlicer from './slicers/userSlicer.js';
+import managerSlicer from './slicers/managerSlicer.js';
 
 
 const rootReducer = combineReducers({
   user: userSlicer,
+  manager: managerSlicer,
   game: gameSlicer,
   [userAPI.reducerPath]: userAPI.reducer,
   [gameAPI.reducerPath]: gameAPI.reducer,

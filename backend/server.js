@@ -10,13 +10,26 @@ app.use((req, res, next) => {
   const url = process.env.NODE_ENV === 'prod' ?
     serverData.cors.prod : serverData.cors.dev;
   res.setHeader('Access-Control-Allow-Origin', url);
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Headers',
+    'Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
   next();
 });
 
-app.use(
-  express.json(),
-);
+app.use(express.json());
+
+app.use((req, res, next) => {
+  req.token = req.headers.authorization;
+  next();
+});
+
+exports.get = async (req, res) => {
+  // Доступ к токену через req.token
+  console.log('Токен:', req.token);
+
+  // Остальной код обработчика запроса
+};
 
 // ==========================================================
 // ==================== USER ROUTE ==========================
