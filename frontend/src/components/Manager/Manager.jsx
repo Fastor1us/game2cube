@@ -46,7 +46,10 @@ export default function Manager() {
           автор: {level.author}
         </p>
         <p className={styles.headerItem}>
-          <img alt="" className={styles.like} onClick={handleLike}
+          <img alt="" onClick={handleLike}
+            className={`
+            ${styles.like} ${isAuth ? '' : styles.likeDisabled}
+          `}
             src={
               isAuth ? (levels?.length > 0 &&
                 levels[currLevel.index].isAbleToLike ?

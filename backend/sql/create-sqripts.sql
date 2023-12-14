@@ -149,3 +149,37 @@ $function$;
 
 GRANT EXECUTE ON FUNCTION game2cube.check_user(varchar, varchar) TO express;
 --==========================================================================
+
+
+--========================================================================== 
+--change_user
+-- CREATE OR REPLACE PROCEDURE game2cube.change_user(
+--   p_token varchar(25),
+--   p_username varchar(25),
+--   p_password varchar(25)
+-- )
+-- AS $$
+-- BEGIN
+--   UPDATE game2cube.users
+--   SET username = COALESCE(p_username, username),
+--       password = COALESCE(p_password, password)
+--   WHERE token = p_token;
+-- END;
+-- $$ LANGUAGE plpgsql;
+CREATE OR REPLACE PROCEDURE game2cube.change_user(
+  p_token varchar(25),
+  p_username varchar(25) DEFAULT NULL,
+  p_password varchar(25) DEFAULT NULL
+)
+LANGUAGE plpgsql
+AS $procedure$
+BEGIN
+  UPDATE game2cube.users
+  SET username = COALESCE(p_username, username),
+      password = COALESCE(p_password, password)
+  WHERE token = p_token;
+END;
+$procedure$;
+
+GRANT EXECUTE ON PROCEDURE game2cube.change_user(varchar, varchar, varchar) TO express;
+--==========================================================================

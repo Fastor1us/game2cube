@@ -53,6 +53,12 @@ const getUser = async (...args) => {
   return rows;
 };
 
+const changeUser = async (token, username, password) => {
+  await pool.query(
+    'CALL game2cube.change_user($1, $2, $3)',
+    [token, username, password]);
+}
+
 // const checkEmailRegistrationsExist = async (email) => {
 //   const testQuery = `SELECT * FROM game2cube.registration
 //                      WHERE email = '${email}'`;
@@ -87,7 +93,8 @@ const checkCode = async (email, code) => {
 //   return await pool.query(deleteQuery);
 // }
 const deleteRegistration = async (email) => {
-  return await pool.query(`CALL game2cube.delete_registration('${email}');`);
+  return await pool.query(
+    `CALL game2cube.delete_registration('${email}');`);
 }
 
 // const createRegistrationRecord
@@ -144,6 +151,7 @@ const sendConfirmationEmail = async (email, confirmationCode) => {
 module.exports = {
   checkUser,
   getUser,
+  changeUser,
   checkRegistration,
   checkCode,
   createRegistration,

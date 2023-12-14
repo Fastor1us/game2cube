@@ -149,6 +149,10 @@ export default function CreatingLevelsPage() {
         >
           кнопка сохранения уровня
         </button>
+        {isSuccess && !isCreatingMode &&
+          <div style={{ color: 'green' }}>
+            Уровень успешно сохранен
+          </div>}
       </section>
       <section className={styles.gameContainer}>
         {

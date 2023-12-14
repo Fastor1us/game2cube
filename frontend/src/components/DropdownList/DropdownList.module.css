@@ -2,7 +2,7 @@
   position: relative;
   cursor: pointer;
   z-index: 100;
-  opacity: .8;
+  /* opacity: .9; */
 }
 
 .navList {
@@ -23,9 +23,21 @@
 
 .navItem {
   padding: 10px;
-  width: 100px;
   border-bottom: 1px solid black;
   background-color: gray;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 20px;
+}
+
+.navItem:hover {
+  text-decoration: underline;
+}
+
+.navSvg {
+  height: 20px;
+  width: 20px;
 }
 
 .navList:last-of-type {
@@ -33,16 +45,17 @@
 }
 
 .link {
-  color: #FFEFD5;
+  /* color: #FFEFD5; */
+  color: black;
   text-decoration: none;
 }
 
+/* .link:hover {
+  text-decoration: underline;
+} */
+
 .active {
   color: white;
-}
-
-.link:hover {
-  text-decoration: underline;
 }
 
 .avatar {
@@ -54,4 +67,44 @@
 .arrowDown {
   height: 45px;
   width: 25px;
+}
+
+
+/* Стили для мобильных устройств */
+@media (min-width: 425px) and (max-width: 767px) {}
+
+/* Стили для мобильных устройств */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .navItem {
+    font-size: 21px;
+  }
+
+  .navSvg {
+    height: 21px;
+    width: 21px;
+  }
+}
+
+/* Стили для планшетов */
+@media (min-width: 1024px) and (max-width: 1439px) {
+  .navItem {
+    font-size: 22px;
+  }
+
+  .navSvg {
+    height: 22px;
+    width: 22px;
+  }
+}
+
+/* Стили для десктопов */
+@media (min-width: 1440px) {
+  .navItem {
+    font-size: 24px;
+  }
+
+  .navSvg {
+    height: 24px;
+    width: 24px;
+  }
 }

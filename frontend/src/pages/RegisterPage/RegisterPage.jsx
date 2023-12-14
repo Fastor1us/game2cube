@@ -53,7 +53,6 @@ export default function RegisterPage() {
   }, [values]);
   useEffect(() => {
     if (confirmData) {
-      confirmData && console.log('1');
       confirmData && localStorage.setItem('token', confirmData.token);
       confirmData && dispatch(setUserData({
         username: confirmData.username,
@@ -62,8 +61,6 @@ export default function RegisterPage() {
       }));
       location.state?.from ? navigate(location.state.from) : navigate(-1);
     }
-    confirmError && console.log('error status:', confirmError.status);
-    confirmError && console.log('error data:', confirmError.data);
   }, [confirmData, confirmIsSuccess, confirmIsError]);
 
   return (<>

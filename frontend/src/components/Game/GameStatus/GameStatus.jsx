@@ -9,7 +9,7 @@ export default function GameStatus() {
   return (
     <>
       {!isCompleted && <div>Играем...</div>}
-      {isCompleted && <div>Победа</div>}
+      {isCompleted && <div>Уровень пройден</div>}
     </>
   );
 }

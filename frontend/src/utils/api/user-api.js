@@ -40,6 +40,20 @@ export const userAPI = createApi({
       query: () => ({
         url: '/logout',
       })
+    }),
+    delete: builder.mutation({
+      query: (token) => ({
+        url: '/delete',
+        method: 'POST',
+        body: { token },
+      }),
+    }),
+    change: builder.mutation({
+      query: ({ token, ...params }) => ({
+        url: '/change',
+        method: 'POST',
+        body: { token, ...params },
+      }),
     })
   }),
 });

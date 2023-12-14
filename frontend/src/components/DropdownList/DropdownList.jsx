@@ -8,6 +8,9 @@ import svgAvatar from '../../image/avatar.svg';
 import svgAvatarActive from '../../image/avatar-active.svg';
 import svgArrowDown from '../../image/arrow-down.svg';
 import svgArrowDownActive from '../../image/arrow-down-active.svg';
+import svgLogin from '../../image/login.svg';
+import svgLogout from '../../image/logout.svg';
+import svgProfile from '../../image/profile.svg';
 
 
 export default function DropdownList() {
@@ -64,20 +67,26 @@ export default function DropdownList() {
       {shouldShowDropdownList && (
         // <ul style={{ position: 'absolute', top: '100%', right: 0 }}>
         <ul className={styles.navList}>
-          <NavLink to='/profile' className={styles.link}>
-            <li className={styles.navItem}>
-              1
-            </li>
-          </NavLink>
-          <NavLink to='/profile' className={styles.link}>
-            <li className={styles.navItem}>
-              2
-            </li>
-          </NavLink>
+          {isAuth &&
+            <NavLink to='/profile' className={styles.link}>
+              <li className={styles.navItem}>
+                <img src={svgProfile} alt="Профиль"
+                  className={styles.navSvg} />
+                <div>
+                  Профиль
+                </div>
+              </li>
+            </NavLink>
+          }
           <li className={styles.navItem}
             onClick={isAuth ? logout : login}
           >
-            {isAuth ? 'Выйти' : 'Войти'}
+            <img src={isAuth ? svgLogout : svgLogin}
+              alt={isAuth ? 'Выйти' : 'Войти'}
+              className={styles.navSvg} />
+            <div>
+              {isAuth ? 'Выйти' : 'Войти'}
+            </div>
           </li>
         </ul>
       )}

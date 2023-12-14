@@ -115,3 +115,23 @@ exports.authentication = async (req, res) => {
     res.status(500).json({ error: 'Ошибка сервера' });
   }
 }
+
+
+exports.change = async (req, res) => {
+  const { token, username, password } = req.body;
+  try {
+    // вызывая процедуру передаём null для неопределённых параметров
+    // - необходима передача null вместо udnefined 
+    await userService.changeUser(
+      token, username || null, password || null);
+    // Проверяем, был ли изменен username
+    if (username) {
+      res.status(200).json({ username });
+    } else {
+      res.status(200).json({ success: true });
+    }
+  } catch (error) {
+    console.error('Ошибка изменения данных:', error);
+    res.status(500).json({ error: 'Ошибка сервера' });
+  }
+};
