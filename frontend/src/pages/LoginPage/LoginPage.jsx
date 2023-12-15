@@ -12,7 +12,7 @@ export default function LoginPage() {
   const location = useLocation();
   const navigate = useNavigate();
   const { values, handleChange } = useForm({
-    email: 'test@test.ru',
+    email: 'test2@test.ru',
     password: '12345',
   });
 

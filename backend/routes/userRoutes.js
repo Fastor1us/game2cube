@@ -14,5 +14,9 @@ router.post('/registration-confirm', userController.registrationConfirm);
 
 router.post('/change', userController.change);
 
+// router.post('/forgot-password', userController.forgotPassword);
+
+router.post('/delete', userController.delete);
+
 
 module.exports = router;

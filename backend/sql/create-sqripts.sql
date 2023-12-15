@@ -44,7 +44,7 @@ CREATE OR REPLACE PROCEDURE game2cube.delete_registration(IN p_email character v
 LANGUAGE plpgsql
 AS $procedure$
 BEGIN
-  DELETE FROM game2cube.registration WHERE game2cube.registration.email = p_email;
+  DELETE FROM game2cube.registration WHERE email = p_email;
 END;
 $procedure$;
 
@@ -149,6 +149,34 @@ $function$;
 
 GRANT EXECUTE ON FUNCTION game2cube.check_user(varchar, varchar) TO express;
 --==========================================================================
+
+
+--========================================================================== 
+--delete_user
+-- два варианта объявление процедуру с разным синтаксисом
+-- 1)
+CREATE OR REPLACE PROCEDURE game2cube.delete_user(
+  IN p_token varchar(25)
+)
+AS $$
+BEGIN
+  DELETE FROM game2cube.users
+  WHERE token = p_token;
+END;
+$$ LANGUAGE plpgsql;
+-- 2)
+-- CREATE OR REPLACE PROCEDURE game2cube.delete_user(
+--   IN p_token varchar(25)
+-- )
+-- LANGUAGE plpgsql
+-- AS $procedure$
+-- BEGIN
+--   DELETE FROM game2cube.users WHERE token = p_token;
+-- END;
+-- $procedure$;
+
+GRANT EXECUTE ON PROCEDURE game2cube.delete_user(varchar) TO express;
+--========================================================================== 
 
 
 --========================================================================== 

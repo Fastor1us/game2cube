@@ -12,3 +12,8 @@
 .registerButton {
   margin-top: 20px;
 }
+
+.deleteButton {
+  margin-top: 20px;
+  background-color: rgb(231, 130, 130);
+}

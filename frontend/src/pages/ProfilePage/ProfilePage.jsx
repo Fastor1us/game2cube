@@ -4,7 +4,7 @@ import { userSelector } from '../../store/selectors/userSelectors';
 import { useForm } from '../../utils/hooks/use-form';
 import { shallowEqual } from '../../utils/utils';
 import { userAPI } from '../../utils/api/user-api';
-import { setUserData } from '../../store/slicers/userSlicer';
+import { resetUserData, setUserData } from '../../store/slicers/userSlicer';
 import styles from './ProfilePage.module.css';
 
 
@@ -29,14 +29,19 @@ export default function ProfilePage() {
     })
   }, [userData]);
 
-  const [change, { error, data, isLoading, isSuccess }] =
+  const [change, { error: changeError, data: changeData,
+    isLoading: changeIsLoading, isSuccess: changeIsSuccess }] =
     userAPI.useChangeMutation();
 
+  const [deleteAccount, { error: deleteError, data: deleteData,
+    isLoading: deleteIsLoading, isSuccess: deleteIsSuccess }] =
+    userAPI.useDeleteMutation();
+
   useEffect(() => {
-    isSuccess && data.username && dispatch(setUserData({
-      username: data.username
+    changeIsSuccess && changeData.username && dispatch(setUserData({
+      username: changeData.username
     }));
-  }, [data, error, isSuccess]);
+  }, [changeData, changeError, changeIsSuccess]);
 
   const onSubmit = (e) => {
     e.preventDefault();
@@ -46,6 +51,19 @@ export default function ProfilePage() {
       password: values.password.length > 0 ? values.password : null,
     });
   }
+
+  const handleDelete = () => {
+    deleteAccount({ token: localStorage.getItem('token') });
+  }
+
+  useEffect(() => {
+    if (deleteIsSuccess) {
+      console.log('data:', deleteData);
+      localStorage.removeItem('token');
+      dispatch(resetUserData());
+    }
+    deleteError && console.log('error status:', deleteError.status);
+  }, [deleteData, deleteError, deleteIsSuccess]);
 
   useEffect(() => {
     if (!shallowEqual(values, {
@@ -92,20 +110,25 @@ export default function ProfilePage() {
         <button type="submit"
           // className={styles.registerButton}
           // disabled={regIsLoading}
-          disabled={!isInputChanged || isLoading}
+          disabled={!isInputChanged || changeIsLoading}
         >
           Сохранить
         </button>
-        {error && (
+        {changeError && (
           <div style={{ color: 'red' }}>
-            Ошибка: {error.data.error}
+            Ошибка: {changeError.data.error}
           </div>
         )}
-        {isSuccess && (
+        {changeIsSuccess && (
           <div style={{ color: 'green' }}>
             Данные успешно обновлены
           </div>
         )}
+        <button type="button" className={styles.deleteButton}
+          onClick={handleDelete} disabled={deleteIsLoading}
+        >
+          Удалить Профиль
+        </button>
       </form>
     </>
   );

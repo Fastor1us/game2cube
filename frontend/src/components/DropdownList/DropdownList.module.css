@@ -1,4 +1,6 @@
 .dropdownList {
+  display: flex;
+  align-content: center;
   position: relative;
   cursor: pointer;
   z-index: 100;

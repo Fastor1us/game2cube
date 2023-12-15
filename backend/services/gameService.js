@@ -29,9 +29,9 @@ const createCells = async (levelId, cells) => {
 const isAbleToLike = async (token, levelId) => {
   const { rows } = await pool.query(`
     SELECT * FROM game2cube.likes AS l
-    WHERE l.level_id = ${levelId} AND 
-    l.user_id = (SELECT id FROM game2cube.users WHERE token = '${token}')
-  `);
+    WHERE l.level_id = $1 AND 
+    l.user_id = (SELECT id FROM game2cube.users WHERE token = $2)
+  `, [levelId, token]);
   return !(rows.length > 0);
 }
 
@@ -39,16 +39,16 @@ const isAbleToLike = async (token, levelId) => {
 const getUserLevels = async (username, token) => {
   // Получаем все уровни пользователя
   const levelsResult = await pool.query(`
-    SELECT l.id, l.size FROM game2cube.levels AS l
-    JOIN game2cube.users AS u ON l.user_id = u.id
-    WHERE u.username = '${username}'
-  `);
+  SELECT l.id, l.size FROM game2cube.levels AS l
+  JOIN game2cube.users AS u ON l.user_id = u.id
+  WHERE u.username = $1
+  `, [username]);
   // ф-ия подсчёта лайков для определённого уровня
   const amountOfLikes = async (levelId) => {
     const { rows } = await pool.query(`
       SELECT count(*) FROM game2cube.likes AS l
-      WHERE l.level_id = ${levelId}
-    `);
+      WHERE l.level_id = $1
+    `, [levelId]);
     return rows[0].count;
   }
   // Получаем все ячейки для каждого уровня
@@ -72,17 +72,17 @@ const getUserLevels = async (username, token) => {
 
 const addLike = async (token, levelId) => {
   await pool.query(`
-    INSERT INTO game2cube.likes (user_id, level_id)
-    VALUES ((SELECT id FROM game2cube.users WHERE token = '${token}'), ${levelId})
-  `);
+  INSERT INTO game2cube.likes (user_id, level_id)
+  VALUES ((SELECT id FROM game2cube.users WHERE token = $1), $2)
+`, [token, levelId]);
 }
 
 const removeLike = async (token, levelId) => {
   await pool.query(`
     DELETE FROM game2cube.likes
-    WHERE user_id = (SELECT id FROM game2cube.users WHERE token = '${token}')
-    AND level_id = ${levelId}
-  `);
+    WHERE user_id = (SELECT id FROM game2cube.users WHERE token = $1)
+    AND level_id = $2
+  `, [token, levelId]);
 }
 
 

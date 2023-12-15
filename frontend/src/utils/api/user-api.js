@@ -42,7 +42,7 @@ export const userAPI = createApi({
       })
     }),
     delete: builder.mutation({
-      query: (token) => ({
+      query: ({ token }) => ({
         url: '/delete',
         method: 'POST',
         body: { token },

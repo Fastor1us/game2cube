@@ -135,3 +135,15 @@ exports.change = async (req, res) => {
     res.status(500).json({ error: 'Ошибка сервера' });
   }
 };
+
+
+exports.delete = async (req, res) => {
+  const { token } = req.body;
+  try {
+    await userService.deleteUser(token);
+    res.status(200).json({ success: true });
+  } catch (error) {
+    console.error('Ошибка удаления пользователя:', error);
+    res.status(500).json({ error: 'Ошибка сервера' });
+  }
+}

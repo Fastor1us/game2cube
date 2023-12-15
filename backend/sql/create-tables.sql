@@ -55,6 +55,12 @@ ADD CONSTRAINT fk_likes_level
 FOREIGN KEY (level_id)
 REFERENCES game2cube.levels(id)
 ON DELETE CASCADE;
+-- зависимость для каскадного удаления likes.level_id -> levels.id
+ALTER TABLE game2cube.likes
+ADD CONSTRAINT fk_likes_user
+FOREIGN KEY (user_id)
+REFERENCES game2cube.users(id)
+ON DELETE CASCADE;
 --=============================================================
 
 -- не забываем выдать права для пользователя express:

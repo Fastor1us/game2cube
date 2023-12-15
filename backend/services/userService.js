@@ -10,8 +10,7 @@ const pool = require('../db/pool');
 // };
 const checkUser = async (field, value) => {
   const { rows } = await pool.query(
-    `SELECT game2cube.check_user('${field}', '${value}');`
-  );
+    'SELECT game2cube.check_user($1, $2)', [field, value]);
   return rows;
 };
 
@@ -59,6 +58,14 @@ const changeUser = async (token, username, password) => {
     [token, username, password]);
 }
 
+const deleteUser = async (token) => {
+  console.log('deleteUser', token);
+  // не работает
+  return await pool.query('CALL game2cube.delete_user($1)', [token]);
+  // работает
+  // await pool.query(`CALL game2cube.delete_user('U468rEdLdoSVLRjIBh4Pq')`);
+}
+
 // const checkEmailRegistrationsExist = async (email) => {
 //   const testQuery = `SELECT * FROM game2cube.registration
 //                      WHERE email = '${email}'`;
@@ -67,7 +74,7 @@ const changeUser = async (token, username, password) => {
 // }
 const checkRegistration = async (email) => {
   const { rows } = await pool.query(
-    `SELECT game2cube.check_registration('${email}');`);
+    'SELECT game2cube.check_registration($1)', [email]);
   return rows;
 }
 
@@ -80,7 +87,7 @@ const checkRegistration = async (email) => {
 // }
 const checkCode = async (email, code) => {
   const { rows } = await pool.query(
-    `SELECT game2cube.check_code('${email}', ${Number(code)});`);
+    'SELECT game2cube.check_code($1, $2)', [email, code]);
   return rows;
 }
 
@@ -94,7 +101,7 @@ const checkCode = async (email, code) => {
 // }
 const deleteRegistration = async (email) => {
   return await pool.query(
-    `CALL game2cube.delete_registration('${email}');`);
+    'CALL game2cube.delete_registration($1)', [email]);
 }
 
 // const createRegistrationRecord
@@ -108,8 +115,9 @@ const deleteRegistration = async (email) => {
 //     return await pool.query(insertQuery)
 //   }
 const createRegistration = async (username, email, password, code) => {
-  return await pool.query(`CALL game2cube.create_registration(
-      '${username}', '${email}', '${password}', '${code}');`);
+  return await pool.query(
+    'CALL game2cube.create_registration($1, $2, $3, $4)',
+    [username, email, password, code]);
 };
 
 // const createUsersRecord
@@ -123,8 +131,9 @@ const createRegistration = async (username, email, password, code) => {
 //     return await pool.query(insertQuery)
 //   }
 const createUser = async (username, email, password, token) => {
-  return await pool.query(`CALL game2cube.create_user(
-    '${username}', '${email}', '${password}', '${token}');`);
+  return await pool.query(
+    'CALL game2cube.create_user($1, $2, $3, $4)',
+    [username, email, password, token]);
 };
 
 // ================= отправка письма с кодом на почту =================
@@ -152,6 +161,7 @@ module.exports = {
   checkUser,
   getUser,
   changeUser,
+  deleteUser,
   checkRegistration,
   checkCode,
   createRegistration,
