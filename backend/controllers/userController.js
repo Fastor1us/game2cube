@@ -1,4 +1,5 @@
 const userService = require('../services/userService');
+const path = require('path');
 
 
 exports.register = async (req, res) => {
@@ -144,6 +145,30 @@ exports.delete = async (req, res) => {
     res.status(200).json({ success: true });
   } catch (error) {
     console.error('Ошибка удаления пользователя:', error);
+    res.status(500).json({ error: 'Ошибка сервера' });
+  }
+}
+
+
+exports.getAvatars = async (req, res) => {
+  try {
+    const avatars = userService.getAvatars();
+    res.status(200).json(avatars);
+  } catch (error) {
+    console.error('Ошибка получения аватаров:', error);
+    res.status(500).json({ error: 'Ошибка сервера' });
+  }
+}
+
+
+exports.getAvatar = async (req, res) => {
+  const { filename } = req.params;
+  try {
+    const imagePath = path.join(__dirname,
+      '../public/uploads/avatars', filename);
+    res.sendFile(imagePath);
+  } catch (error) {
+    console.error('Ошибка получения аватара:', error);
     res.status(500).json({ error: 'Ошибка сервера' });
   }
 }

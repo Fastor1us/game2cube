@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { userSelector } from '../../store/selectors/userSelectors';
 import { useForm } from '../../utils/hooks/use-form';
@@ -6,12 +6,18 @@ import { shallowEqual } from '../../utils/utils';
 import { userAPI } from '../../utils/api/user-api';
 import { resetUserData, setUserData } from '../../store/slicers/userSlicer';
 import styles from './ProfilePage.module.css';
+import Modal from '../../components/Modal/Modal';
+import AvatarList from '../../components/AvatarList/AvatarList';
 
 
 export default function ProfilePage() {
   const dispatch = useDispatch();
+  const ref = useRef(null);
   const userData = useSelector(userSelector);
   const [isInputChanged, setIsInputChanged] = useState(false);
+  const [showAvaModal, setShowAvaModal] = useState(false);
+  const [showDelModal, setShowDelModal] = useState(false);
+  const [timer, setTimer] = useState(5);
 
   const { values, setValues, handleChange } = useForm({
     username: 'admin',
@@ -50,11 +56,22 @@ export default function ProfilePage() {
       username: userData.username !== values.username ? values.username : null,
       password: values.password.length > 0 ? values.password : null,
     });
-  }
+  };
 
   const handleDelete = () => {
-    deleteAccount({ token: localStorage.getItem('token') });
-  }
+    setShowDelModal(true);
+    setTimer(5);
+    clearInterval(ref.current);
+    ref.current = setInterval(
+      () => setTimer((prevTimer) => prevTimer - 1), 1000
+    );
+  };
+
+  useEffect(() => {
+    if (timer === 0) {
+      clearInterval(ref.current);
+    }
+  }, [timer]);
 
   useEffect(() => {
     if (deleteIsSuccess) {
@@ -84,10 +101,17 @@ export default function ProfilePage() {
       <h2>
         Профиль
       </h2>
-      <form
-        className={styles.registerForm}
-        onSubmit={onSubmit}
-      >
+
+      <h2 onClick={() => setShowAvaModal(true)}>
+        нажми на меня что бы поменять аватарку
+      </h2>
+      {showAvaModal && (
+        <Modal setVisible={setShowAvaModal} title='Выбор Аватарки'>
+          <AvatarList />
+        </Modal>
+      )}
+
+      <form className={styles.registerForm} onSubmit={onSubmit}>
         <label htmlFor="username">
           Никнейм:
         </label>
@@ -129,6 +153,22 @@ export default function ProfilePage() {
         >
           Удалить Профиль
         </button>
+        {showDelModal && (
+          <Modal setVisible={setShowDelModal} title='Подтвердите удаление'>
+            <section style={{ textAlign: 'center' }}>
+              <h2 style={{ color: 'black' }}>
+                Внимание! Данное действие безвозвратное!
+              </h2>
+              <button disabled={timer !== 0}
+                onClick={() => deleteAccount({
+                  token: localStorage.getItem('token')
+                })}
+              >
+                {'Подтвердить' + (timer !== 0 ? ` ${timer}` : '')}
+              </button>
+            </section>
+          </Modal>
+        )}
       </form>
     </>
   );

@@ -1,0 +1,12 @@
+.avatar {
+  height: 80px;
+  width: 80px;
+}
+
+.list {
+  list-style-type: none;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  padding: 0;
+}

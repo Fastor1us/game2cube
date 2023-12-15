@@ -18,5 +18,11 @@ router.post('/change', userController.change);
 
 router.post('/delete', userController.delete);
 
+router.get('/avatars', userController.getAvatars);
+
+router.get('/avatars/:filename', userController.getAvatar);
+
+// router.post('/avatar', userController.changeAvatar);
+
 
 module.exports = router;

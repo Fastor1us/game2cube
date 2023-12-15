@@ -3,8 +3,6 @@
   align-content: center;
   position: relative;
   cursor: pointer;
-  z-index: 100;
-  /* opacity: .9; */
 }
 
 .navList {

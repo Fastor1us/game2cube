@@ -1,5 +1,7 @@
 // services/userService.js
 const pool = require('../db/pool');
+const fs = require('fs');
+const path = require('path');
 
 
 // const checkUserExists = async (field, value) => {
@@ -157,6 +159,15 @@ const sendConfirmationEmail = async (email, confirmationCode) => {
   return await transporter.sendMail(mailOptions);
 };
 
+const getAvatars = () => {
+  const avatarsDir = path.join(__dirname, '../public/uploads/avatars');
+  const files = fs.readdirSync(avatarsDir);
+  return files.map(file => {
+    // console.log('file', file);
+    return file;
+  });
+};
+
 module.exports = {
   checkUser,
   getUser,
@@ -168,4 +179,5 @@ module.exports = {
   deleteRegistration,
   createUser,
   sendConfirmationEmail,
+  getAvatars,
 };

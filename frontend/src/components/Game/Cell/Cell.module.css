@@ -18,9 +18,7 @@
 }
 
 .filledCell {
-  border: 1px solid rgba(0, 0, 0, 0.5);
-  border-width: 6px;
-  border-style: outset;
+  border: 6px outset rgba(0, 0, 0, 0.5);
 }
 
 .step {

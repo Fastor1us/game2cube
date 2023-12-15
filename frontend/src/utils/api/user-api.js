@@ -54,6 +54,16 @@ export const userAPI = createApi({
         method: 'POST',
         body: { token, ...params },
       }),
+    }),
+    getAvatarList: builder.query({
+      query: () => ({
+        url: '/avatars',
+      }),
+    }),
+    getAvatar: builder.mutation({
+      query: (filename) => ({
+        url: `/avatars/${filename}`,
+      }),
     })
   }),
 });
