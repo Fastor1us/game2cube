@@ -1,39 +1,44 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { userSelector } from '../../store/selectors/userSelectors';
+import { avatarSelector, userSelector } from '../../store/selectors/userSelectors';
 import { useForm } from '../../utils/hooks/use-form';
 import { shallowEqual } from '../../utils/utils';
 import { userAPI } from '../../utils/api/user-api';
-import { resetUserData, setUserData } from '../../store/slicers/userSlicer';
+import { resetUserData, setUserData, setAvatarList } from '../../store/slicers/userSlicer';
 import styles from './ProfilePage.module.css';
 import Modal from '../../components/Modal/Modal';
 import AvatarList from '../../components/AvatarList/AvatarList';
+import { BACKEND_URL } from '../../utils/constants';
 
 
 export default function ProfilePage() {
   const dispatch = useDispatch();
+  const avatar = useSelector(avatarSelector);
+  const [selectedAvatar, setSelectedAvatar] = useState(null);
   const ref = useRef(null);
-  const userData = useSelector(userSelector);
+  const { username, email } = useSelector(userSelector);
   const [isInputChanged, setIsInputChanged] = useState(false);
   const [showAvaModal, setShowAvaModal] = useState(false);
   const [showDelModal, setShowDelModal] = useState(false);
   const [timer, setTimer] = useState(5);
 
   const { values, setValues, handleChange } = useForm({
-    username: 'admin',
-    email: 'fewgwer3@ya.ru',
-    password: '12345',
-    passwordConfirmation: '12345',
-    confirmationCode: '',
+    username: username,
+    email: email,
+    password: '',
   });
 
   useEffect(() => {
+    avatar && setSelectedAvatar(avatar);
+  }, [])
+
+  useEffect(() => {
     setValues({
-      username: userData.username,
-      email: userData.email,
+      username: username,
+      email: email,
       password: '',
     })
-  }, [userData]);
+  }, [username, email]);
 
   const [change, { error: changeError, data: changeData,
     isLoading: changeIsLoading, isSuccess: changeIsSuccess }] =
@@ -43,18 +48,37 @@ export default function ProfilePage() {
     isLoading: deleteIsLoading, isSuccess: deleteIsSuccess }] =
     userAPI.useDeleteMutation();
 
+  const { data: getAvatarListData, error: getAvatarListError,
+    isLoading: getAvatarListIsLoading, isSuccess: getAvatarListIsSuccess } =
+    userAPI.useGetAvatarListQuery();
+
   useEffect(() => {
-    changeIsSuccess && changeData.username && dispatch(setUserData({
-      username: changeData.username
+    changeIsSuccess && dispatch(setUserData({
+      ...changeData
     }));
   }, [changeData, changeError, changeIsSuccess]);
+
+  useEffect(() => {
+    if (deleteIsSuccess) {
+      console.log('data:', deleteData);
+      localStorage.removeItem('token');
+      dispatch(resetUserData());
+    }
+    deleteError && console.log('error status:', deleteError.status);
+  }, [deleteData, deleteError, deleteIsSuccess]);
+
+  useEffect(() => {
+    getAvatarListIsSuccess && getAvatarListData &&
+      dispatch(setAvatarList(getAvatarListData));
+  }, [getAvatarListData, getAvatarListIsSuccess]);
 
   const onSubmit = (e) => {
     e.preventDefault();
     change({
       token: localStorage.getItem('token'),
-      username: userData.username !== values.username ? values.username : null,
+      username: username !== values.username ? values.username : null,
       password: values.password.length > 0 ? values.password : null,
+      avatar: selectedAvatar !== avatar ? selectedAvatar : null
     });
   };
 
@@ -74,18 +98,9 @@ export default function ProfilePage() {
   }, [timer]);
 
   useEffect(() => {
-    if (deleteIsSuccess) {
-      console.log('data:', deleteData);
-      localStorage.removeItem('token');
-      dispatch(resetUserData());
-    }
-    deleteError && console.log('error status:', deleteError.status);
-  }, [deleteData, deleteError, deleteIsSuccess]);
-
-  useEffect(() => {
     if (!shallowEqual(values, {
-      username: userData.username,
-      email: userData.email,
+      username: username,
+      email: email,
       password: '',
     })) {
       // TODO
@@ -102,12 +117,22 @@ export default function ProfilePage() {
         Профиль
       </h2>
 
-      <h2 onClick={() => setShowAvaModal(true)}>
-        нажми на меня что бы поменять аватарку
-      </h2>
+      {selectedAvatar ? (
+        <img src={`${BACKEND_URL}/user/avatars/${selectedAvatar}`}
+          alt={`Аватар ${selectedAvatar}`} className={styles.avatar}
+          onClick={() => setShowAvaModal(true)}
+        />
+      ) : (
+        <img src={`${BACKEND_URL}/user/avatars/avatar001.svg`}
+          alt="дефолтная аватарка" className={styles.avatar}
+          onClick={() => setShowAvaModal(true)}
+        />
+      )}
       {showAvaModal && (
         <Modal setVisible={setShowAvaModal} title='Выбор Аватарки'>
-          <AvatarList />
+          <AvatarList
+            setVisible={setShowAvaModal} setSelectedAvatar={setSelectedAvatar}
+          />
         </Modal>
       )}
 
@@ -133,8 +158,9 @@ export default function ProfilePage() {
 
         <button type="submit"
           // className={styles.registerButton}
-          // disabled={regIsLoading}
-          disabled={!isInputChanged || changeIsLoading}
+          disabled={
+            (!isInputChanged || changeIsLoading) && selectedAvatar === avatar
+          }
         >
           Сохранить
         </button>
@@ -164,7 +190,7 @@ export default function ProfilePage() {
                   token: localStorage.getItem('token')
                 })}
               >
-                {'Подтвердить' + (timer !== 0 ? ` ${timer}` : '')}
+                {'Подтвердить' + (timer !== 0 ? ` (${timer})` : '')}
               </button>
             </section>
           </Modal>

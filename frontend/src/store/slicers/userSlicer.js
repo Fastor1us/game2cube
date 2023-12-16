@@ -4,6 +4,8 @@ const initialState = {
   username: null,
   email: null,
   isAuth: false,
+  avatar: null,
+  avatarList: [],
 };
 
 const userSlicer = createSlice({
@@ -17,13 +19,21 @@ const userSlicer = createSlice({
     },
     resetUserData(state) {
       Object.assign(state, initialState);
+    },
+    setAvatarList(state, action) {
+      state.avatarList = action.payload;
+    },
+    setAvatar(state, action) {
+      state.avatar = action.payload;
     }
   },
 });
 
 export const {
   setUserData,
-  resetUserData
+  resetUserData,
+  setAvatarList,
+  setAvatar
 } = userSlicer.actions;
 
 export default userSlicer.reducer;

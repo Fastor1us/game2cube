@@ -3,6 +3,12 @@
   width: 80px;
 }
 
+.avatar:hover {
+  cursor: pointer;
+  outline: 2px solid black;
+  border-radius: 50%;
+}
+
 .list {
   list-style-type: none;
   display: grid;

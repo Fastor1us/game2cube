@@ -12,3 +12,15 @@
 .registerButton {
   margin-top: 20px;
 }
+
+.avatar {
+  height: 80px;
+  width: 80px;
+  position: relative;
+}
+
+.avatar:hover {
+  cursor: pointer;
+  outline: 2px solid rgb(0, 0, 0, 0.7);
+  border-radius: 50%;
+}

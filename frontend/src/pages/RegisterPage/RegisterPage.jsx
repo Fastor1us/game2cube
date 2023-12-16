@@ -1,16 +1,22 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useForm } from '../../utils/hooks/use-form';
 import { userAPI } from '../../utils/api/user-api';
 import styles from './RegisterPage.module.css';
-import { setUserData } from '../../store/slicers/userSlicer';
-import { useDispatch } from 'react-redux';
+import { setAvatarList, setUserData } from '../../store/slicers/userSlicer';
+import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { avatarSelector } from '../../store/selectors/userSelectors';
+import AvatarList from '../../components/AvatarList/AvatarList';
+import Modal from '../../components/Modal/Modal';
+import { BACKEND_URL } from '../../utils/constants';
 
 
 export default function RegisterPage() {
   const dispatch = useDispatch();
   const location = useLocation();
   const navigate = useNavigate();
+  const [selectedAvatar, setSelectedAvatar] = useState(null);
+  const [showAvaModal, setShowAvaModal] = useState(false);
   const { values, handleChange } = useForm({
     username: 'test2',
     email: 'test2@test.ru',
@@ -49,6 +55,7 @@ export default function RegisterPage() {
       email: values.email,
       password: values.password,
       confirmationCode: values.confirmationCode,
+      avatar: selectedAvatar
     });
   }, [values]);
   useEffect(() => {
@@ -57,17 +64,47 @@ export default function RegisterPage() {
       confirmData && dispatch(setUserData({
         username: confirmData.username,
         email: confirmData.email,
+        avatar: confirmData.avatar,
         isAuth: true
       }));
       location.state?.from ? navigate(location.state.from) : navigate(-1);
     }
   }, [confirmData, confirmIsSuccess, confirmIsError]);
 
+  const { data: getAvatarListData, error: getAvatarListError,
+    isLoading: getAvatarListIsLoading, isSuccess: getAvatarListIsSuccess } =
+    userAPI.useGetAvatarListQuery();
+
+  useEffect(() => {
+    getAvatarListIsSuccess && getAvatarListData &&
+      dispatch(setAvatarList(getAvatarListData));
+  }, [getAvatarListData, getAvatarListIsSuccess]);
+
   return (<>
     {!regIsSuccess && (<>
       <h2 className={styles.title}>
         Форма регистрации
       </h2>
+
+      {selectedAvatar ? (
+        <img src={`${BACKEND_URL}/user/avatars/${selectedAvatar}`}
+          alt={`Аватар ${selectedAvatar}`} className={styles.avatar}
+          onClick={() => setShowAvaModal(true)}
+        />
+      ) : (
+        <img src={`${BACKEND_URL}/user/avatars/avatar001.svg`}
+          alt="дефолтная аватарка" className={styles.avatar}
+          onClick={() => setShowAvaModal(true)}
+        />
+      )}
+      {showAvaModal && (
+        <Modal setVisible={setShowAvaModal} title='Выбор Аватарки'>
+          <AvatarList
+            setVisible={setShowAvaModal} setSelectedAvatar={setSelectedAvatar}
+          />
+        </Modal>
+      )}
+
       <form
         className={styles.registerForm}
         onSubmit={onRegisterSubmit}

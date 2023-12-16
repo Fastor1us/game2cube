@@ -41,7 +41,7 @@ exports.register = async (req, res) => {
 
 
 exports.registrationConfirm = async (req, res) => {
-  const { username, email, password, confirmationCode } = req.body;
+  const { username, email, password, confirmationCode, avatar } = req.body;
   try {
     // перед проверкой кода подтверждения проверяем, что
     // 1) что email не занят (таблица users)
@@ -65,8 +65,8 @@ exports.registrationConfirm = async (req, res) => {
       const { nanoid } = require('@reduxjs/toolkit');
       const token = nanoid();
       await userService.deleteRegistration(email);
-      await userService.createUser(username, email, password, token);
-      res.status(200).json({ username, email, token });
+      await userService.createUser(username, email, password, token, avatar);
+      res.status(200).json({ username, email, token, avatar });
     } else {
       // возвращаем сообщение о том, что код не подходит
       res.status(409).json({ error: 'Неверный код подтверждения' });
@@ -87,7 +87,8 @@ exports.login = async (req, res) => {
       res.status(200).json({
         username: user[0].username,
         email: user[0].email,
-        token: user[0].token
+        token: user[0].token,
+        avatar: user[0].avatar
       });
     } else {
       res.status(401).json({ error: 'Неверное почта или пароль' });
@@ -106,7 +107,8 @@ exports.authentication = async (req, res) => {
     if (user.length > 0) {
       res.status(200).json({
         username: user[0].username,
-        email: user[0].email
+        email: user[0].email,
+        avatar: user[0].avatar
       });
     } else {
       res.status(401).json({ error: 'Неверный токен' });
@@ -119,18 +121,28 @@ exports.authentication = async (req, res) => {
 
 
 exports.change = async (req, res) => {
-  const { token, username, password } = req.body;
+  const { token, username, password, avatar } = req.body;
   try {
     // вызывая процедуру передаём null для неопределённых параметров
     // - необходима передача null вместо udnefined 
     await userService.changeUser(
-      token, username || null, password || null);
-    // Проверяем, был ли изменен username
+      token, username || null, password || null, avatar || null);
+    // TODO
+    // TODO 
+    // TODO
+    if (username && avatar) {
+      res.status(200).json({ username, avatar });
+      return;
+    }
     if (username) {
       res.status(200).json({ username });
-    } else {
-      res.status(200).json({ success: true });
+      return;
     }
+    if (avatar) {
+      res.status(200).json({ avatar });
+      return;
+    }
+    res.status(200).json({ success: true });
   } catch (error) {
     console.error('Ошибка изменения данных:', error);
     res.status(500).json({ error: 'Ошибка сервера' });

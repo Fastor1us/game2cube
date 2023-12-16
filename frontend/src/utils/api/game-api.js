@@ -1,6 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/dist/query/react';
+import { BACKEND_URL } from '../constants';
 
-const API_URL = 'http://localhost:3001/game';
+const API_URL = `${BACKEND_URL}/game`;
 
 
 export const gameAPI = createApi({

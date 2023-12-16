@@ -11,7 +11,8 @@ CREATE TABLE game2cube.users (
   username varchar(25) UNIQUE,
   email varchar(25) UNIQUE,
   password varchar(25),
-  token varchar(25)
+  token varchar(25),
+  avatar varchar(25),
 );
 
 CREATE TABLE game2cube.levels (
@@ -70,6 +71,12 @@ GRANT SELECT, UPDATE, INSERT, DELETE ON TABLE game2cube.levels TO express;
 GRANT SELECT, UPDATE, INSERT, DELETE ON TABLE game2cube.cells TO express;
 GRANT SELECT, UPDATE, INSERT, DELETE ON TABLE game2cube.likes TO express;
 
+--==========================================================================
+
+
+--==========================================================================
+
+-- гранты для express, для использования SEQUENCES (для id) во всех таблицах
 GRANT USAGE ON ALL SEQUENCES IN schema game2cube to express;
 
 --==========================================================================

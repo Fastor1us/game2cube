@@ -1,7 +1,7 @@
-// import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/dist/query/react';
+import { BACKEND_URL } from '../constants';
 
-const API_URL = 'http://localhost:3001/user';
+const API_URL = `${BACKEND_URL}/user`;
 
 
 export const userAPI = createApi({
@@ -16,10 +16,14 @@ export const userAPI = createApi({
       }),
     }),
     confirmRegistration: builder.mutation({
-      query: ({ username, email, password, confirmationCode }) => ({
+      query: ({
+        username, email, password, confirmationCode, avatar
+      }) => ({
         url: '/registration-confirm',
         method: 'POST',
-        body: { username, email, password, confirmationCode },
+        body: {
+          username, email, password, confirmationCode, avatar
+        },
       }),
     }),
     login: builder.mutation({

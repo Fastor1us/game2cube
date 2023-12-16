@@ -1,32 +1,25 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import styles from './AvatarList.module.css';
+import { useSelector } from 'react-redux';
+import { avatarListSelector } from '../../store/selectors/userSelectors';
+import { BACKEND_URL } from '../../utils/constants';
 
 
-function AvatarList() {
-  const [avatars, setAvatars] = useState([]);
+function AvatarList(props) {
+  const avatarList = useSelector(avatarListSelector);
 
-  useEffect(() => {
-    fetch('http://localhost:3001/user/avatars')
-      .then(response => response.json())
-      .then(data => {
-        // console.log('data:', data);
-        setAvatars(data);
-      })
-      .catch(error => {
-        console.log('Error:', error);
-      });
-  }, []);
+  const handleClick = (avatar) => {
+    props.setSelectedAvatar(avatar);
+    props.setVisible(false);
+  }
 
-  // TODO
-  // заменить div на ul
-  // и все img упаковать в li
   return (
     <ul className={styles.list}>
-      {avatars.map((avatar, index) => (
-        <li>
-          <img key={index} alt={`Аватар ${index}`}
-            src={`http://localhost:3001/user/avatars/${avatar}`}
-            className={styles.avatar}
+      {avatarList.map((avatar, index) => (
+        <li key={index}>
+          <img alt={`Аватар ${avatar}`} className={styles.avatar}
+            src={`${BACKEND_URL}/user/avatars/${avatar}`}
+            onClick={() => handleClick(avatar)}
           />
         </li>
       ))}

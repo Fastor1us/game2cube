@@ -54,10 +54,10 @@ const getUser = async (...args) => {
   return rows;
 };
 
-const changeUser = async (token, username, password) => {
+const changeUser = async (token, username, password, avatar) => {
   await pool.query(
-    'CALL game2cube.change_user($1, $2, $3)',
-    [token, username, password]);
+    'CALL game2cube.change_user($1, $2, $3, $4)',
+    [token, username, password, avatar]);
 }
 
 const deleteUser = async (token) => {
@@ -132,10 +132,10 @@ const createRegistration = async (username, email, password, code) => {
 //     };
 //     return await pool.query(insertQuery)
 //   }
-const createUser = async (username, email, password, token) => {
+const createUser = async (username, email, password, token, avatar) => {
   return await pool.query(
-    'CALL game2cube.create_user($1, $2, $3, $4)',
-    [username, email, password, token]);
+    'CALL game2cube.create_user($1, $2, $3, $4, $5)',
+    [username, email, password, token, avatar]);
 };
 
 // ================= отправка письма с кодом на почту =================

@@ -4,17 +4,18 @@ CREATE OR REPLACE PROCEDURE game2cube.create_user(
   username varchar(25),
   email varchar(25),
   password varchar(25),
-  token varchar(25)
+  token varchar(25),
+  avatar varchar(25)
 )
 AS $$
 BEGIN
-  INSERT INTO game2cube.users(username, email, password, token)
-  VALUES(username, email, password, token);
+  INSERT INTO game2cube.users(username, email, password, token, avatar)
+  VALUES(username, email, password, token, avatar);
 END;
 $$ LANGUAGE plpgsql;
 
 -- не забываем  после создания скрипта выдать права для пользователя express
-GRANT EXECUTE ON PROCEDURE game2cube.create_user(varchar, varchar, varchar, varchar) TO express;
+GRANT EXECUTE ON PROCEDURE game2cube.create_user(varchar, varchar, varchar, varchar, varchar) TO express;
 --==========================================================================
 
 
@@ -197,17 +198,19 @@ GRANT EXECUTE ON PROCEDURE game2cube.delete_user(varchar) TO express;
 CREATE OR REPLACE PROCEDURE game2cube.change_user(
   p_token varchar(25),
   p_username varchar(25) DEFAULT NULL,
-  p_password varchar(25) DEFAULT NULL
+  p_password varchar(25) DEFAULT NULL,
+  p_avatar varchar(25) DEFAULT NULL
 )
 LANGUAGE plpgsql
 AS $procedure$
 BEGIN
   UPDATE game2cube.users
   SET username = COALESCE(p_username, username),
-      password = COALESCE(p_password, password)
+      password = COALESCE(p_password, password),
+      avatar = COALESCE(p_avatar, avatar)
   WHERE token = p_token;
 END;
 $procedure$;
 
-GRANT EXECUTE ON PROCEDURE game2cube.change_user(varchar, varchar, varchar) TO express;
+GRANT EXECUTE ON PROCEDURE game2cube.change_user(varchar, varchar, varchar, varchar) TO express;
 --==========================================================================

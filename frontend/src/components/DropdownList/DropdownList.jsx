@@ -3,7 +3,7 @@ import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import styles from './DropdownList.module.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { resetUserData } from '../../store/slicers/userSlicer';
-import { isAuthSelector } from '../../store/selectors/userSelectors';
+import { avatarSelector, isAuthSelector } from '../../store/selectors/userSelectors';
 import svgAvatar from '../../image/avatar.svg';
 import svgAvatarActive from '../../image/avatar-active.svg';
 import svgArrowDown from '../../image/arrow-down.svg';
@@ -11,12 +11,14 @@ import svgArrowDownActive from '../../image/arrow-down-active.svg';
 import svgLogin from '../../image/login.svg';
 import svgLogout from '../../image/logout.svg';
 import svgProfile from '../../image/profile.svg';
+import { BACKEND_URL } from '../../utils/constants';
 
 
 export default function DropdownList() {
   const dispatch = useDispatch();
   const location = useLocation();
   const navigate = useNavigate();
+  const avatar = useSelector(avatarSelector);
   const [shouldShowDropdownList, setShouldShowDropdownList] = useState(false);
 
   const isAuth = useSelector(isAuthSelector);
@@ -58,9 +60,14 @@ export default function DropdownList() {
 
   return (
     <section onClick={handleClick} className={styles.dropdownList}>
-      <img src={
-        shouldShowDropdownList ? svgAvatarActive : svgAvatar
-      } alt="Profile" className={styles.avatar} />
+
+      {avatar ? (
+        <img src={`${BACKEND_URL}/user/avatars/${avatar}`}
+          alt={`Аватар ${avatar}`} className={styles.avatar} />
+      ) : (
+        <img src={shouldShowDropdownList ? svgAvatarActive : svgAvatar}
+          alt="Profile" className={styles.avatar} />
+      )}
       <img src={
         shouldShowDropdownList ? svgArrowDownActive : svgArrowDown
       } alt="Profile" className={styles.arrowDown} />

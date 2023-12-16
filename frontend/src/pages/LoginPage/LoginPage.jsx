@@ -29,6 +29,7 @@ export default function LoginPage() {
     data && dispatch(setUserData({
       username: data.username,
       email: data.email,
+      avatar: data.avatar,
       isAuth: true
     }));
     data && navigate(-1);
