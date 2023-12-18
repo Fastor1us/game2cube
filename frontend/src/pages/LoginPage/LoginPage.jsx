@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { useForm } from '../../utils/hooks/use-form';
 import styles from './LoginPage.module.css';
 import { userAPI } from '../../utils/api/user-api';
@@ -11,12 +11,18 @@ export default function LoginPage() {
   const dispatch = useDispatch();
   const location = useLocation();
   const navigate = useNavigate();
+  const focusRef = useRef(null);
   const { values, handleChange } = useForm({
     email: 'test2@test.ru',
     password: '12345',
   });
 
-  const [login, { error, data }] = userAPI.useLoginMutation();
+  useEffect(() => {
+    focusRef.current.focus();
+  }, []);
+
+  const [login, { error, data, isLoading }] =
+    userAPI.useLoginMutation();
   const onSubmit = useCallback((e) => {
     e.preventDefault();
     login({
@@ -40,14 +46,11 @@ export default function LoginPage() {
     <h2 className={styles.title}>
       Форма входа
     </h2>
-    <form
-      className={styles.registerForm}
-      onSubmit={onSubmit}
-    >
+    <form className={styles.registerForm} onSubmit={onSubmit}>
       <label htmlFor="email">
         Email:
       </label>
-      <input type="email" id="email" name='email'
+      <input type="email" id="email" name='email' ref={focusRef}
         onChange={handleChange} value={values.email} />
 
       <label htmlFor="password">
@@ -56,7 +59,10 @@ export default function LoginPage() {
       <input type="password" id="password" name='password'
         onChange={handleChange} value={values.password} />
 
-      <button type="submit" className={styles.registerButton}>
+      <button
+        className={styles.registerButton}
+        type="submit" disabled={isLoading}
+      >
         Войти
       </button>
     </form>
@@ -75,5 +81,13 @@ export default function LoginPage() {
         Зарегистрироваться
       </Link>
     </p >
+    <p style={{ marginTop: 0 }}>
+      {'Забыли пароль? '}
+      <Link className={styles.link}
+        to='/reset-password' state={{ from: location }}
+      >
+        Восстановить
+      </Link>
+    </p>
   </>);
 }

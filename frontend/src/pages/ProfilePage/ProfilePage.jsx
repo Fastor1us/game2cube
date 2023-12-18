@@ -20,6 +20,7 @@ export default function ProfilePage() {
   const [isInputChanged, setIsInputChanged] = useState(false);
   const [showAvaModal, setShowAvaModal] = useState(false);
   const [showDelModal, setShowDelModal] = useState(false);
+  const [showNotificationStatus, setShowNotificationStatus] = useState(false);
   const [timer, setTimer] = useState(5);
 
   const { values, setValues, handleChange } = useForm({
@@ -56,11 +57,17 @@ export default function ProfilePage() {
     changeIsSuccess && dispatch(setUserData({
       ...changeData
     }));
+    (changeIsSuccess || changeError) && setShowNotificationStatus(true);
   }, [changeData, changeError, changeIsSuccess]);
 
   useEffect(() => {
+    if (selectedAvatar !== avatar) {
+      setShowNotificationStatus(false);
+    }
+  }, [selectedAvatar]);
+
+  useEffect(() => {
     if (deleteIsSuccess) {
-      console.log('data:', deleteData);
       localStorage.removeItem('token');
       dispatch(resetUserData());
     }
@@ -106,6 +113,7 @@ export default function ProfilePage() {
       // TODO
       // добавить проверку на длинну пароля и username
       setIsInputChanged(true);
+      (changeIsSuccess) && setShowNotificationStatus(false);
     } else {
       setIsInputChanged(false);
     }
@@ -169,11 +177,13 @@ export default function ProfilePage() {
             Ошибка: {changeError.data.error}
           </div>
         )}
-        {changeIsSuccess && (
-          <div style={{ color: 'green' }}>
-            Данные успешно обновлены
-          </div>
-        )}
+        {changeIsSuccess && showNotificationStatus &&
+          ((!isInputChanged || changeIsLoading) && selectedAvatar === avatar) &&
+          (
+            <div style={{ color: 'DarkGreen' }}>
+              Данные успешно обновлены
+            </div>
+          )}
         <button type="button" className={styles.deleteButton}
           onClick={handleDelete} disabled={deleteIsLoading}
         >

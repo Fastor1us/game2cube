@@ -15,6 +15,7 @@ import { userAPI } from './utils/api/user-api';
 import { OnlyAuth, OnlyUnAuth } from './components/ProtectedRoute.jsx';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
+import ResetPasswordPage from './pages/ResetPasswordPage/ResetPasswordPage.jsx';
 
 
 export default function App() {
@@ -47,6 +48,9 @@ export default function App() {
         />
         <Route path='/login' element={
           <OnlyUnAuth component={<LoginPage />} />}
+        />
+        <Route path='/reset-password' element={
+          <OnlyUnAuth component={<ResetPasswordPage />} />}
         />
         <Route path='/profile' element={
           <OnlyAuth component={<ProfilePage />} />}

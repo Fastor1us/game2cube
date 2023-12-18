@@ -6,4 +6,6 @@ export const cellPattern = {
   focus: false
 }
 
+export const defaultAvatar = 'avatar001.svg';
+
 export const BACKEND_URL = 'http://localhost:3001';

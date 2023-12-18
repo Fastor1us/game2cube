@@ -1,20 +1,22 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useForm } from '../../utils/hooks/use-form';
 import { userAPI } from '../../utils/api/user-api';
 import styles from './RegisterPage.module.css';
 import { setAvatarList, setUserData } from '../../store/slicers/userSlicer';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { avatarSelector } from '../../store/selectors/userSelectors';
 import AvatarList from '../../components/AvatarList/AvatarList';
 import Modal from '../../components/Modal/Modal';
 import { BACKEND_URL } from '../../utils/constants';
+import { defaultAvatar } from '../../utils/constants';
 
 
 export default function RegisterPage() {
   const dispatch = useDispatch();
   const location = useLocation();
   const navigate = useNavigate();
+  const focusRef = useRef(null);
+  const focusRefConfirm = useRef(null);
   const [selectedAvatar, setSelectedAvatar] = useState(null);
   const [showAvaModal, setShowAvaModal] = useState(false);
   const { values, handleChange } = useForm({
@@ -24,6 +26,10 @@ export default function RegisterPage() {
     passwordConfirmation: '12345',
     confirmationCode: '',
   });
+
+  useEffect(() => {
+    focusRef.current.focus();
+  }, []);
 
   const [register, { error: regError, data: regData,
     isLoading: regIsLoading, isSuccess: regIsSuccess,
@@ -37,11 +43,10 @@ export default function RegisterPage() {
     });
   }, [values]);
   useEffect(() => {
-    // success
-    regData && console.log('data:', regData);
     // error
-    regError && console.log('error status:', regError.status);
     regError && console.log('error data:', regError.data);
+    // устанавливаем фокус на инпут подтверждения
+    regIsSuccess && focusRefConfirm.current.focus();
   }, [regData, regIsSuccess, regIsError]);
 
   const [confirmRegistration, { error: confirmError,
@@ -55,7 +60,7 @@ export default function RegisterPage() {
       email: values.email,
       password: values.password,
       confirmationCode: values.confirmationCode,
-      avatar: selectedAvatar
+      avatar: selectedAvatar || defaultAvatar,
     });
   }, [values]);
   useEffect(() => {
@@ -92,7 +97,7 @@ export default function RegisterPage() {
           onClick={() => setShowAvaModal(true)}
         />
       ) : (
-        <img src={`${BACKEND_URL}/user/avatars/avatar001.svg`}
+        <img src={`${BACKEND_URL}/user/avatars/${defaultAvatar}`}
           alt="дефолтная аватарка" className={styles.avatar}
           onClick={() => setShowAvaModal(true)}
         />
@@ -105,14 +110,11 @@ export default function RegisterPage() {
         </Modal>
       )}
 
-      <form
-        className={styles.registerForm}
-        onSubmit={onRegisterSubmit}
-      >
+      <form className={styles.registerForm} onSubmit={onRegisterSubmit}>
         <label htmlFor="username">
           Никнейм:
         </label>
-        <input type="text" id="username" name='username'
+        <input type="text" id="username" name='username' ref={focusRef}
           onChange={handleChange} value={values.username} />
 
         <label htmlFor="email">
@@ -147,6 +149,7 @@ export default function RegisterPage() {
         Ошибка: {regError.data.error}
       </p>
     )}
+
     {regIsSuccess && (<>
       <h2 className={styles.title}>
         Код подтверждения
@@ -160,7 +163,8 @@ export default function RegisterPage() {
         </label>
         <input type="text" id="confirmationCode"
           name='confirmationCode' onChange={handleChange}
-          value={values.confirmationCode} />
+          value={values.confirmationCode}
+          ref={focusRefConfirm} />
         <button type="submit"
           className={styles.registerButton}
           disabled={confirmIsLoading}

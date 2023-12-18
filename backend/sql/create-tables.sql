@@ -12,7 +12,13 @@ CREATE TABLE game2cube.users (
   email varchar(25) UNIQUE,
   password varchar(25),
   token varchar(25),
-  avatar varchar(25),
+  avatar varchar(25)
+);
+
+CREATE TABLE game2cube.recovery (
+  id SERIAL PRIMARY KEY,
+  email varchar(25) UNIQUE,
+  code smallint
 );
 
 CREATE TABLE game2cube.levels (
@@ -67,6 +73,7 @@ ON DELETE CASCADE;
 -- не забываем выдать права для пользователя express:
 GRANT SELECT, UPDATE, INSERT, DELETE ON TABLE game2cube.registration TO express;
 GRANT SELECT, UPDATE, INSERT, DELETE ON TABLE game2cube.users TO express;
+GRANT SELECT, UPDATE, INSERT, DELETE ON TABLE game2cube.recovery TO express;
 GRANT SELECT, UPDATE, INSERT, DELETE ON TABLE game2cube.levels TO express;
 GRANT SELECT, UPDATE, INSERT, DELETE ON TABLE game2cube.cells TO express;
 GRANT SELECT, UPDATE, INSERT, DELETE ON TABLE game2cube.likes TO express;

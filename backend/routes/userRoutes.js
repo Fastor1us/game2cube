@@ -14,15 +14,15 @@ router.post('/registration-confirm', userController.registrationConfirm);
 
 router.post('/change', userController.change);
 
-// router.post('/forgot-password', userController.forgotPassword);
-
 router.post('/delete', userController.delete);
+
+router.post('/recovery-email', userController.recoveryEmail);
+
+router.post('/recovery-code', userController.recoveryCode);
 
 router.get('/avatars', userController.getAvatars);
 
 router.get('/avatars/:filename', userController.getAvatar);
-
-// router.post('/avatar', userController.changeAvatar);
 
 
 module.exports = router;

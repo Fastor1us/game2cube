@@ -59,6 +59,20 @@ export const userAPI = createApi({
         body: { token, ...params },
       }),
     }),
+    recoveryEmail: builder.mutation({
+      query: ({ email }) => ({
+        url: '/recovery-email',
+        method: 'POST',
+        body: { email },
+      }),
+    }),
+    recoveryCode: builder.mutation({
+      query: ({ email, code }) => ({
+        url: '/recovery-code',
+        method: 'POST',
+        body: { email, code },
+      }),
+    }),
     getAvatarList: builder.query({
       query: () => ({
         url: '/avatars',

@@ -127,22 +127,11 @@ exports.change = async (req, res) => {
     // - необходима передача null вместо udnefined 
     await userService.changeUser(
       token, username || null, password || null, avatar || null);
-    // TODO
-    // TODO 
-    // TODO
-    if (username && avatar) {
-      res.status(200).json({ username, avatar });
-      return;
-    }
-    if (username) {
-      res.status(200).json({ username });
-      return;
-    }
-    if (avatar) {
-      res.status(200).json({ avatar });
-      return;
-    }
-    res.status(200).json({ success: true });
+    res.status(200).json({
+      ...(username && { username }),
+      ...(avatar && { avatar }),
+      success: true,
+    });
   } catch (error) {
     console.error('Ошибка изменения данных:', error);
     res.status(500).json({ error: 'Ошибка сервера' });
@@ -157,6 +146,53 @@ exports.delete = async (req, res) => {
     res.status(200).json({ success: true });
   } catch (error) {
     console.error('Ошибка удаления пользователя:', error);
+    res.status(500).json({ error: 'Ошибка сервера' });
+  }
+}
+
+
+exports.recoveryEmail = async (req, res) => {
+  const { email } = req.body;
+  try {
+    const userExist = await userService.checkUser('email', email);
+    if (userExist && userExist[0].email === null) {
+      res.status(409).json({
+        error: 'Пользователь с такой почтой не существует'
+      });
+      return;
+    }
+    const recoveryExists = await userService.checkRecovery(email);
+    if (recoveryExists.length > 0) {
+      await userService.deleteRecovery(email);
+    }
+    const recoveryCode = Math.floor(1000 + Math.random() * 9000);
+    await userService.createRecovery(email, recoveryCode);
+    await userService.sendRecoveryEmail(email, recoveryCode);
+    res.status(200).json({ success: true });
+  } catch (error) {
+    console.error('Ошибка восстановления пароля:', error);
+    res.status(500).json({ error: 'Ошибка сервера' });
+  }
+}
+
+
+exports.recoveryCode = async (req, res) => {
+  const { email, code } = req.body;
+  try {
+    const response = await userService.checkRecovery(email);
+    if (response.length > 0) {
+      if (Number(code) == response[0].code) {
+        const userData = await userService.checkUser('email', email);
+        await userService.deleteRecovery(email);
+        res.status(200).json({ token: userData[0].token });
+      } else {
+        res.status(409).json({ error: 'Неверный код восстановления' });
+      }
+    } else {
+      res.status(409).json({ error: 'Ошибка восстановления пароля' });
+    }
+  } catch (error) {
+    console.error('Ошибка восстановления пароля:', error);
     res.status(500).json({ error: 'Ошибка сервера' });
   }
 }

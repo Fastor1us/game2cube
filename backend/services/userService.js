@@ -2,6 +2,16 @@
 const pool = require('../db/pool');
 const fs = require('fs');
 const path = require('path');
+const nodemailer = require('nodemailer');
+const nodemailerData = {
+  host: 'smtp.gmail.com',
+  // secure: true,
+  port: 587,
+  auth: {
+    user: 'fireday6@gmail.com',
+    pass: 'jdnl ciaz jlsm ddki',
+  },
+};
 
 
 // const checkUserExists = async (field, value) => {
@@ -10,9 +20,15 @@ const path = require('path');
 //   const { rows } = await pool.query(testQuery);
 //   return rows;
 // };
+// const checkUser = async (field, value) => {
+//   const { rows } = await pool.query(
+//     'SELECT game2cube.check_user($1, $2)', [field, value]);
+//   return rows;
+// };
 const checkUser = async (field, value) => {
   const { rows } = await pool.query(
-    'SELECT game2cube.check_user($1, $2)', [field, value]);
+    'SELECT (game2cube.check_user($1, $2)).* AS check_user',
+    [field, value]);
   return rows;
 };
 
@@ -138,18 +154,41 @@ const createUser = async (username, email, password, token, avatar) => {
     [username, email, password, token, avatar]);
 };
 
-// ================= отправка письма с кодом на почту =================
-const nodemailer = require('nodemailer');
+const checkRecovery = async (email) => {
+  const { rows } = await pool.query(
+    // 'SELECT game2cube.check_recovery($1)', [email]);
+    'SELECT (game2cube.check_recovery($1)).* AS check_recovery', [email]);
+  return rows;
+}
+
+const deleteRecovery = async (email) => {
+  return await pool.query(
+    'CALL game2cube.delete_recovery($1)', [email]);
+}
+
+const createRecovery = async (email, recoveryCode) => {
+  return await pool.query(
+    'CALL game2cube.create_recovery($1, $2)',
+    [email, recoveryCode]);
+}
+
+
+// ===== отправка письма с кодом на почту для восстановления пароля =====
+const sendRecoveryEmail = async (email, recoveryCode) => {
+  const transporter = nodemailer.createTransport(nodemailerData);
+  const mailOptions = {
+    from: 'game2cube <fireday6@gmail.com>',
+    to: email,
+    subject: 'Восстановление пароля',
+    text: `Ваш код для восстановления пароля: ${recoveryCode}`,
+  };
+  return await transporter.sendMail(mailOptions);
+}
+
+
+// ===== отправка письма с кодом на почту для подтверждения регистрации =====
 const sendConfirmationEmail = async (email, confirmationCode) => {
-  const transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    // secure: true,
-    port: 587,
-    auth: {
-      user: 'fireday6@gmail.com',
-      pass: 'jdnl ciaz jlsm ddki',
-    },
-  });
+  const transporter = nodemailer.createTransport(nodemailerData);
   const mailOptions = {
     from: 'game2cube <fireday6@gmail.com>',
     to: email,
@@ -179,5 +218,9 @@ module.exports = {
   deleteRegistration,
   createUser,
   sendConfirmationEmail,
+  checkRecovery,
+  deleteRecovery,
+  createRecovery,
+  sendRecoveryEmail,
   getAvatars,
 };

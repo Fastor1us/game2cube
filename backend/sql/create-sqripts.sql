@@ -135,16 +135,32 @@ GRANT EXECUTE ON FUNCTION game2cube.get_user(varchar, varchar) TO express;
 
 --========================================================================== 
 --check_user
+-- CREATE OR REPLACE FUNCTION game2cube.check_user(
+--   p_column varchar(25),
+--   p_value varchar(25)
+-- )
+--  RETURNS SETOF game2cube.users
+--  LANGUAGE plpgsql
+-- AS $function$
+-- BEGIN
+--   RETURN QUERY EXECUTE format('SELECT * FROM game2cube.users WHERE %I = $1', p_column)
+--   USING p_value;
+-- END;
+-- $function$;
 CREATE OR REPLACE FUNCTION game2cube.check_user(
   p_column varchar(25),
   p_value varchar(25)
 )
- RETURNS SETOF game2cube.users
- LANGUAGE plpgsql
+RETURNS game2cube.users
+LANGUAGE plpgsql
 AS $function$
+DECLARE
+  user_data game2cube.users;
 BEGIN
-  RETURN QUERY EXECUTE format('SELECT * FROM game2cube.users WHERE %I = $1', p_column)
+  EXECUTE format('SELECT * FROM game2cube.users WHERE %I = $1', p_column)
+  INTO user_data
   USING p_value;
+  RETURN user_data;
 END;
 $function$;
 
@@ -214,3 +230,64 @@ $procedure$;
 
 GRANT EXECUTE ON PROCEDURE game2cube.change_user(varchar, varchar, varchar, varchar) TO express;
 --==========================================================================
+
+
+--========================================================================== 
+--create_recovery
+CREATE OR REPLACE PROCEDURE game2cube.create_recovery(
+  email varchar(25),
+  code integer
+)
+AS $$
+BEGIN
+  INSERT INTO game2cube.recovery(email, code)
+  VALUES(email, code);
+END;
+$$ LANGUAGE plpgsql;
+
+-- не забываем  после создания скрипта выдать права для пользователя express
+GRANT EXECUTE ON PROCEDURE game2cube.create_recovery(varchar, int4) TO express;
+--==========================================================================
+
+
+--========================================================================== 
+--!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+--ответ в виде:  
+--response [
+--   { check_recovery_2: { id: 19, code: 4102, email: 'fewgwer3@ya.ru' } }
+-- ]
+--!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+--check_recovery
+CREATE OR REPLACE FUNCTION game2cube.check_recovery(p_email character varying)
+RETURNS game2cube.recovery
+LANGUAGE plpgsql
+AS $function$
+DECLARE
+  recovery_data game2cube.recovery;
+BEGIN
+  SELECT id, email, code
+  INTO recovery_data
+  FROM game2cube.recovery
+  WHERE email = p_email;
+  RETURN recovery_data;
+END;
+$function$;
+
+GRANT EXECUTE ON FUNCTION game2cube.check_recovery(varchar) TO express;
+--==========================================================================
+
+
+--========================================================================== 
+--delete_recovery
+CREATE OR REPLACE PROCEDURE game2cube.delete_recovery(
+  IN p_email varchar(25)
+)
+AS $$
+BEGIN
+  DELETE FROM game2cube.recovery
+  WHERE email = p_email;
+END;
+$$ LANGUAGE plpgsql;
+
+GRANT EXECUTE ON PROCEDURE game2cube.delete_recovery(varchar) TO express;
+--========================================================================== 
