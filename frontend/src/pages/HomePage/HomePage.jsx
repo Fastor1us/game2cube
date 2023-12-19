@@ -1,28 +1,125 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { gameAPI } from '../../utils/api/game-api.js';
-import { useDispatch } from 'react-redux';
-import { setLevels } from '../../store/slicers/managerSlicer.js';
+import { useDispatch, useSelector } from 'react-redux';
+import { setCurrLevel, setLevels, setStatus } from '../../store/slicers/managerSlicer.js';
+import { statusSelector } from '../../store/selectors/managerSelectors.js';
+import { userSelector } from '../../store/selectors/userSelectors.js';
 import Manager from '../../components/Manager/Manager.jsx';
+import styles from './HomePage.module.css';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { setGridData } from '../../store/slicers/gameSlicer.js';
+
 
 
 export default function HomePage() {
   const dispatch = useDispatch();
-  const [get, { data, isSuccess }] = gameAPI.useGetMutation();
-
-  useEffect(() => {
-    get({ main: true });
-  }, []);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { isLoading } = useSelector(statusSelector);
+  const { username, isAuth } = useSelector(userSelector);
+  const [isMyLevels, setIsMyLevels] = useState(false);
+  const [isSearch, setIsSearch] = useState(false);
+  const [isRules, setIsRules] = useState(false);
+  const [isAboutProject, setIsAboutProject] = useState(false);
+  const [currTab, setCurrTab] = useState(null);
+  const [get, { data, isSuccess: getIsSuccess,
+    error: getError, isLoading: getIsLoading }] =
+    gameAPI.useGetMutation();
 
   useEffect(() => {
     data && dispatch(setLevels(data.levels));
   }, [data]);
 
-  // TODO
-  // перенести загрузку уровней, всю связанную логику в отдельный компонент
+  useEffect(() => {
+    dispatch(setStatus({
+      isSuccess: getIsSuccess,
+      error: getError,
+      isLoading: getIsLoading
+    }));
+  }, [getIsSuccess, getError, getIsLoading]);
+
+  const onLiClick = (strNavItem, callback) => {
+    setIsMyLevels(false);
+    setIsSearch(false);
+    setIsRules(false);
+    setIsAboutProject(false);
+    dispatch(setLevels([]));
+    dispatch(setGridData([]));
+    dispatch(setCurrLevel({ index: null }));
+    setCurrTab(strNavItem);
+    callback();
+  }
+  const onMainLevelsClick = () => {
+    get({ main: true });
+  }
+  const onRandomLevelsClick = () => {
+    get({ random: true });
+  }
+  const onMyLevelsClick = () => {
+    setIsMyLevels(true);
+    isAuth ? get({ user: username }) :
+      navigate('/login', { state: { from: location } });
+  }
+  const onSearchClick = () => {
+    setIsSearch(true);
+  }
+  const onRulesClick = () => {
+    setIsRules(true);
+  }
+  const onAboutClick = () => {
+    setIsAboutProject(true);
+  }
+
+  const navPanelData = [
+    ['основные уровни', onMainLevelsClick],
+    ['случайные уровни', onRandomLevelsClick],
+    ['мои уровни', onMyLevelsClick],
+    ['поиск по фильтру', onSearchClick],
+    ['правила игры', onRulesClick],
+    ['о проекте', onAboutClick]
+  ];
+
+  useEffect(() => {
+    setCurrTab(navPanelData[0][0]);
+    get({ main: true });
+  }, [isAuth]);
+
+  useEffect(() => {
+    get({ main: true });
+    setCurrTab(navPanelData[0][0]);
+    return () => {
+      dispatch(setLevels([]));
+      dispatch(setGridData([]));
+      dispatch(setCurrLevel({ index: null }));
+    }
+  }, []);
 
   return (
-    <>
-      {isSuccess && <Manager />}
-    </>
+    <section className={styles.container}>
+      <ul className={styles.list}>
+        {navPanelData.map((item, index) => (
+          <li key={index} onClick={() => onLiClick(item[0], item[1])}
+            className={`${[
+              styles.listItem,
+              isLoading && styles.listItemDisabled
+            ].filter(Boolean).join(' ')}`}
+          >
+            {item[0]}
+          </li>
+        ))}
+      </ul>
+      <h1 className={styles.title}>
+        {currTab && (currTab?.charAt(0).toUpperCase() + currTab?.slice(1))}
+      </h1>
+      {isSearch && (
+        <form>
+          <input type="text" />
+          <button>Поиск</button>
+        </form>
+      )}
+      {!isAboutProject && !isRules && <Manager isMyLevels={isMyLevels} />}
+      {isAboutProject && <p>О проекте</p>}
+      {isRules && <p>Правила игры</p>}
+    </section>
   );
 }

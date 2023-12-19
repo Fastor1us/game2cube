@@ -10,6 +10,8 @@ router.get('/get', gameController.get);
 
 router.post('/toggle-like', gameController.toggleLike);
 
+router.post('/delete', gameController.delete);
+
 // router.post('/remove-like', gameController.removeLike);
 
 

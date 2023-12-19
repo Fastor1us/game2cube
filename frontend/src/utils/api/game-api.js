@@ -24,6 +24,13 @@ export const gameAPI = createApi({
         body: { token, data },
       }),
     }),
+    delete: builder.mutation({
+      query: ({ token, levelId }) => ({
+        url: '/delete',
+        method: 'POST',
+        body: { token, levelId },
+      })
+    }),
     get: builder.mutation({
       query: (params) => ({
         url: '/get',

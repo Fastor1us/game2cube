@@ -12,13 +12,8 @@
   list-style-type: none;
   margin: 0;
   padding: 0;
-  /* display: flex;
-  justify-content: space-between;
-  position: relative;
-  align-items: center;
-  gap: 40px; */
-
   border: 1px solid black;
+  z-index: 999;
 }
 
 .navItem {
@@ -45,14 +40,9 @@
 }
 
 .link {
-  /* color: #FFEFD5; */
   color: black;
   text-decoration: none;
 }
-
-/* .link:hover {
-  text-decoration: underline;
-} */
 
 .active {
   color: white;

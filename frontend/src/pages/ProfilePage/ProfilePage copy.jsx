@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { avatarSelector, userSelector } from '../../store/selectors/userSelectors';
 import { useForm } from '../../utils/hooks/use-form';
@@ -9,19 +9,19 @@ import styles from './ProfilePage.module.css';
 import Modal from '../../components/Modal/Modal';
 import AvatarList from '../../components/AvatarList/AvatarList';
 import { BACKEND_URL } from '../../utils/constants';
-import DeleteModal from '../../utils/HOC/DeleteModal';
 
 
 export default function ProfilePage() {
   const dispatch = useDispatch();
   const avatar = useSelector(avatarSelector);
   const [selectedAvatar, setSelectedAvatar] = useState(null);
+  const ref = useRef(null);
   const { username, email } = useSelector(userSelector);
   const [isInputChanged, setIsInputChanged] = useState(false);
   const [showAvaModal, setShowAvaModal] = useState(false);
   const [showDelModal, setShowDelModal] = useState(false);
   const [showNotificationStatus, setShowNotificationStatus] = useState(false);
-
+  const [timer, setTimer] = useState(5);
 
   const { values, setValues, handleChange } = useForm({
     username: username,
@@ -91,7 +91,18 @@ export default function ProfilePage() {
 
   const handleDelete = () => {
     setShowDelModal(true);
+    setTimer(5);
+    clearInterval(ref.current);
+    ref.current = setInterval(
+      () => setTimer((prevTimer) => prevTimer - 1), 1000
+    );
   };
+
+  useEffect(() => {
+    if (timer === 0) {
+      clearInterval(ref.current);
+    }
+  }, [timer]);
 
   useEffect(() => {
     if (!shallowEqual(values, {
@@ -179,10 +190,20 @@ export default function ProfilePage() {
           Удалить Профиль
         </button>
         {showDelModal && (
-          <DeleteModal setVisible={setShowDelModal} title='Удалить Профиль?'
-            onHandleClick={
-              () => deleteAccount({ token: localStorage.getItem('token') })
-            } />
+          <Modal setVisible={setShowDelModal} title='Подтвердите удаление'>
+            <section style={{ textAlign: 'center' }}>
+              <h2 style={{ color: 'black' }}>
+                Внимание! Данное действие безвозвратное!
+              </h2>
+              <button disabled={timer !== 0}
+                onClick={() => deleteAccount({
+                  token: localStorage.getItem('token')
+                })}
+              >
+                {'Подтвердить' + (timer !== 0 ? ` (${timer})` : '')}
+              </button>
+            </section>
+          </Modal>
         )}
       </form>
     </>

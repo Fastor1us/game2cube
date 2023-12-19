@@ -87,7 +87,7 @@ export default function CreatingLevelsPage() {
     gameAPI.useAddMutation();
 
   useEffect(() => {
-    data && console.log('data', data);
+    // data && console.log('data', data);
     error && console.log('error', error);
   }, [error, data, isLoading]);
 

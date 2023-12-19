@@ -26,6 +26,23 @@ const createCells = async (levelId, cells) => {
 }
 
 
+const deleteLevel = async (token, levelId) => {
+  const { rows } = await pool.query(`
+    SELECT * FROM game2cube.levels AS l
+    JOIN game2cube.users AS u ON l.user_id = u.id
+    WHERE l.id = $1 AND u.token = $2
+  `, [levelId, token]);
+  if (rows.length > 0) {
+    await pool.query(`
+      DELETE FROM game2cube.levels
+      WHERE id = $1
+    `, [levelId]);
+  } else {
+    throw new Error('Пользователь не является владельцем таблицы');
+  }
+}
+
+
 const isAbleToLike = async (token, levelId) => {
   const { rows } = await pool.query(`
     SELECT * FROM game2cube.likes AS l
@@ -43,14 +60,6 @@ const getUserLevels = async (username, token) => {
   JOIN game2cube.users AS u ON l.user_id = u.id
   WHERE u.username = $1
   `, [username]);
-  // ф-ия подсчёта лайков для определённого уровня
-  const amountOfLikes = async (levelId) => {
-    const { rows } = await pool.query(`
-      SELECT count(*) FROM game2cube.likes AS l
-      WHERE l.level_id = $1
-    `, [levelId]);
-    return rows[0].count;
-  }
   // Получаем все ячейки для каждого уровня
   const levelsWithCells = await Promise.all(
     levelsResult.rows.map(async (level) => {
@@ -60,6 +69,36 @@ const getUserLevels = async (username, token) => {
       `, [level.id]);
       return {
         author: username,
+        levelId: level.id,
+        likes: await amountOfLikes(level.id),
+        isAbleToLike: token ? await isAbleToLike(token, level.id) : false,
+        size: level.size,
+        cells: cellsResult.rows
+      };
+    }));
+  return levelsWithCells;
+}
+
+const getRandomLevels = async (token) => {
+  // Получаем случайные 10 уровней
+  const levelsResult = await pool.query(`
+    SELECT l.id, l.user_id,l.size FROM game2cube.levels AS l
+    JOIN game2cube.users AS u ON l.user_id = u.id
+    ORDER BY random() LIMIT 10
+  `);
+  // Получаем все ячейки для каждого уровня
+  const levelsWithCells = await Promise.all(
+    levelsResult.rows.map(async (level) => {
+      const authorResult = await pool.query(`
+        SELECT username FROM game2cube.users
+        WHERE id = $1
+      `, [level.user_id]);
+      const cellsResult = await pool.query(`
+        SELECT c.row, c.col, c.number FROM game2cube.cells AS c
+        WHERE c.level_id = $1
+      `, [level.id]);
+      return {
+        author: authorResult.rows[0].username,
         levelId: level.id,
         likes: await amountOfLikes(level.id),
         isAbleToLike: token ? await isAbleToLike(token, level.id) : false,
@@ -89,8 +128,19 @@ const removeLike = async (token, levelId) => {
 module.exports = {
   createLevel,
   createCells,
+  deleteLevel,
   isAbleToLike,
   getUserLevels,
+  getRandomLevels,
   addLike,
   removeLike
 };
+
+
+async function amountOfLikes(levelId) {
+  const { rows } = await pool.query(`
+    SELECT count(*) FROM game2cube.likes AS l
+    WHERE l.level_id = $1
+  `, [levelId]);
+  return rows[0].count;
+}

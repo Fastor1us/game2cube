@@ -20,14 +20,12 @@ const Cell = forwardRef((props, ref) => {
   useEffect(() => {
     if (!props.isCellOutsideGame && !props.isCreatingMode) {
       const handleMouseEnter = () => {
-        // console.log('handleMouseEnter');
         dispatch(setCellCoords({
           row: props.row,
           col: props.col,
         }));
         // вернулись на поле в ячейку с фокусом при зажатой ЛКМ
         if (!getGameState().isWatching && getGameState().isFocus) {
-          // console.log('вернулись на поле в ячейку с фокусом при зажатой ЛКМ');
           // если адрес ячейки с фокусом равен адресу текущей ячейки, то
           // включаем setIsWatching и прерываем функцию
           const focusedCellCoords = findFocusedCellCoords(getGridData());
@@ -91,13 +89,12 @@ const Cell = forwardRef((props, ref) => {
       >
         {
           props.step &&
-          <div
-            className={`${[
-              styles.cell,
-              styles.step,
-              styles.filledCell,
-              styles[`color-${props.color}`],
-            ].filter(Boolean).join(' ')}`}
+          <div className={`${[
+            styles.cell,
+            styles.step,
+            styles.filledCell,
+            styles[`color-${props.color}`],
+          ].filter(Boolean).join(' ')}`}
           ></div>
         }
       </div >

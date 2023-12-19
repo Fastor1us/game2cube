@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
+  status: {},
   currLevel: {
     index: null,
     id: null
@@ -26,6 +27,15 @@ const managerSlicer = createSlice({
           state.levels[action.payload.index].likes - 1;
       state.levels[action.payload.index].isAbleToLike =
         !state.levels[action.payload.index].isAbleToLike;
+    },
+    setStatus(state, action) {
+      if (Object.keys(action.payload).length > 0) {
+        state.status = {};
+        const entries = Object.entries(action.payload);
+        entries.forEach(([key, value]) => {
+          if (value) state.status[key] = value;
+        })
+      }
     }
   }
 });
@@ -33,7 +43,8 @@ const managerSlicer = createSlice({
 export const {
   setLevels,
   setCurrLevel,
-  toggleLevelReduxLike
+  toggleLevelReduxLike,
+  setStatus
 } = managerSlicer.actions;
 
 export default managerSlicer.reducer;

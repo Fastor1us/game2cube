@@ -20,7 +20,7 @@ export default function LevelList() {
 
   useEffect(() => {
     if (levels && levels.length > 0) {
-      const index = currLevel.index;
+      const index = currLevel.index || 0;
       const size = levels[index].size;
       // tech - технический стороковый массив координат цветных ячеек
       const tech = levels[index].cells.map(item => {

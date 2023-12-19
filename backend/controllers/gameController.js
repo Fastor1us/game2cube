@@ -17,29 +17,42 @@ exports.add = async (req, res) => {
   }
 }
 
+exports.delete = async (req, res) => {
+  const { token, levelId } = req.body;
+  try {
+    await gameService.deleteLevel(token, levelId);
+    res.status(200).json({ success: true });
+  } catch (error) {
+    console.error('Ошибка при удалении уровня:', error);
+    res.status(500).json({ error: 'Ошибка сервера' });
+    return;
+  }
+}
 
 exports.get = async (req, res) => {
-  const { user, size, main } = req.query;
-  // const tech = [{ user }, { size }, { main }];
-  // console.log('arguments we got:', tech.reduce((acc, item) => {
-  //   if (item) { acc[Object.keys(item)[0]] = Object.values(item)[0] }
-  //   return acc;
-  // }, {}));
-  // console.log('user', user);
-  // console.log('size', size);
-  // console.log('test', main);
+  const { user, size, main, random } = req.query;
   try {
     if (main) {
       const levels = await gameService.getUserLevels('admin', req.token);
       res.json({ levels });
       return;
     }
-    // res.json('дошли до конца эндпоинта /game/get');
+    if (random) {
+      const levels = await gameService.getRandomLevels(req.token);
+      res.json({ levels });
+      return;
+    }
+    if (user) {
+      const levels = await gameService.getUserLevels(user, req.token);
+      res.json({ levels });
+      return;
+    }
   } catch (error) {
     console.error('Ошибка при получении уровней:', error);
     res.status(500).json({ error: 'Ошибка сервера' });
     return;
   }
+  res.status(500).json({ error: 'Ошибка сервера' });
 }
 
 
