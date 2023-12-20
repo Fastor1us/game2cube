@@ -21,8 +21,6 @@ export default function ProfilePage() {
   const [showAvaModal, setShowAvaModal] = useState(false);
   const [showDelModal, setShowDelModal] = useState(false);
   const [showNotificationStatus, setShowNotificationStatus] = useState(false);
-
-
   const { values, setValues, handleChange } = useForm({
     username: username,
     email: email,
@@ -31,40 +29,17 @@ export default function ProfilePage() {
 
   useEffect(() => {
     avatar && setSelectedAvatar(avatar);
-  }, [])
-
-  useEffect(() => {
-    setValues({
-      username: username,
-      email: email,
-      password: '',
-    })
-  }, [username, email]);
+  }, [avatar]);
 
   const [change, { error: changeError, data: changeData,
     isLoading: changeIsLoading, isSuccess: changeIsSuccess }] =
     userAPI.useChangeMutation();
-
   const [deleteAccount, { error: deleteError, data: deleteData,
     isLoading: deleteIsLoading, isSuccess: deleteIsSuccess }] =
     userAPI.useDeleteMutation();
-
   const { data: getAvatarListData, error: getAvatarListError,
     isLoading: getAvatarListIsLoading, isSuccess: getAvatarListIsSuccess } =
     userAPI.useGetAvatarListQuery();
-
-  useEffect(() => {
-    changeIsSuccess && dispatch(setUserData({
-      ...changeData
-    }));
-    (changeIsSuccess || changeError) && setShowNotificationStatus(true);
-  }, [changeData, changeError, changeIsSuccess]);
-
-  useEffect(() => {
-    if (selectedAvatar !== avatar) {
-      setShowNotificationStatus(false);
-    }
-  }, [selectedAvatar]);
 
   useEffect(() => {
     if (deleteIsSuccess) {
@@ -73,7 +48,6 @@ export default function ProfilePage() {
     }
     deleteError && console.log('error status:', deleteError.status);
   }, [deleteData, deleteError, deleteIsSuccess]);
-
   useEffect(() => {
     getAvatarListIsSuccess && getAvatarListData &&
       dispatch(setAvatarList(getAvatarListData));
@@ -107,6 +81,22 @@ export default function ProfilePage() {
       setIsInputChanged(false);
     }
   }, [values]);
+
+  useEffect(() => {
+    changeIsSuccess && dispatch(setUserData({ ...changeData }));
+    (changeIsSuccess || changeError) && setShowNotificationStatus(true);
+    changeIsSuccess && setValues({
+      username: username,
+      email: email,
+      password: '',
+    });
+  }, [changeData, changeError, changeIsSuccess]);
+
+  useEffect(() => {
+    if (selectedAvatar !== avatar) {
+      setShowNotificationStatus(false);
+    }
+  }, [selectedAvatar]);
 
   return (
     <>

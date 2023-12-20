@@ -13,6 +13,7 @@ const nodemailerData = {
   },
 };
 
+const generateCode = () => Math.floor(100000 + Math.random() * 900000);
 
 // const checkUserExists = async (field, value) => {
 //   const testQuery = `SELECT * FROM game2cube.users
@@ -25,9 +26,9 @@ const nodemailerData = {
 //     'SELECT game2cube.check_user($1, $2)', [field, value]);
 //   return rows;
 // };
-const checkUser = async (field, value) => {
+const readUser = async (field, value) => {
   const { rows } = await pool.query(
-    'SELECT (game2cube.check_user($1, $2)).* AS check_user',
+    'SELECT (game2cube.read_user($1, $2)).* AS read_user',
     [field, value]);
   return rows;
 };
@@ -70,9 +71,9 @@ const getUser = async (...args) => {
   return rows;
 };
 
-const changeUser = async (token, username, password, avatar) => {
+const updateUser = async (token, username, password, avatar) => {
   await pool.query(
-    'CALL game2cube.change_user($1, $2, $3, $4)',
+    'CALL game2cube.update_user($1, $2, $3, $4)',
     [token, username, password, avatar]);
 }
 
@@ -90,9 +91,9 @@ const deleteUser = async (token) => {
 //   const { rows } = await pool.query(testQuery);
 //   return rows;
 // }
-const checkRegistration = async (email) => {
+const readRegistration = async (email) => {
   const { rows } = await pool.query(
-    'SELECT game2cube.check_registration($1)', [email]);
+    'SELECT game2cube.read_registration($1)', [email]);
   return rows;
 }
 
@@ -103,9 +104,9 @@ const checkRegistration = async (email) => {
 //   const { rows } = await pool.query(testQuery);
 //   return rows;
 // }
-const checkCode = async (email, code) => {
+const readRegistrationCode = async (email, code) => {
   const { rows } = await pool.query(
-    'SELECT game2cube.check_code($1, $2)', [email, code]);
+    'SELECT game2cube.read_registration($1, $2)', [email, code]);
   return rows;
 }
 
@@ -154,10 +155,9 @@ const createUser = async (username, email, password, token, avatar) => {
     [username, email, password, token, avatar]);
 };
 
-const checkRecovery = async (email) => {
+const readRecovery = async (email) => {
   const { rows } = await pool.query(
-    // 'SELECT game2cube.check_recovery($1)', [email]);
-    'SELECT (game2cube.check_recovery($1)).* AS check_recovery', [email]);
+    'SELECT (game2cube.read_recovery($1)).* AS check_recovery', [email]);
   return rows;
 }
 
@@ -168,8 +168,14 @@ const deleteRecovery = async (email) => {
 
 const createRecovery = async (email, recoveryCode) => {
   return await pool.query(
-    'CALL game2cube.create_recovery($1, $2)',
-    [email, recoveryCode]);
+    'CALL game2cube.create_recovery($1, $2, $3)',
+    [email, recoveryCode, 0]);
+}
+
+const updateRecovery = async (email, attempt) => {
+  return await pool.query(
+    'CALL game2cube.update_recovery($1, $2)',
+    [email, attempt]);
 }
 
 
@@ -208,19 +214,21 @@ const getAvatars = () => {
 };
 
 module.exports = {
-  checkUser,
+  generateCode,
+  readUser,
   getUser,
-  changeUser,
+  updateUser,
   deleteUser,
-  checkRegistration,
-  checkCode,
+  readRegistration,
+  readRegistrationCode,
   createRegistration,
   deleteRegistration,
   createUser,
   sendConfirmationEmail,
-  checkRecovery,
+  readRecovery,
   deleteRecovery,
   createRecovery,
+  updateRecovery,
   sendRecoveryEmail,
   getAvatars,
 };

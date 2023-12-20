@@ -7,26 +7,26 @@ exports.register = async (req, res) => {
   // после получения данных из формы регистрации пользователя, проверяем:
   try {
     // 1) что email не занят (таблица users)
-    const emailExists = await userService.checkUser('email', email);
+    const emailExists = await userService.readUser('email', email);
     if (emailExists.length > 0) {
       // 409 - conflict , 422 - Unprocessable Entity , 424 - Failed Dependency
       res.status(409).json({ error: 'На данную почту уже зарегистрирован аккаунт' });
       return;
     }
     // 2) что имя пользователя не занято (таблица users)
-    const usernameExists = await userService.checkUser('username', username);
+    const usernameExists = await userService.readUser('username', username);
     if (usernameExists.length > 0) {
       res.status(409).json({ error: 'Данное имя пользователя уже занято' });
       return;
     }
     // 3) проверяем есть ли в таблице registration запись с переданным email
-    const emailRegistrationCodeExists = await userService.checkRegistration(email);
+    const emailRegistrationCodeExists = await userService.readRegistration(email);
     if (emailRegistrationCodeExists.length > 0) {
       // если есть, то удаляем запись
       await userService.deleteRegistration(email);
     }
     // если всё ок, то создаем новую запись
-    const confirmationCode = Math.floor(1000 + Math.random() * 9000);
+    const confirmationCode = userService.generateCode();
     await userService.createRegistration(username, email, password, confirmationCode);
     // после записи отправляем письмо на указанную почту с кодом подтвержения
     await userService.sendConfirmationEmail(email, confirmationCode);
@@ -45,7 +45,7 @@ exports.registrationConfirm = async (req, res) => {
   try {
     // перед проверкой кода подтверждения проверяем, что
     // 1) что email не занят (таблица users)
-    const emailExists = await userService.checkUser('email', email);
+    const emailExists = await userService.readUser('email', email);
     if (emailExists.length > 0) {
       res.status(409).json({
         error: 'На указанную почту уже зарегистрирован аккаунт'
@@ -53,14 +53,14 @@ exports.registrationConfirm = async (req, res) => {
       return;
     }
     // 2) что имя пользователя не занято (таблица users)
-    const usernameExists = await userService.checkUser('username', username);
+    const usernameExists = await userService.readUser('username', username);
     if (usernameExists.length > 0) {
       res.status(409).json({ error: 'Имя пользователя уже занято' });
       return;
     }
     // 3) проверяем совпадает ли переданный код с кодом из таблицы registration
     const emailRegistrationCodeExists =
-      await userService.checkCode(email, confirmationCode);
+      await userService.readRegistrationCode(email, confirmationCode);
     if (emailRegistrationCodeExists.length > 0) {
       const { nanoid } = require('@reduxjs/toolkit');
       const token = nanoid();
@@ -125,7 +125,7 @@ exports.change = async (req, res) => {
   try {
     // вызывая процедуру передаём null для неопределённых параметров
     // - необходима передача null вместо udnefined 
-    await userService.changeUser(
+    await userService.updateUser(
       token, username || null, password || null, avatar || null);
     res.status(200).json({
       ...(username && { username }),
@@ -154,18 +154,18 @@ exports.delete = async (req, res) => {
 exports.recoveryEmail = async (req, res) => {
   const { email } = req.body;
   try {
-    const userExist = await userService.checkUser('email', email);
+    const userExist = await userService.readUser('email', email);
     if (userExist && userExist[0].email === null) {
       res.status(409).json({
         error: 'Пользователь с такой почтой не существует'
       });
       return;
     }
-    const recoveryExists = await userService.checkRecovery(email);
+    const recoveryExists = await userService.readRecovery(email);
     if (recoveryExists.length > 0) {
       await userService.deleteRecovery(email);
     }
-    const recoveryCode = Math.floor(1000 + Math.random() * 9000);
+    const recoveryCode = userService.generateCode();
     await userService.createRecovery(email, recoveryCode);
     await userService.sendRecoveryEmail(email, recoveryCode);
     res.status(200).json({ success: true });
@@ -179,13 +179,26 @@ exports.recoveryEmail = async (req, res) => {
 exports.recoveryCode = async (req, res) => {
   const { email, code } = req.body;
   try {
-    const response = await userService.checkRecovery(email);
-    if (response.length > 0) {
+    const response = await userService.readRecovery(email);
+    console.log('response', response);
+    if (response[0].id !== null && response.length > 0) {
+      console.log('attempt', response[0].attempt);
       if (Number(code) == response[0].code) {
-        const userData = await userService.checkUser('email', email);
+        const userData = await userService.readUser('email', email);
         await userService.deleteRecovery(email);
         res.status(200).json({ token: userData[0].token });
       } else {
+        // проверить .если attempt = 2, то
+        if (response[0].attempt === 2) {
+          await userService.deleteRecovery(email);
+          res.status(409).json({
+            error: 'Превышен лимит попыток. Попробуйте позже'
+          });
+          return;
+        } else {
+          // если attempt < 2, то увеличить attempt на 1
+          await userService.updateRecovery(email, response[0].attempt + 1);
+        }
         res.status(409).json({ error: 'Неверный код восстановления' });
       }
     } else {

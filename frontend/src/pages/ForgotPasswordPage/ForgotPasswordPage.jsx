@@ -1,18 +1,19 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import styles from './ResetPasswordPage.module.css';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import styles from './ForgotPasswordPage.module.css';
 import { useForm } from '../../utils/hooks/use-form';
 import { userAPI } from '../../utils/api/user-api';
 
 
-export default function ResetPasswordPage() {
+export default function ForgotPasswordPage() {
   const location = useLocation();
   const navigate = useNavigate();
   const focusRefCode = useRef(null);
   const [token, setToken] = useState(null);
+  const [isAttemptLimit, setIsAttemptLimit] = useState(false);
 
   const { values, handleChange } = useForm({
-    email: 'fewgwer3@ya.ru',
+    email: 'test2@test.ru',
     code: '',
     password: '',
   });
@@ -33,13 +34,15 @@ export default function ResetPasswordPage() {
     userAPI.useChangeMutation();
 
   useEffect(() => {
-    ;
     recoveryEmailIsSuccess && focusRefCode.current.focus();
   }, [recoveryEmailError, recoveryEmailIsSuccess]);
 
   useEffect(() => {
-    recoveryCodeError &&
+    if (recoveryCodeError) {
+      /лимит/i.test(recoveryCodeError?.data?.error) &&
+        setIsAttemptLimit(true);
       console.log('recoveryCodeError:', recoveryCodeError?.data);
+    }
     // recoveryCodeIsSuccess && .current.focus();
     recoveryCodeIsSuccess && recoveryCodeData &&
       setToken(recoveryCodeData.token);
@@ -67,9 +70,7 @@ export default function ResetPasswordPage() {
     e.preventDefault();
     // const from = location?.state?.from;
     // {from && <p>Пользователь пришел со страницы: {from.pathname}</p>}
-    change({
-      token: token, password: values.password
-    });
+    change({ token: token, password: values.password });
   }, [token, values]);
 
   return (
@@ -113,10 +114,17 @@ export default function ResetPasswordPage() {
             ref={focusRefCode} />
           <button type="submit"
             className={styles.registerButton}
-            disabled={recoveryCodeIsLoading}
+            disabled={recoveryCodeIsLoading || isAttemptLimit}
           >
             Отправить код
           </button>
+          {isAttemptLimit &&
+            <button type='button'
+              style={{ width: '100%' }} onClick={() => navigate('/')}
+            >
+              На главную
+            </button>
+          }
         </form>
         {recoveryCodeError && (
           <p>

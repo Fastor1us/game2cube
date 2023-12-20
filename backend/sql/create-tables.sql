@@ -3,7 +3,7 @@ CREATE TABLE game2cube.registration (
   username varchar(25),
   email varchar(25),
   password varchar(25),
-  code smallint
+  code integer
 );
 
 CREATE TABLE game2cube.users (
@@ -18,27 +18,28 @@ CREATE TABLE game2cube.users (
 CREATE TABLE game2cube.recovery (
   id SERIAL PRIMARY KEY,
   email varchar(25) UNIQUE,
-  code smallint
+  code integer,
+  attempt integer
 );
 
 CREATE TABLE game2cube.levels (
   id SERIAL PRIMARY KEY,
-  user_id smallint,
-  size smallint
+  user_id integer,
+  size integer
 );
 
 CREATE TABLE game2cube.cells (
   id SERIAL PRIMARY KEY,
-  level_id smallint,
-  row smallint,
-  col smallint,
-  number smallint
+  level_id integer,
+  row integer,
+  col integer,
+  number integer
 );
 
 CREATE TABLE game2cube.likes (
   id SERIAL PRIMARY KEY,
-  level_id smallint,
-  user_id smallint
+  level_id integer,
+  user_id integer
 );
 -- что бы один юзер не мог лайкнуть один уровень более одного раза:
 CREATE UNIQUE INDEX idx_likes_level_user ON game2cube.likes (level_id, user_id);

@@ -35,7 +35,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- не забываем  после создания скрипта выдать права для пользователя express
-GRANT EXECUTE ON PROCEDURE game2cube.create_registration(varchar, varchar, varchar, int2) TO express;
+GRANT EXECUTE ON PROCEDURE game2cube.create_registration(varchar, varchar, varchar, int4) TO express;
 --==========================================================================
 
 
@@ -54,8 +54,8 @@ GRANT EXECUTE ON PROCEDURE game2cube.delete_registration(varchar) TO express;
 
 
 --========================================================================== 
---check_code
-CREATE OR REPLACE FUNCTION game2cube.check_code(
+--read_registration
+CREATE OR REPLACE FUNCTION game2cube.read_registration(
   IN p_email varchar(25),
   IN p_code integer
 )
@@ -70,13 +70,13 @@ BEGIN
 END;
 $function$;
 
-GRANT EXECUTE ON FUNCTION game2cube.check_code(varchar, int4) TO express;
+GRANT EXECUTE ON FUNCTION game2cube.read_registration(varchar, int4) TO express;
 --==========================================================================
 
 
 --========================================================================== 
---check_registration
-CREATE OR REPLACE FUNCTION game2cube.check_registration(
+--read_registration
+CREATE OR REPLACE FUNCTION game2cube.read_registration(
   IN p_email varchar(25)
 )
 RETURNS SETOF game2cube.registration
@@ -89,7 +89,7 @@ begin
 END;
 $function$;
 
-GRANT EXECUTE ON FUNCTION game2cube.check_registration(varchar) TO express;
+GRANT EXECUTE ON FUNCTION game2cube.read_registration(varchar) TO express;
 --==========================================================================
 
 
@@ -134,8 +134,8 @@ GRANT EXECUTE ON FUNCTION game2cube.get_user(varchar, varchar) TO express;
 
 
 --========================================================================== 
---check_user
--- CREATE OR REPLACE FUNCTION game2cube.check_user(
+--read_user
+-- CREATE OR REPLACE FUNCTION game2cube.read_user(
 --   p_column varchar(25),
 --   p_value varchar(25)
 -- )
@@ -147,7 +147,7 @@ GRANT EXECUTE ON FUNCTION game2cube.get_user(varchar, varchar) TO express;
 --   USING p_value;
 -- END;
 -- $function$;
-CREATE OR REPLACE FUNCTION game2cube.check_user(
+CREATE OR REPLACE FUNCTION game2cube.read_user(
   p_column varchar(25),
   p_value varchar(25)
 )
@@ -164,7 +164,7 @@ BEGIN
 END;
 $function$;
 
-GRANT EXECUTE ON FUNCTION game2cube.check_user(varchar, varchar) TO express;
+GRANT EXECUTE ON FUNCTION game2cube.read_user(varchar, varchar) TO express;
 --==========================================================================
 
 
@@ -197,8 +197,8 @@ GRANT EXECUTE ON PROCEDURE game2cube.delete_user(varchar) TO express;
 
 
 --========================================================================== 
---change_user
--- CREATE OR REPLACE PROCEDURE game2cube.change_user(
+--update_user
+-- CREATE OR REPLACE PROCEDURE game2cube.update_user(
 --   p_token varchar(25),
 --   p_username varchar(25),
 --   p_password varchar(25)
@@ -211,7 +211,7 @@ GRANT EXECUTE ON PROCEDURE game2cube.delete_user(varchar) TO express;
 --   WHERE token = p_token;
 -- END;
 -- $$ LANGUAGE plpgsql;
-CREATE OR REPLACE PROCEDURE game2cube.change_user(
+CREATE OR REPLACE PROCEDURE game2cube.update_user(
   p_token varchar(25),
   p_username varchar(25) DEFAULT NULL,
   p_password varchar(25) DEFAULT NULL,
@@ -236,17 +236,18 @@ GRANT EXECUTE ON PROCEDURE game2cube.change_user(varchar, varchar, varchar, varc
 --create_recovery
 CREATE OR REPLACE PROCEDURE game2cube.create_recovery(
   email varchar(25),
-  code integer
+  code integer,
+  attempt integer
 )
 AS $$
 BEGIN
-  INSERT INTO game2cube.recovery(email, code)
-  VALUES(email, code);
+  INSERT INTO game2cube.recovery(email, code, attempt)
+  VALUES(email, code, attempt);
 END;
 $$ LANGUAGE plpgsql;
 
 -- не забываем  после создания скрипта выдать права для пользователя express
-GRANT EXECUTE ON PROCEDURE game2cube.create_recovery(varchar, int4) TO express;
+GRANT EXECUTE ON PROCEDURE game2cube.create_recovery(varchar, int4, int4) TO express;
 --==========================================================================
 
 
@@ -254,18 +255,18 @@ GRANT EXECUTE ON PROCEDURE game2cube.create_recovery(varchar, int4) TO express;
 --!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 --ответ в виде:  
 --response [
---   { check_recovery_2: { id: 19, code: 4102, email: 'fewgwer3@ya.ru' } }
+--   { read_recovery: { id: 19, code: 4102, email: 'fewgwer3@ya.ru', attempt: 1  } }
 -- ]
 --!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
---check_recovery
-CREATE OR REPLACE FUNCTION game2cube.check_recovery(p_email character varying)
+--read_recovery
+CREATE OR REPLACE FUNCTION game2cube.read_recovery(p_email character varying)
 RETURNS game2cube.recovery
 LANGUAGE plpgsql
 AS $function$
 DECLARE
   recovery_data game2cube.recovery;
 BEGIN
-  SELECT id, email, code
+  SELECT *
   INTO recovery_data
   FROM game2cube.recovery
   WHERE email = p_email;
@@ -273,7 +274,7 @@ BEGIN
 END;
 $function$;
 
-GRANT EXECUTE ON FUNCTION game2cube.check_recovery(varchar) TO express;
+GRANT EXECUTE ON FUNCTION game2cube.read_recovery(varchar) TO express;
 --==========================================================================
 
 
@@ -290,4 +291,23 @@ END;
 $$ LANGUAGE plpgsql;
 
 GRANT EXECUTE ON PROCEDURE game2cube.delete_recovery(varchar) TO express;
+--========================================================================== 
+
+
+--========================================================================== 
+--delete_recovery
+CREATE OR REPLACE PROCEDURE game2cube.update_recovery(
+  p_email varchar(25),
+  p_attempt integer
+)
+LANGUAGE plpgsql
+AS $procedure$
+BEGIN
+  UPDATE game2cube.recovery
+  SET attempt = p_attempt
+  WHERE email = p_email;
+END;
+$procedure$;
+
+GRANT EXECUTE ON PROCEDURE game2cube.update_recovery(varchar, int4) TO express;
 --========================================================================== 

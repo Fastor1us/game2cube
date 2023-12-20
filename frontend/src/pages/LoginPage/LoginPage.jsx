@@ -84,7 +84,7 @@ export default function LoginPage() {
     <p style={{ marginTop: 0 }}>
       {'Забыли пароль? '}
       <Link className={styles.link}
-        to='/reset-password' state={{ from: location }}
+        to='/forgot-password' state={{ from: location }}
       >
         Восстановить
       </Link>

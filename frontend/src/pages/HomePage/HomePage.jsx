@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { gameAPI } from '../../utils/api/game-api.js';
 import { useDispatch, useSelector } from 'react-redux';
-import { setCurrLevel, setLevels, setStatus } from '../../store/slicers/managerSlicer.js';
-import { statusSelector } from '../../store/selectors/managerSelectors.js';
+import { setCurrLevel, setLevels } from '../../store/slicers/managerSlicer.js';
 import { userSelector } from '../../store/selectors/userSelectors.js';
 import Manager from '../../components/Manager/Manager.jsx';
 import styles from './HomePage.module.css';
@@ -10,12 +9,10 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { setGridData } from '../../store/slicers/gameSlicer.js';
 
 
-
 export default function HomePage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-  const { isLoading } = useSelector(statusSelector);
   const { username, isAuth } = useSelector(userSelector);
   const [isMyLevels, setIsMyLevels] = useState(false);
   const [isSearch, setIsSearch] = useState(false);
@@ -29,14 +26,6 @@ export default function HomePage() {
   useEffect(() => {
     data && dispatch(setLevels(data.levels));
   }, [data]);
-
-  useEffect(() => {
-    dispatch(setStatus({
-      isSuccess: getIsSuccess,
-      error: getError,
-      isLoading: getIsLoading
-    }));
-  }, [getIsSuccess, getError, getIsLoading]);
 
   const onLiClick = (strNavItem, callback) => {
     setIsMyLevels(false);
@@ -57,7 +46,8 @@ export default function HomePage() {
   }
   const onMyLevelsClick = () => {
     setIsMyLevels(true);
-    isAuth ? get({ user: username }) :
+    isAuth ?
+      get({ user: username }) :
       navigate('/login', { state: { from: location } });
   }
   const onSearchClick = () => {
@@ -101,7 +91,7 @@ export default function HomePage() {
           <li key={index} onClick={() => onLiClick(item[0], item[1])}
             className={`${[
               styles.listItem,
-              isLoading && styles.listItemDisabled
+              getIsLoading && styles.listItemDisabled
             ].filter(Boolean).join(' ')}`}
           >
             {item[0]}
