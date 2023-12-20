@@ -4,7 +4,7 @@ import styles from './GridSizeController.module.css';
 
 
 export default function GridSizeController({
-  gridSize, setGridSize
+  gridSize, setGridSize, disabled
 }) {
   const onButtonClick = (e) => {
     e.target.name === 'increment' ?
@@ -22,7 +22,7 @@ export default function GridSizeController({
       <button type='button'
         className={`${styles.button} ${styles.buttonDecrement}`}
         name='decrement' onClick={onButtonClick}
-        disabled={gridSize === 4}
+        disabled={gridSize === 4 || disabled}
       >
         -
       </button>
@@ -32,7 +32,7 @@ export default function GridSizeController({
       <button type='button'
         className={`${styles.button} ${styles.buttonIncrement}`}
         name='increment' onClick={onButtonClick}
-        disabled={gridSize === 7}
+        disabled={gridSize === 7 || disabled}
       >
         +
       </button>

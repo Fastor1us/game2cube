@@ -51,7 +51,7 @@
 }
 
 /* Стили для мобильных устройств */
-@media (min-width: 425px) and (max-width: 767px) {
+@media (min-width: 412px) and (max-width: 767px) {
   .navPanel {
     max-width: 400px;
     font-size: 20px;

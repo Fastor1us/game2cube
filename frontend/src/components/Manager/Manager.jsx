@@ -11,6 +11,9 @@ import { gameAPI } from '../../utils/api/game-api';
 import { setCurrLevel, setLevels, toggleLevelReduxLike } from '../../store/slicers/managerSlicer';
 import LevelList from './LevelList/LevelList';
 import Modal from '../Modal/Modal';
+import svgArrowLeft from '../../image/arrow-left.svg';
+import svgArrowRight from '../../image/arrow-right.svg';
+import { setIsCompleted, setLinkedColors } from '../../store/slicers/gameSlicer';
 
 
 export default function Manager(props) {
@@ -42,6 +45,11 @@ export default function Manager(props) {
       toggleLevelReduxLike({ index: currLevel.index }));
   }, [toggleLikeIsSuccess]);
 
+  useEffect(() => {
+    dispatch(setLinkedColors({}));
+    dispatch(setIsCompleted(false));
+  }, [currLevel]);
+
   const handleDelete = () => {
     setShowDelModal(false);
     if (isAuth && !deleteLevelIsLoading) {
@@ -56,7 +64,19 @@ export default function Manager(props) {
       return;
     }
     dispatch(setCurrLevel({ index: currLevel.index - 1 }));
-    dispatch(setLevels(levels.filter((_, index) => index !== currLevel.index)));
+    dispatch(setLevels(
+      levels.filter((_, index) => index !== currLevel.index)
+    ));
+  }
+
+  const handleLefArrow = () => {
+    currLevel.index > 0 &&
+      dispatch(setCurrLevel({ index: currLevel.index - 1 }));
+  }
+
+  const handleRightArrow = () => {
+    currLevel.index < levels.length - 1 &&
+      dispatch(setCurrLevel({ index: currLevel.index + 1 }));
   }
 
   return (<>
@@ -64,13 +84,19 @@ export default function Manager(props) {
       (<section className={styles.manager}>
         <div className={styles.header}>
           <p className={styles.headerItem}>
-            автор: {level?.author || ''}
+            <div style={{ userSelect: 'none' }}>
+              автор:
+            </div>
+            <b>
+              {level?.author || ''}
+            </b>
           </p>
           <p className={styles.headerItem}>
             <img alt="" onClick={handleLike}
-              className={`
-            ${styles.like} ${isAuth ? '' : styles.likeDisabled}
-          `}
+              className={`${[
+                styles.like,
+                isAuth ? styles.isAbleToLike : styles.likeDisabled
+              ].filter(Boolean).join(' ')}`}
               src={
                 isAuth ? (levels?.length > 0 &&
                   levels[currLevel.index]?.isAbleToLike ?
@@ -78,20 +104,18 @@ export default function Manager(props) {
                 ) : heartDisabledSVG
               }
             />
-            {level?.likes || ''}
+            <b>
+              {level?.likes || ''}
+            </b>
           </p>
         </div>
-
-        <section className={styles.gameContainer}>
-          <Game />
-        </section>
 
         {props?.isMyLevels && (<>
           <form className={styles.myLevelsform}
             onSubmit={(e) => e.preventDefault()}
           >
             <button disabled={true}>
-              TODO: редактировать
+              редактировать
             </button>
             <button onClick={() => setShowDelModal(true)}>
               удалить
@@ -104,7 +128,7 @@ export default function Manager(props) {
                   <h2 style={{ color: 'black' }}>
                     Внимание! Данное действие безвозвратное!
                   </h2>
-                  <button onClick={handleDelete}  >
+                  <button onClick={handleDelete}>
                     Подтвердить
                   </button>
                 </section>
@@ -112,6 +136,21 @@ export default function Manager(props) {
             }
           </form>
         </>)}
+
+        <section className={styles.gameContainer}>
+          <Game />
+        </section>
+
+        <div className={styles.arrowContainer}>
+          <img src={svgArrowLeft} alt='стрелка влево'
+            className={styles.svgArrow}
+            onClick={handleLefArrow}
+          />
+          <img src={svgArrowRight} alt='стрелка вправо'
+            className={styles.svgArrow}
+            onClick={handleRightArrow}
+          />
+        </div>
 
         <LevelList />
       </section>)}

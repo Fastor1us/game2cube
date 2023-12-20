@@ -16,7 +16,6 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  position: relative;
 }
 
 .gameContainer {
@@ -33,10 +32,65 @@
   /* border-radius: 50%; */
 }
 
+.isAbleToLike:hover {
+  cursor: pointer;
+  transform: scale(1.2);
+}
+
 .likeDisabled:hover {
   cursor: not-allowed;
 }
 
 .myLevelsform {
   position: absolute;
+}
+
+.arrowContainer {
+  pointer-events: none;
+  display: flex;
+  justify-content: space-between;
+  width: 110%;
+  position: absolute;
+  top: 15%;
+}
+
+.svgArrow {
+  /* outline: 1px solid red; */
+  pointer-events: auto;
+  width: 50px;
+  height: 300px;
+  user-select: none;
+}
+
+.svgArrow:hover {
+  transform: scale(1.2);
+}
+
+.svgArrow:active {
+  outline: 3px ridge rgb(192, 192, 192, 0.7);
+  transform: scale(1.1);
+}
+
+@media (min-width: 412px) and (max-width: 540px) {
+  .arrowContainer {
+    display: flex;
+    justify-content: space-around;
+    position: fixed;
+    top: 83%;
+  }
+
+  .svgArrow {
+    width: 50px;
+    height: 60px;
+  }
+}
+
+@media (min-width: 541px) and (max-width: 625px) {
+  .svgArrow {
+    width: 40px;
+  }
+
+  .svgArrow:hover {
+    width: 50px;
+  }
 }

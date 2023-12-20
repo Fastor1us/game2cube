@@ -1,6 +1,7 @@
 .container {
   position: relative;
-  width: 488px;
+  max-width: 488px;
+  width: 100%;
 }
 
 .list {
@@ -26,7 +27,7 @@
 }
 
 
-@media (min-width: 425px) and (max-width: 1023px) {
+@media (min-width: 412px) and (max-width: 1023px) {
   .list {
     display: grid;
     grid-template-columns: repeat(3, 1fr);

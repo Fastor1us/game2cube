@@ -10,3 +10,9 @@
 .active {
   text-decoration: underline;
 }
+
+@media (min-width: 412px) and (max-width: 1023px) {
+  .levelItem {
+    padding: 5px 14px;
+  }
+}

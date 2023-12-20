@@ -28,6 +28,7 @@ export default function CreatingLevelsPage() {
   const [gridSize, setGridSize] = useState(4);
   const [isCreatingMode, setIsCreatingMode] = useState(true);
   const [isMounted, setIsMounted] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
 
   const isAuth = useSelector(isAuthSelector);
   const fields = useSelector(gridDataSelector);
@@ -40,6 +41,7 @@ export default function CreatingLevelsPage() {
   };
 
   const handleReset = useCallback(() => {
+    setIsSaved(false);
     setIsCreatingMode(true);
     resetGrid();
   }, [gridSize]);
@@ -87,9 +89,9 @@ export default function CreatingLevelsPage() {
     gameAPI.useAddMutation();
 
   useEffect(() => {
-    // data && console.log('data', data);
+    isSuccess && setIsSaved(true);
     error && console.log('error', error);
-  }, [error, data, isLoading]);
+  }, [error, isSuccess]);
 
   const [, dropRef] = useDrop({
     accept: 'cell',
@@ -135,23 +137,32 @@ export default function CreatingLevelsPage() {
         })}
       </ul>
       <section style={{ display: 'flex', flexDirection: 'column' }}>
-        <GridSizeController {...{ gridSize, setGridSize }} />
-        <button onClick={handleReset}>
+        <GridSizeController
+          {...{ gridSize, setGridSize }}
+          disabled={isLoading || isError}
+        />
+        <button onClick={handleReset} disabled={isLoading || isError}>
           очистить поле
         </button>
-        <button onClick={() => setIsCreatingMode(!isCreatingMode)}>
+        <button disabled={isLoading || isError || isSaved}
+          onClick={() => setIsCreatingMode(!isCreatingMode)}
+        >
           включение/выключение режима прохождения уровня
         </button>
         <button onClick={handleSave}
           disabled={
-            !isAuth || !isCompleted || isLoading || isError || isSuccess
+            !isAuth || !isCompleted || isLoading || isError || isSaved
           }
         >
           кнопка сохранения уровня
         </button>
-        {isSuccess && !isCreatingMode &&
+        {isSaved &&
           <div style={{ color: 'green' }}>
             Уровень успешно сохранен
+          </div>}
+        {isError &&
+          <div style={{ color: 'red' }}>
+            Произошла ошибка. Перезагрузите страницу
           </div>}
       </section>
       <section className={styles.gameContainer}>
