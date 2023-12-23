@@ -83,14 +83,14 @@ export default function Manager(props) {
     {levels && levels.length > 0 &&
       (<section className={styles.manager}>
         <div className={styles.header}>
-          <p className={styles.headerItem}>
+          <div className={styles.headerItem}>
             <div style={{ userSelect: 'none' }}>
               автор:
             </div>
             <b>
               {level?.author || ''}
             </b>
-          </p>
+          </div>
           <p className={styles.headerItem}>
             <img alt="" onClick={handleLike}
               className={`${[
@@ -143,11 +143,19 @@ export default function Manager(props) {
 
         <div className={styles.arrowContainer}>
           <img src={svgArrowLeft} alt='стрелка влево'
-            className={styles.svgArrow}
+            className={`
+              ${styles.svgArrow}
+              ${currLevel.index > 0 ?
+                styles.enabledArrow : styles.disabledArrow}
+            `}
             onClick={handleLefArrow}
           />
           <img src={svgArrowRight} alt='стрелка вправо'
-            className={styles.svgArrow}
+            className={`
+              ${styles.svgArrow}
+              ${currLevel.index < levels.length - 1 ?
+                styles.enabledArrow : styles.disabledArrow}
+            `}
             onClick={handleRightArrow}
           />
         </div>

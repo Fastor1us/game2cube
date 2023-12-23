@@ -71,10 +71,12 @@ const getUser = async (...args) => {
   return rows;
 };
 
-const updateUser = async (token, username, password, avatar) => {
+const updateUser = async (
+  token, username, password, avatar, last_seen
+) => {
   await pool.query(
-    'CALL game2cube.update_user($1, $2, $3, $4)',
-    [token, username, password, avatar]);
+    'CALL game2cube.update_user($1, $2, $3, $4, $5)',
+    [token, username, password, avatar, last_seen]);
 }
 
 const deleteUser = async (token) => {
@@ -149,10 +151,12 @@ const createRegistration = async (username, email, password, code) => {
 //     };
 //     return await pool.query(insertQuery)
 //   }
-const createUser = async (username, email, password, token, avatar) => {
+const createUser = async (
+  username, email, password, token, avatar, register_date, last_seen
+) => {
   return await pool.query(
-    'CALL game2cube.create_user($1, $2, $3, $4, $5)',
-    [username, email, password, token, avatar]);
+    'CALL game2cube.create_user($1, $2, $3, $4, $5, $6, $7)',
+    [username, email, password, token, avatar, register_date, last_seen]);
 };
 
 const readRecovery = async (email) => {

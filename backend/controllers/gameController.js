@@ -1,9 +1,19 @@
 const gameService = require('../services/gameService');
+const userService = require('../services/userService');
 
 
 exports.add = async (req, res) => {
   const { token, data } = req.body;
   try {
+    // получаем пользователя по токену
+    const user = await userService.getUser(token);
+    const levels = await gameService.getUserLevels(user[0].username, token);
+    if (levels.length === 10) {
+      res.status(409).json({
+        error: 'Привышен допустимый лимит кол-ва уровней для пользователя'
+      });
+      return;
+    }
     // делаем запись об уровне в levels
     const id = await gameService.createLevel(token, data.size);
     // делаем запись игровых ячеек в cells

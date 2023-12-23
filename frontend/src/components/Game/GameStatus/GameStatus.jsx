@@ -1,15 +1,17 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { isCompletedSelector } from '../../../store/selectors/gameSelectors';
+import styles from './GameStatus.module.css';
 
 
 export default function GameStatus() {
   const isCompleted = useSelector(isCompletedSelector);
 
-  return (
-    <>
-      {!isCompleted && <div>Играем...</div>}
-      {isCompleted && <div>Уровень пройден</div>}
-    </>
-  );
+  return (<> {isCompleted &&
+    <section className={styles.container}>
+      <h2>
+        Уровень пройден!
+      </h2>
+    </section>
+  }</>);
 }

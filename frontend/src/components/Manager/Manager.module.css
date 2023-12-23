@@ -62,14 +62,19 @@
   user-select: none;
 }
 
-.svgArrow:hover {
+.enabledArrow:hover {
   transform: scale(1.2);
 }
 
-.svgArrow:active {
+.enabledArrow:active {
   outline: 3px ridge rgb(192, 192, 192, 0.7);
   transform: scale(1.1);
 }
+
+.disabledArrow {
+  opacity: 0.5;
+}
+
 
 @media (min-width: 412px) and (max-width: 540px) {
   .arrowContainer {
@@ -87,10 +92,10 @@
 
 @media (min-width: 541px) and (max-width: 625px) {
   .svgArrow {
-    width: 40px;
+    width: 45px;
   }
 
-  .svgArrow:hover {
-    width: 50px;
+  .enabledArrow:hover {
+    width: 52px;
   }
 }

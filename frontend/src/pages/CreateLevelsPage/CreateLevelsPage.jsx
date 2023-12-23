@@ -162,7 +162,8 @@ export default function CreatingLevelsPage() {
           </div>}
         {isError &&
           <div style={{ color: 'red' }}>
-            Произошла ошибка. Перезагрузите страницу
+            {`${error?.data?.error ||
+              'Произошла ошибка. Перезагрузите страницу'}`}
           </div>}
       </section>
       <section className={styles.gameContainer}>
@@ -190,6 +191,10 @@ export default function CreatingLevelsPage() {
         }
 
         {!isCreatingMode && <Game />}
+        {!isCreatingMode && !isCompleted ?
+          <div>Режим прохождения</div> :
+          <div>Режим расстановки</div>
+        }
       </section>
     </section >
   );

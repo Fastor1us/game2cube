@@ -17,6 +17,10 @@ const DeleteModal = (props) => {
     }
   }, []);
 
+  useEffect(() => {
+    timer === 0 && clearInterval(ref.current);
+  }, [timer]);
+
   return (
     <Modal setVisible={props.setVisible} title={props.title}>
       <section style={{ textAlign: 'center' }}>

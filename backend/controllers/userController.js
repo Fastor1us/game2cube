@@ -8,14 +8,14 @@ exports.register = async (req, res) => {
   try {
     // 1) что email не занят (таблица users)
     const emailExists = await userService.readUser('email', email);
-    if (emailExists.length > 0) {
+    if (emailExists[0].id?.length > 0) {
       // 409 - conflict , 422 - Unprocessable Entity , 424 - Failed Dependency
       res.status(409).json({ error: 'На данную почту уже зарегистрирован аккаунт' });
       return;
     }
     // 2) что имя пользователя не занято (таблица users)
     const usernameExists = await userService.readUser('username', username);
-    if (usernameExists.length > 0) {
+    if (usernameExists[0].id?.length > 0) {
       res.status(409).json({ error: 'Данное имя пользователя уже занято' });
       return;
     }
@@ -46,15 +46,15 @@ exports.registrationConfirm = async (req, res) => {
     // перед проверкой кода подтверждения проверяем, что
     // 1) что email не занят (таблица users)
     const emailExists = await userService.readUser('email', email);
-    if (emailExists.length > 0) {
+    if (emailExists[0].id?.length > 0) {
       res.status(409).json({
-        error: 'На указанную почту уже зарегистрирован аккаунт'
+        error: 'На данную почту уже зарегистрирован аккаунт'
       });
       return;
     }
     // 2) что имя пользователя не занято (таблица users)
     const usernameExists = await userService.readUser('username', username);
-    if (usernameExists.length > 0) {
+    if (usernameExists[0].id?.length > 0) {
       res.status(409).json({ error: 'Имя пользователя уже занято' });
       return;
     }
@@ -65,7 +65,10 @@ exports.registrationConfirm = async (req, res) => {
       const { nanoid } = require('@reduxjs/toolkit');
       const token = nanoid();
       await userService.deleteRegistration(email);
-      await userService.createUser(username, email, password, token, avatar);
+      const currDate = new Date();
+      await userService.createUser(
+        username, email, password, token, avatar, currDate, currDate
+      );
       res.status(200).json({ username, email, token, avatar });
     } else {
       // возвращаем сообщение о том, что код не подходит
@@ -84,6 +87,7 @@ exports.login = async (req, res) => {
   try {
     const user = await userService.getUser(email, password);
     if (user.length > 0) {
+      await userService.updateUser(user[0].token, null, null, null, new Date());
       res.status(200).json({
         username: user[0].username,
         email: user[0].email,
@@ -105,6 +109,7 @@ exports.authentication = async (req, res) => {
   try {
     const user = await userService.getUser(token);
     if (user.length > 0) {
+      await userService.updateUser(token, null, null, null, new Date());
       res.status(200).json({
         username: user[0].username,
         email: user[0].email,
@@ -126,7 +131,7 @@ exports.change = async (req, res) => {
     // вызывая процедуру передаём null для неопределённых параметров
     // - необходима передача null вместо udnefined 
     await userService.updateUser(
-      token, username || null, password || null, avatar || null);
+      token, username || null, password || null, avatar || null, null);
     res.status(200).json({
       ...(username && { username }),
       ...(avatar && { avatar }),

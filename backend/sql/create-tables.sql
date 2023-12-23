@@ -12,7 +12,9 @@ CREATE TABLE game2cube.users (
   email varchar(25) UNIQUE,
   password varchar(25),
   token varchar(25),
-  avatar varchar(25)
+  avatar varchar(25),
+  register_date timestamp,
+  last_seen timestamp
 );
 
 CREATE TABLE game2cube.recovery (
