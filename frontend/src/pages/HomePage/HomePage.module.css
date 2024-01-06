@@ -14,7 +14,7 @@
 
 .listItem {
   padding: 5px;
-  border: 1px inset rgba(143, 16, 16, 0.555);
+  border: 1px inset rgba(143, 16, 16, 0.5);
 }
 
 .listItem:hover {
@@ -45,4 +45,9 @@
   .listItem {
     padding: 10px 5px;
   }
+}
+
+.searchForm {
+  display: flex;
+
 }

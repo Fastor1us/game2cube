@@ -43,6 +43,7 @@
 
 .myLevelsform {
   position: absolute;
+  top: -4px;
 }
 
 .arrowContainer {

@@ -5,21 +5,18 @@ import { userAPI } from '../../utils/api/user-api';
 import { useDispatch } from 'react-redux';
 import { setUserData } from '../../store/slicers/userSlicer';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
+import { EmailInput, PasswordInput } from '../../utils/HOC/inputs';
+import CustomButton from '../../components/CustomButton/CustomButton';
 
 
 export default function LoginPage() {
   const dispatch = useDispatch();
   const location = useLocation();
   const navigate = useNavigate();
-  const focusRef = useRef(null);
   const { values, handleChange } = useForm({
     email: 'test2@test.ru',
     password: '12345',
   });
-
-  useEffect(() => {
-    focusRef.current.focus();
-  }, []);
 
   const [login, { error, data, isLoading }] =
     userAPI.useLoginMutation();
@@ -47,24 +44,25 @@ export default function LoginPage() {
       Форма входа
     </h2>
     <form className={styles.registerForm} onSubmit={onSubmit}>
-      <label htmlFor="email">
-        Email:
-      </label>
-      <input type="email" id="email" name='email' ref={focusRef}
-        onChange={handleChange} value={values.email} />
+      <label htmlFor="email"> Email: </label>
+      <EmailInput
+        onChange={handleChange}
+        value={values.email}
+        shouldSetFocusOnLoad={true}
+      />
 
-      <label htmlFor="password">
-        Пароль:
-      </label>
-      <input type="password" id="password" name='password'
-        onChange={handleChange} value={values.password} />
+      <label htmlFor="password"> Пароль: </label>
+      <PasswordInput
+        onChange={handleChange}
+        value={values.password}
+      />
 
-      <button
-        className={styles.registerButton}
+      <CustomButton
+        extraStyles={styles.registerButton}
         type="submit" disabled={isLoading}
       >
         Войти
-      </button>
+      </CustomButton>
     </form>
     {error && (
       <p>

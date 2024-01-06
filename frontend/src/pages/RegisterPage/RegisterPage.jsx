@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useForm } from '../../utils/hooks/use-form';
 import { userAPI } from '../../utils/api/user-api';
 import styles from './RegisterPage.module.css';
@@ -9,14 +9,14 @@ import AvatarList from '../../components/AvatarList/AvatarList';
 import Modal from '../../components/Modal/Modal';
 import { BACKEND_URL } from '../../utils/constants';
 import { defaultAvatar } from '../../utils/constants';
+import { EmailInput, PasswordInput, TextInput } from '../../utils/HOC/inputs';
+import CustomButton from '../../components/CustomButton/CustomButton';
 
 
 export default function RegisterPage() {
   const dispatch = useDispatch();
   const location = useLocation();
   const navigate = useNavigate();
-  const focusRef = useRef(null);
-  const focusRefConfirm = useRef(null);
   const [selectedAvatar, setSelectedAvatar] = useState(null);
   const [showAvaModal, setShowAvaModal] = useState(false);
   const { values, handleChange } = useForm({
@@ -26,10 +26,6 @@ export default function RegisterPage() {
     passwordConfirmation: '12345',
     confirmationCode: '',
   });
-
-  useEffect(() => {
-    focusRef.current.focus();
-  }, []);
 
   const [register, { error: regError, data: regData,
     isLoading: regIsLoading, isSuccess: regIsSuccess,
@@ -43,11 +39,8 @@ export default function RegisterPage() {
     });
   }, [values]);
   useEffect(() => {
-    // error
     regError && console.log('error data:', regError.data);
-    // устанавливаем фокус на инпут подтверждения
-    regIsSuccess && focusRefConfirm.current.focus();
-  }, [regData, regIsSuccess, regIsError]);
+  }, [regData, regIsError]);
 
   const [confirmRegistration, { error: confirmError,
     data: confirmData, isLoading: confirmIsLoading,
@@ -98,7 +91,7 @@ export default function RegisterPage() {
         />
       ) : (
         <img src={`${BACKEND_URL}/user/avatars/${defaultAvatar}`}
-          alt="дефолтная аватарка" className={styles.avatar}
+          alt='дефолтная аватарка' className={styles.avatar}
           onClick={() => setShowAvaModal(true)}
         />
       )}
@@ -111,37 +104,44 @@ export default function RegisterPage() {
       )}
 
       <form className={styles.registerForm} onSubmit={onRegisterSubmit}>
-        <label htmlFor="username">
-          Никнейм:
-        </label>
-        <input type="text" id="username" name='username' ref={focusRef}
-          onChange={handleChange} value={values.username} />
+        <label htmlFor='username'> Никнейм: </label>
+        <TextInput
+          id='username'
+          name='username'
+          onChange={handleChange}
+          value={values.username}
+          shouldSetFocusOnLoad={true}
+        />
 
-        <label htmlFor="email">
-          Email:
-        </label>
-        <input type="email" id="email" name='email'
-          onChange={handleChange} value={values.email} />
+        <label htmlFor='email'> Email: </label>
+        <EmailInput
+          onChange={handleChange}
+          value={values.email}
+        />
 
-        <label htmlFor="password">
-          Пароль:
-        </label>
-        <input type="password" id="password" name='password'
-          onChange={handleChange} value={values.password} />
+        <label htmlFor='password'> Пароль: </label>
+        <PasswordInput
+          onChange={handleChange}
+          value={values.password}
+        />
 
-        <label htmlFor="passwordConfirmation">
+        <label htmlFor='passwordConfirmation'>
           Повторите пароль:
         </label>
-        <input type="password" id="passwordConfirmation"
-          name='passwordConfirmation' onChange={handleChange}
-          value={values.passwordConfirmation} />
+        <PasswordInput
+          id='passwordConfirmation'
+          name='passwordConfirmation'
+          onChange={handleChange}
+          value={values.passwordConfirmation}
+        />
 
-        <button type="submit"
-          className={styles.registerButton}
+        <CustomButton
+          type='submit'
+          extraStyles={styles.registerButton}
           disabled={regIsLoading}
         >
           Зарегистрироваться
-        </button>
+        </CustomButton>
       </form>
     </>)}
     {regIsError && (
@@ -158,19 +158,21 @@ export default function RegisterPage() {
         className={styles.registerForm}
         onSubmit={onConfirmationSubmit}
       >
-        <label htmlFor="confirmationCode">
-          Код из письма:
-        </label>
-        <input type="text" id="confirmationCode"
-          name='confirmationCode' onChange={handleChange}
+        <label htmlFor='confirmationCode'> Код из письма: </label>
+        <TextInput
+          id='confirmationCode'
+          name='confirmationCode'
+          onChange={handleChange}
           value={values.confirmationCode}
-          ref={focusRefConfirm} />
-        <button type="submit"
-          className={styles.registerButton}
+          shouldSetFocusOnLoad={true}
+        />
+        <CustomButton
+          type='submit'
+          extraStyles={styles.registerButton}
           disabled={confirmIsLoading}
         >
           Отправить код
-        </button>
+        </CustomButton>
       </form>
       {confirmIsError && (
         <p>

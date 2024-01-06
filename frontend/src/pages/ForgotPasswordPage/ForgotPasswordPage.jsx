@@ -1,14 +1,15 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import styles from './ForgotPasswordPage.module.css';
 import { useForm } from '../../utils/hooks/use-form';
 import { userAPI } from '../../utils/api/user-api';
+import { EmailInput, PasswordInput, TextInput } from '../../utils/HOC/inputs';
+import CustomButton from '../../components/CustomButton/CustomButton';
 
 
 export default function ForgotPasswordPage() {
   const location = useLocation();
   const navigate = useNavigate();
-  const focusRefCode = useRef(null);
   const [token, setToken] = useState(null);
   const [isAttemptLimit, setIsAttemptLimit] = useState(false);
 
@@ -32,10 +33,6 @@ export default function ForgotPasswordPage() {
   const [change, { error: changeError, data: changeData,
     isLoading: changeIsLoading, isSuccess: changeIsSuccess }] =
     userAPI.useChangeMutation();
-
-  useEffect(() => {
-    recoveryEmailIsSuccess && focusRefCode.current.focus();
-  }, [recoveryEmailError, recoveryEmailIsSuccess]);
 
   useEffect(() => {
     if (recoveryCodeError) {
@@ -81,18 +78,19 @@ export default function ForgotPasswordPage() {
           Забыли пароль? Введите email, на который вы регистрировались
         </p>
         <form className={styles.form} onSubmit={onEmailSubmit}>
-          <label htmlFor="email">
-            Email:
-          </label>
-          <input type="email" id="email" name='email'
-            value={values.email} onChange={handleChange}
+          <label htmlFor='email'> Email: </label>
+          <EmailInput
+            onChange={handleChange}
+            value={values.email}
+            shouldSetFocusOnLoad={true}
           />
-          <button
-            className={styles.btn}
-            type='submit' disabled={recoveryEmailIsLoading}
+          <CustomButton
+            type='submit'
+            extraStyles={styles.btn}
+            disabled={recoveryEmailIsLoading}
           >
             Отправить код на почту
-          </button>
+          </CustomButton>
         </form>
       </>)}
       {recoveryEmailError && (
@@ -105,25 +103,29 @@ export default function ForgotPasswordPage() {
           Введите код из письма
         </p>
         <form className={styles.form} onSubmit={onCodeSubmit}>
-          <label htmlFor="code">
-            Код из письма:
-          </label>
-          <input type="text" id="code"
-            name='code' onChange={handleChange}
+          <label htmlFor='code'> Код из письма: </label>
+          <TextInput
+            minLength={6}
+            maxLength={6}
+            id='code'
+            name='code'
+            onChange={handleChange}
             value={values.code}
-            ref={focusRefCode} />
-          <button type="submit"
-            className={styles.registerButton}
+            shouldSetFocusOnLoad={true}
+          />
+          <CustomButton
+            type='submit'
+            extraStyles={styles.registerButton}
             disabled={recoveryCodeIsLoading || isAttemptLimit}
           >
             Отправить код
-          </button>
+          </CustomButton>
           {isAttemptLimit &&
-            <button type='button'
-              style={{ width: '100%' }} onClick={() => navigate('/')}
+            <CustomButton
+              onClick={() => navigate('/')}
             >
               На главную
-            </button>
+            </CustomButton>
           }
         </form>
         {recoveryCodeError && (
@@ -137,19 +139,19 @@ export default function ForgotPasswordPage() {
           Введите новый пароль
         </p>
         <form className={styles.form} onSubmit={onPasswordSubmit}>
-          <label htmlFor="password">
-            Пароль:
-          </label>
-          <input type="password" id="password"
-            name='password' onChange={handleChange}
+          <label htmlFor='password'> Пароль: </label>
+          <PasswordInput
+            onChange={handleChange}
             value={values.password}
-            ref={focusRefCode} />
-          <button type="submit"
-            className={styles.registerButton}
+            shouldSetFocusOnLoad={true}
+          />
+          <CustomButton
+            type='submit'
+            extraStyles={styles.registerButton}
             disabled={changeIsLoading}
           >
             Сохранить
-          </button>
+          </CustomButton>
         </form>
         {changeError && (
           <p>

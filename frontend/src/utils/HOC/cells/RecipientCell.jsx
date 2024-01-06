@@ -1,9 +1,9 @@
 import React from 'react';
 import { useDrop } from 'react-dnd';
-import Cell from '../../components/Game/Cell/Cell';
+import Cell from '../../../components/Game/Cell/Cell';
 import { useDispatch } from 'react-redux';
-import { setCellState } from '../../store/slicers/gameSlicer';
-import { getGameState, getGridData } from '../utils';
+import { setCellState } from '../../../store/slicers/gameSlicer';
+import { getGameState, getGridData } from '../../utils';
 
 
 export default function RecipientCell(props) {

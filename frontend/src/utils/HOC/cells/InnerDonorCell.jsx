@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
-import Cell from '../../components/Game/Cell/Cell';
+import Cell from '../../../components/Game/Cell/Cell';
 
 //TODO
 // доабвить возможность менять цветные ячейки местами

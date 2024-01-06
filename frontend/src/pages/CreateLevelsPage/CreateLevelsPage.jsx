@@ -12,14 +12,15 @@ import {
   gridDataSelector,
   isCompletedSelector
 } from '../../store/selectors/gameSelectors.js';
-import OuterDonorCell from '../../utils/HOC/OuterDonorCell.jsx';
-import InnerDonorCell from '../../utils/HOC/InnerDonorCell.jsx';
-import RecipientCell from '../../utils/HOC/RecipientCell.jsx';
+import OuterDonorCell from '../../utils/HOC/cells/OuterDonorCell.jsx';
+import InnerDonorCell from '../../utils/HOC/cells/InnerDonorCell.jsx';
+import RecipientCell from '../../utils/HOC/cells/RecipientCell.jsx';
 import styles from './CreateLevelsPage.module.css';
 import { Link, useLocation } from 'react-router-dom';
 import { useDrop } from 'react-dnd';
 import { cellPattern } from '../../utils/constants.js';
 import { gameAPI } from '../../utils/api/game-api.js';
+import CustomButton from '../../components/CustomButton/CustomButton.jsx';
 
 
 export default function CreatingLevelsPage() {
@@ -111,12 +112,12 @@ export default function CreatingLevelsPage() {
 
   return (
     <section className={styles.container} ref={dropRef}>
-      <h1>Страница создания уровней</h1>
+      <h1 style={{ marginBottom: 0 }}>Страница создания уровней</h1>
       {!isAuth && (<>
-        <p>
+        <p className={styles.info} style={{ margin: 0 }}>
           Что бы сохранить уровень вы должны быть авторизированны.
         </p>
-        <p>
+        <p className={styles.info} style={{ margin: '0 0 5px' }}>
           <Link to='/login' state={{ from: location.pathname }}>
             Войти
           </Link>
@@ -124,38 +125,32 @@ export default function CreatingLevelsPage() {
       </>)
       }
       {
-        isAuth && <p>
-          Для сохранения уровеня, после его создания, уровень необходимо пройти,
-          тогда кнопка "сохранить" станет активна
+        isAuth && <p className={styles.info}>
+          Что бы сохраненить уровнь, сперва необходимо его пройти,
+          затем кнопка "сохранить" станет активна
         </p>
       }
-      <ul className={styles.creatingCellsList}>
-        {new Array(gridSize).fill(0).map((_, index) => {
-          return <OuterDonorCell size={gridSize}
-            key={index} color={index + 1} sequenceNumber={1}
-            {...{ isCreatingMode, isCellOutsideGame: true }} />
-        })}
-      </ul>
-      <section style={{ display: 'flex', flexDirection: 'column' }}>
+
+      <section className={styles.controlContainer}>
         <GridSizeController
           {...{ gridSize, setGridSize }}
           disabled={isLoading || isError}
         />
-        <button onClick={handleReset} disabled={isLoading || isError}>
+        <CustomButton onClick={handleReset} disabled={isLoading || isError}>
           очистить поле
-        </button>
-        <button disabled={isLoading || isError || isSaved}
+        </CustomButton>
+        <CustomButton
+          disabled={isLoading || isError || isSaved}
           onClick={() => setIsCreatingMode(!isCreatingMode)}
         >
           включение/выключение режима прохождения уровня
-        </button>
-        <button onClick={handleSave}
-          disabled={
-            !isAuth || !isCompleted || isLoading || isError || isSaved
-          }
+        </CustomButton>
+        <CustomButton
+          onClick={handleSave}
+          disabled={!isAuth || !isCompleted || isLoading || isError || isSaved}
         >
           кнопка сохранения уровня
-        </button>
+        </CustomButton>
         {isSaved &&
           <div style={{ color: 'green' }}>
             Уровень успешно сохранен
@@ -166,36 +161,48 @@ export default function CreatingLevelsPage() {
               'Произошла ошибка. Перезагрузите страницу'}`}
           </div>}
       </section>
-      <section className={styles.gameContainer}>
-        {
-          isCreatingMode &&
-          <ul
-            className={`${[
-              styles.gameField,
-              styles[`gameGrid${fields.length}`],
-            ].join(' ')}`}
-          >
-            {fields.map((_, row) => {
-              return _.map((item, col) => {
-                const Cell = item.sequenceNumber ?
-                  InnerDonorCell : RecipientCell;
-                return <Cell
-                  {...item} size={fields.length}
-                  key={row + '' + col}
-                  address={{ row, col }}
-                  isCreatingMode={true}
-                />
-              });
-            })}
-          </ul>
-        }
+      <div className={styles.gridContainer}>
+        <ul className={styles.creatingCellsList}>
+          {new Array(gridSize).fill(0).map((_, index) => {
+            return <OuterDonorCell size={gridSize}
+              key={index} color={index + 1} sequenceNumber={1}
+              {...{ isCreatingMode, isCellOutsideGame: true }} />
+          })}
+        </ul>
 
-        {!isCreatingMode && <Game />}
-        {!isCreatingMode && !isCompleted ?
-          <div>Режим прохождения</div> :
-          <div>Режим расстановки</div>
-        }
-      </section>
+        <div className={styles.break}></div>
+
+        <section className={styles.gameContainer}>
+          {
+            isCreatingMode &&
+            <ul
+              className={`${[
+                styles.gameField,
+                styles[`gameGrid${fields.length}`],
+              ].join(' ')}`}
+            >
+              {fields.map((_, row) => {
+                return _.map((item, col) => {
+                  const Cell = item.sequenceNumber ?
+                    InnerDonorCell : RecipientCell;
+                  return <Cell
+                    {...item} size={fields.length}
+                    key={row + '' + col}
+                    address={{ row, col }}
+                    isCreatingMode={true}
+                  />
+                });
+              })}
+            </ul>
+          }
+
+          {!isCreatingMode && <Game />}
+          {!isCreatingMode && !isCompleted ?
+            <div>Режим прохождения</div> :
+            <div>Режим расстановки</div>
+          }
+        </section>
+      </div>
     </section >
   );
 }

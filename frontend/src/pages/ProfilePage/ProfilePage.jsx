@@ -10,6 +10,8 @@ import Modal from '../../components/Modal/Modal';
 import AvatarList from '../../components/AvatarList/AvatarList';
 import { BACKEND_URL } from '../../utils/constants';
 import DeleteModal from '../../utils/HOC/DeleteModal';
+import { EmailInput, PasswordInput, TextInput } from '../../utils/HOC/inputs';
+import CustomButton from '../../components/CustomButton/CustomButton';
 
 
 export default function ProfilePage() {
@@ -124,33 +126,36 @@ export default function ProfilePage() {
       )}
 
       <form className={styles.registerForm} onSubmit={onSubmit}>
-        <label htmlFor="username">
-          Никнейм:
-        </label>
-        <input type="text" id="username" name='username'
-          onChange={handleChange} value={values.username} />
+        <label htmlFor="username"> Никнейм: </label>
+        <TextInput
+          id="username"
+          name='username'
+          onChange={handleChange}
+          value={values.username}
+        />
 
-        <label htmlFor="email">
-          Email:
-        </label>
-        <input type="email" id="email" name='email'
-          onChange={handleChange} value={values.email}
-          disabled={true} />
+        <label htmlFor="email"> Email: </label>
+        <EmailInput
+          value={values.email}
+          disabled={true}
+        />
 
-        <label htmlFor="password">
-          Пароль:
-        </label>
-        <input type="password" id="password" name='password'
-          onChange={handleChange} value={values.password} />
+        <label htmlFor="password"> Пароль: </label>
+        <PasswordInput
+          onChange={handleChange}
+          value={values.password}
+          required={false}
+        />
 
-        <button type="submit"
-          // className={styles.registerButton}
+        <CustomButton
+          type="submit"
+          extraStyles={styles.registerButton}
           disabled={
             (!isInputChanged || changeIsLoading) && selectedAvatar === avatar
           }
         >
           Сохранить
-        </button>
+        </CustomButton>
         {changeError && (
           <div style={{ color: 'red' }}>
             Ошибка: {changeError.data.error}
@@ -163,11 +168,13 @@ export default function ProfilePage() {
               Данные успешно обновлены
             </div>
           )}
-        <button type="button" className={styles.deleteButton}
-          onClick={handleDelete} disabled={deleteIsLoading}
+        <CustomButton
+          extraStyles={styles.deleteButton}
+          onClick={handleDelete}
+          disabled={deleteIsLoading}
         >
           Удалить Профиль
-        </button>
+        </CustomButton>
         {showDelModal && (
           <DeleteModal setVisible={setShowDelModal} title='Удалить Профиль?'
             onHandleClick={

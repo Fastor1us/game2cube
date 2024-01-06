@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useDrag } from 'react-dnd';
-import Cell from '../../components/Game/Cell/Cell';
+import Cell from '../../../components/Game/Cell/Cell';
 import { useSelector } from 'react-redux';
-import { gridDataSelector } from '../../store/selectors/gameSelectors';
+import { gridDataSelector } from '../../../store/selectors/gameSelectors';
 
 
 export default function OuterDonorCell(props) {

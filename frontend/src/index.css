@@ -1,9 +1,8 @@
 :root {
   --cell-size: 70px;
   --cell-number-size: 50px;
-  /* --background-app-color: PapayaWhip; */
   --background-header-color: DarkSlateGrey;
-  /* --main-text-color: white; */
+  --form-width: 250px;
 }
 
 @font-face {
@@ -22,16 +21,4 @@ body {
   display: flex;
   flex-direction: column;
   height: 100vh;
-}
-
-@media (min-width: 768px) and (max-width: 1023px) {
-  /* Стили для мобильных устройств */
-}
-
-@media (min-width: 1024) and (max-width: 1439px) {
-  /* Стили для планшетов */
-}
-
-@media (min-width: 1440) {
-  /* Стили для десктопов */
 }

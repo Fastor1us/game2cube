@@ -7,4 +7,6 @@
   background-color: var(--background-header-color);
 
   color: white;
+
+  user-select: none;
 }

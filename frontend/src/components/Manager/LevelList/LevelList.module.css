@@ -5,14 +5,42 @@
 
 .levelItem {
   padding: 5px 20px;
+  border: 1px inset rgba(143, 16, 16, 0.5);
+  user-select: none;
+}
+
+.levelItem:hover {
+  cursor: pointer;
+  outline: 2px solid rgb(0, 0, 0, 0.7);
 }
 
 .active {
-  text-decoration: underline;
+  font-weight: bold;
+  background-color: rgb(115, 115, 115);
+  color: white;
 }
 
 @media (min-width: 412px) and (max-width: 1023px) {
   .levelItem {
     padding: 5px 14px;
   }
+}
+
+
+
+.list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  border: 1px outset rgb(151, 91, 201);
+}
+
+.listItem {
+  padding: 5px;
+  border: 1px inset rgba(143, 16, 16, 0.555);
+}
+
+.listItem:hover {
+  cursor: pointer;
+  outline: 2px solid rgb(0, 0, 0, 0.7);
 }

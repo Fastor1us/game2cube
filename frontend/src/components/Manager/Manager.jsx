@@ -14,6 +14,7 @@ import Modal from '../Modal/Modal';
 import svgArrowLeft from '../../image/arrow-left.svg';
 import svgArrowRight from '../../image/arrow-right.svg';
 import { setIsCompleted, setLinkedColors } from '../../store/slicers/gameSlicer';
+import CustomButton from '../CustomButton/CustomButton';
 
 
 export default function Manager(props) {
@@ -97,6 +98,7 @@ export default function Manager(props) {
                 styles.like,
                 isAuth ? styles.isAbleToLike : styles.likeDisabled
               ].filter(Boolean).join(' ')}`}
+              style={{ userSelect: 'none' }}
               src={
                 isAuth ? (levels?.length > 0 &&
                   levels[currLevel.index]?.isAbleToLike ?
@@ -114,12 +116,9 @@ export default function Manager(props) {
           <form className={styles.myLevelsform}
             onSubmit={(e) => e.preventDefault()}
           >
-            <button disabled={true}>
-              редактировать
-            </button>
-            <button onClick={() => setShowDelModal(true)}>
-              удалить
-            </button>
+            <CustomButton onClick={() => setShowDelModal(true)}>
+              удалить уровень
+            </CustomButton>
             {showDelModal &&
               <Modal useTimer={false} title='Удалить уровень?'
                 setVisible={setShowDelModal}
@@ -128,9 +127,12 @@ export default function Manager(props) {
                   <h2 style={{ color: 'black' }}>
                     Внимание! Данное действие безвозвратное!
                   </h2>
-                  <button onClick={handleDelete}>
+                  <CustomButton
+                    onClick={handleDelete}
+                    style={{ width: '250px', margin: '10px 0 12px' }}
+                  >
                     Подтвердить
-                  </button>
+                  </CustomButton>
                 </section>
               </Modal>
             }

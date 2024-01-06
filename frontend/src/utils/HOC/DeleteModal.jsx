@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Modal from '../../components/Modal/Modal';
+import CustomButton from '../../components/CustomButton/CustomButton';
 
 
 const DeleteModal = (props) => {
@@ -27,12 +28,13 @@ const DeleteModal = (props) => {
         <h2 style={{ color: 'black' }}>
           Внимание! Данное действие безвозвратное!
         </h2>
-        <button disabled={props.useTimer && timer !== 0}
+        <CustomButton disabled={props.useTimer && timer !== 0}
           onClick={props.onHandleClick}
+          style={{ width: '250px', margin: '10px 0 12px' }}
         >
           {'Подтвердить' + (props.useTimer ?
             ((timer !== 0 ? ` (${timer})` : '')) : '')}
-        </button>
+        </CustomButton>
       </section>
     </Modal>
   );

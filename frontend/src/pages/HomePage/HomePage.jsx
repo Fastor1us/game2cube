@@ -7,6 +7,8 @@ import Manager from '../../components/Manager/Manager.jsx';
 import styles from './HomePage.module.css';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { setGridData } from '../../store/slicers/gameSlicer.js';
+import CustomButton from '../../components/CustomButton/CustomButton.jsx';
+import { TextInput } from '../../utils/HOC/inputs/index.jsx';
 
 
 export default function HomePage() {
@@ -102,9 +104,9 @@ export default function HomePage() {
         {currTab && (currTab?.charAt(0).toUpperCase() + currTab?.slice(1))}
       </h1>
       {isSearch && (
-        <form>
-          <input type="text" />
-          <button>Поиск</button>
+        <form className={styles.searchForm}>
+          <TextInput />
+          <CustomButton>Поиск</CustomButton>
         </form>
       )}
       {!isAboutProject && !isRules && <Manager isMyLevels={isMyLevels} />}
