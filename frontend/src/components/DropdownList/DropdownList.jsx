@@ -4,13 +4,13 @@ import styles from './DropdownList.module.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { resetUserData } from '../../store/slicers/userSlicer';
 import { avatarSelector, isAuthSelector } from '../../store/selectors/userSelectors';
-import svgAvatar from '../../image/avatar.svg';
-import svgAvatarActive from '../../image/avatar-active.svg';
-import svgArrowDown from '../../image/arrow-down.svg';
-import svgArrowDownActive from '../../image/arrow-down-active.svg';
-import svgLogin from '../../image/login.svg';
-import svgLogout from '../../image/logout.svg';
-import svgProfile from '../../image/profile.svg';
+import svgAvatar from '../../images/dropdown-list/avatar.svg';
+import svgAvatarActive from '../../images/dropdown-list/avatar-active.svg';
+import svgArrowDown from '../../images/dropdown-list/arrow-down.svg';
+import svgArrowDownActive from '../../images/dropdown-list/arrow-down-active.svg';
+import svgLogin from '../../images/dropdown-list/login.svg';
+import svgLogout from '../../images/dropdown-list/logout.svg';
+import svgProfile from '../../images/dropdown-list/profile.svg';
 import { BACKEND_URL } from '../../utils/constants';
 
 

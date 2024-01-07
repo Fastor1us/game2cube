@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavLink, Link } from 'react-router-dom';
 import DropdownList from '../DropdownList/DropdownList';
-import svgLogo from '../../image/logo.svg';
+import svgLogo from '../../images/logo.svg';
 import styles from './Header.module.css';
 
 

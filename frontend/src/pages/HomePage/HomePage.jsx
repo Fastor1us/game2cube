@@ -9,6 +9,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { setGridData } from '../../store/slicers/gameSlicer.js';
 import CustomButton from '../../components/CustomButton/CustomButton.jsx';
 import { TextInput } from '../../utils/HOC/inputs/index.jsx';
+import GameRules from '../../components/GameRules/GameRules.jsx';
 
 
 export default function HomePage() {
@@ -110,8 +111,8 @@ export default function HomePage() {
         </form>
       )}
       {!isAboutProject && !isRules && <Manager isMyLevels={isMyLevels} />}
+      {isRules && <GameRules />}
       {isAboutProject && <p>О проекте</p>}
-      {isRules && <p>Правила игры</p>}
     </section>
   );
 }

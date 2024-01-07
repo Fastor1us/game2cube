@@ -15,7 +15,6 @@ import { userAPI } from './utils/api/user-api';
 import { OnlyAuth, OnlyUnAuth } from './components/ProtectedRoute.jsx';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import ResetPasswordPage from './pages/ForgotPasswordPage/ForgotPasswordPage.jsx';
 import ForgotPasswordPage from './pages/ForgotPasswordPage/ForgotPasswordPage.jsx';
 
 
@@ -42,7 +41,6 @@ export default function App() {
   return (
     <Routes>
       <Route path='/' element={<Layout />}>
-        {/* <Route index element={<GamePage />} /> */}
         <Route index element={<HomePage />} />
         <Route path='/registration' element={
           <OnlyUnAuth component={<RegisterPage />} />}

@@ -16,9 +16,20 @@ h1 {
   font-family: 'MyFont', sans-serif;
 }
 
+
 body {
   background-color: rgb(181, 182, 204);
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+#app {
+  min-height: 100%;
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  justify-content: start;
 }
