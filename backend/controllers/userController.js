@@ -8,14 +8,14 @@ exports.register = async (req, res) => {
   try {
     // 1) что email не занят (таблица users)
     const emailExists = await userService.readUser('email', email);
-    if (emailExists[0].id?.length > 0) {
+    if (emailExists[0]?.id) {
       // 409 - conflict , 422 - Unprocessable Entity , 424 - Failed Dependency
       res.status(409).json({ error: 'На данную почту уже зарегистрирован аккаунт' });
       return;
     }
     // 2) что имя пользователя не занято (таблица users)
     const usernameExists = await userService.readUser('username', username);
-    if (usernameExists[0].id?.length > 0) {
+    if (usernameExists[0]?.id) {
       res.status(409).json({ error: 'Данное имя пользователя уже занято' });
       return;
     }
@@ -46,7 +46,7 @@ exports.registrationConfirm = async (req, res) => {
     // перед проверкой кода подтверждения проверяем, что
     // 1) что email не занят (таблица users)
     const emailExists = await userService.readUser('email', email);
-    if (emailExists[0].id?.length > 0) {
+    if (emailExists[0]?.id) {
       res.status(409).json({
         error: 'На данную почту уже зарегистрирован аккаунт'
       });
@@ -54,8 +54,8 @@ exports.registrationConfirm = async (req, res) => {
     }
     // 2) что имя пользователя не занято (таблица users)
     const usernameExists = await userService.readUser('username', username);
-    if (usernameExists[0].id?.length > 0) {
-      res.status(409).json({ error: 'Имя пользователя уже занято' });
+    if (usernameExists[0]?.id) {
+      res.status(409).json({ error: 'Данное имя пользователя уже занято' });
       return;
     }
     // 3) проверяем совпадает ли переданный код с кодом из таблицы registration
@@ -86,7 +86,7 @@ exports.login = async (req, res) => {
   const { email, password } = req.body;
   try {
     const user = await userService.getUser(email, password);
-    if (user.length > 0) {
+    if (user[0]?.id) {
       await userService.updateUser(user[0].token, null, null, null, new Date());
       res.status(200).json({
         username: user[0].username,
@@ -108,7 +108,7 @@ exports.authentication = async (req, res) => {
   const { token } = req.body;
   try {
     const user = await userService.getUser(token);
-    if (user.length > 0) {
+    if (user[0]?.id) {
       await userService.updateUser(token, null, null, null, new Date());
       res.status(200).json({
         username: user[0].username,
@@ -139,7 +139,7 @@ exports.change = async (req, res) => {
     });
   } catch (error) {
     console.error('Ошибка изменения данных:', error);
-    res.status(500).json({ error: 'Ошибка сервера' });
+    res.status(409).json({ error: 'Данное имя пользователя уже занято' });
   }
 };
 
@@ -160,14 +160,14 @@ exports.recoveryEmail = async (req, res) => {
   const { email } = req.body;
   try {
     const userExist = await userService.readUser('email', email);
-    if (userExist && userExist[0].email === null) {
+    if (!userExist[0]?.email) {
       res.status(409).json({
         error: 'Пользователь с такой почтой не существует'
       });
       return;
     }
     const recoveryExists = await userService.readRecovery(email);
-    if (recoveryExists.length > 0) {
+    if (recoveryExists[0].id) {
       await userService.deleteRecovery(email);
     }
     const recoveryCode = userService.generateCode();

@@ -25,3 +25,7 @@
   outline: 2px solid rgb(0, 0, 0, 0.7);
   border-radius: 50%;
 }
+
+.error {
+  color: red;
+}

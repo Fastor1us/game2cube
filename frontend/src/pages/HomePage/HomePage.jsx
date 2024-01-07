@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { gameAPI } from '../../utils/api/game-api.js';
 import { useDispatch, useSelector } from 'react-redux';
 import { setCurrLevel, setLevels } from '../../store/slicers/managerSlicer.js';
@@ -7,9 +7,9 @@ import Manager from '../../components/Manager/Manager.jsx';
 import styles from './HomePage.module.css';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { setGridData } from '../../store/slicers/gameSlicer.js';
-import CustomButton from '../../components/CustomButton/CustomButton.jsx';
-import { TextInput } from '../../utils/HOC/inputs/index.jsx';
 import GameRules from '../../components/GameRules/GameRules.jsx';
+import AboutProject from '../../components/AboutProject/AboutProject.jsx';
+import GameFilter from '../../components/GameFilter/GameFilter.jsx';
 
 
 export default function HomePage() {
@@ -30,7 +30,7 @@ export default function HomePage() {
     data && dispatch(setLevels(data.levels));
   }, [data]);
 
-  const onLiClick = (strNavItem, callback) => {
+  const reset = useCallback(() => {
     setIsMyLevels(false);
     setIsSearch(false);
     setIsRules(false);
@@ -38,6 +38,10 @@ export default function HomePage() {
     dispatch(setLevels([]));
     dispatch(setGridData([]));
     dispatch(setCurrLevel({ index: null }));
+  }, []);
+
+  const onLiClick = (strNavItem, callback) => {
+    reset();
     setCurrTab(strNavItem);
     callback();
   }
@@ -87,6 +91,14 @@ export default function HomePage() {
     }
   }, []);
 
+  useEffect(() => {
+    if (location?.search === '?about') {
+      reset();
+      setIsAboutProject(true);
+      navigate('/');
+    }
+  }, [location]);
+
   return (
     <section className={styles.container}>
       <ul className={styles.list}>
@@ -104,15 +116,10 @@ export default function HomePage() {
       <h1 className={styles.title}>
         {currTab && (currTab?.charAt(0).toUpperCase() + currTab?.slice(1))}
       </h1>
-      {isSearch && (
-        <form className={styles.searchForm}>
-          <TextInput />
-          <CustomButton>Поиск</CustomButton>
-        </form>
-      )}
+      {isSearch && <GameFilter />}
       {!isAboutProject && !isRules && <Manager isMyLevels={isMyLevels} />}
       {isRules && <GameRules />}
-      {isAboutProject && <p>О проекте</p>}
+      {isAboutProject && <AboutProject />}
     </section>
   );
 }

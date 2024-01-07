@@ -1,5 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import styles from './CustomInput.module.css';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  setInputValidation, resetValidation, setFormValidation
+} from '../../store/slicers/validationSlicer';
+import { inputsValidationSelector } from '../../store/selectors/validationSelector';
 
 
 const CustomInput = ({
@@ -14,15 +19,45 @@ const CustomInput = ({
   onChange,
   ...rest
 }) => {
-  console.log(rest);
+  const dispatch = useDispatch();
   const inputRef = useRef(null);
-  const [error, setError] = useState('');
+  const [errorMsg, setErrorMsg] = useState('');
+
+  const inputsValidation = useSelector(inputsValidationSelector);
+
+  useEffect(() => {
+    if (Object.keys(inputsValidation).length === 0) {
+      dispatch(setFormValidation(true));
+    } else {
+      dispatch(setFormValidation(
+        Object.entries(inputsValidation)
+          .every((item) => {
+            return item[1];
+          })
+      ));
+    }
+  }, [inputsValidation]);
+
+  const validKey = name || type;
 
   const handleChange = (event) => {
     const { validity } = inputRef.current;
-    console.log(event);
-    console.log(validity);
     const value = event.target.value;
+
+    const setError = (msg) => {
+      if (msg.length > 0) {
+        dispatch(setInputValidation({
+          key: validKey,
+          value: false
+        }));
+      } else {
+        dispatch(setInputValidation({
+          key: validKey,
+          value: true
+        }));
+      }
+      setErrorMsg(msg);
+    }
 
     if (!validity.valid) {
       setError(inputRef.current.validationMessage);
@@ -43,15 +78,30 @@ const CustomInput = ({
       }
     }
 
+    if (type === 'email') {
+      if (value.length > 0 && !/.+@.+\..+/.test(value)) {
+        setError('Неверный формат адреса электронной почты');
+      }
+    }
+
     onChange(event);
   };
 
   useEffect(() => {
     shouldSetFocusOnLoad && inputRef.current.focus();
+
+    required && dispatch(setInputValidation({
+      key: validKey,
+      value: inputRef.current.validity.valid
+    }));
+
+    return () => {
+      dispatch(resetValidation());
+    }
   }, []);
 
   return (
-    <>
+    <div className={styles.container}>
       <input
         className={styles.input}
         type={type}
@@ -66,9 +116,9 @@ const CustomInput = ({
         {...rest}
       />
       <div className={styles.error}>
-        {error}
+        {errorMsg}
       </div>
-    </>
+    </div>
   );
 };
 

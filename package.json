@@ -1,6 +1,6 @@
 {
   "name": "game2cube",
-  "version": "0.5.9",
+  "version": "0.6.0",
   "description": "pet-project",
   "private": true,
   "scripts": {
@@ -12,8 +12,8 @@
     "f-run-build": "start ./frontend/build/index.html"
   },
   "keywords": [],
-  "author": "Kiryushin Oleg <fewgwer3@yandex.ru>",
-  "license": "ISC",
+  "author": "Kiryushin Oleg <fewgwer3@ya.ru>",
+  "license": "All Rights Reserved",
   "devDependencies": {
     "@babel/core": "^7.23.3",
     "@babel/preset-env": "^7.23.3",

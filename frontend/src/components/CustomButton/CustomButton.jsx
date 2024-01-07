@@ -9,11 +9,12 @@ import styles from './CustomButton.module.css';
  * @returns {JSX.Element}
  */
 export default function CustomButton(props) {
+  const { extraStyles, ...otherProps } = props;
   return (
     <button
       type={props.type || 'button'}
       className={`${styles.btn} ${props.extraStyles || ''}`}
-      {...props}
+      {...otherProps}
     >
       {props.children}
     </button>

@@ -10,3 +10,8 @@
   word-wrap: break-word;
   color: red;
 }
+
+.container {
+  display: flex;
+  flex-direction: column;
+}

@@ -9,4 +9,19 @@
   color: white;
 
   user-select: none;
+
+  display: flex;
+  justify-content: space-between;
+
+  box-sizing: border-box;
+  padding: 0 10px;
+}
+
+.link {
+  color: white;
+  text-decoration: none;
+}
+
+.link:hover {
+  text-decoration: underline;
 }

@@ -2,11 +2,12 @@ import React, { useCallback, useEffect, useRef } from 'react';
 import { useForm } from '../../utils/hooks/use-form';
 import styles from './LoginPage.module.css';
 import { userAPI } from '../../utils/api/user-api';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setUserData } from '../../store/slicers/userSlicer';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { EmailInput, PasswordInput } from '../../utils/HOC/inputs';
 import CustomButton from '../../components/CustomButton/CustomButton';
+import { isFormValidSelector } from '../../store/selectors/validationSelector';
 
 
 export default function LoginPage() {
@@ -14,9 +15,10 @@ export default function LoginPage() {
   const location = useLocation();
   const navigate = useNavigate();
   const { values, handleChange } = useForm({
-    email: 'test2@test.ru',
-    password: '12345',
+    email: '',
+    password: '',
   });
+  const isFormValid = useSelector(isFormValidSelector);
 
   const [login, { error, data, isLoading }] =
     userAPI.useLoginMutation();
@@ -59,14 +61,15 @@ export default function LoginPage() {
 
       <CustomButton
         extraStyles={styles.registerButton}
-        type="submit" disabled={isLoading}
+        type="submit"
+        disabled={isLoading || !isFormValid}
       >
         Войти
       </CustomButton>
     </form>
     {error && (
-      <p>
-        Ошибка: {error.data.error}
+      <p className={styles.error}>
+        {error.data.error}
       </p>
     )}
     <p>

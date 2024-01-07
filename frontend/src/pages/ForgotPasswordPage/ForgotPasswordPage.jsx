@@ -5,6 +5,8 @@ import { useForm } from '../../utils/hooks/use-form';
 import { userAPI } from '../../utils/api/user-api';
 import { EmailInput, PasswordInput, TextInput } from '../../utils/HOC/inputs';
 import CustomButton from '../../components/CustomButton/CustomButton';
+import { useSelector } from 'react-redux';
+import { isFormValidSelector } from '../../store/selectors/validationSelector';
 
 
 export default function ForgotPasswordPage() {
@@ -12,12 +14,18 @@ export default function ForgotPasswordPage() {
   const navigate = useNavigate();
   const [token, setToken] = useState(null);
   const [isAttemptLimit, setIsAttemptLimit] = useState(false);
-
   const { values, handleChange } = useForm({
-    email: 'test2@test.ru',
+    email: '',
     code: '',
     password: '',
   });
+  const isFormValid = useSelector(isFormValidSelector);
+  const [shouldShowError, setShouldShowError] = useState(false);
+
+  const onChange = (event) => {
+    setShouldShowError(false);
+    handleChange(event);
+  }
 
   const [recoveryEmail, {
     error: recoveryEmailError,
@@ -30,9 +38,16 @@ export default function ForgotPasswordPage() {
     isSuccess: recoveryCodeIsSuccess,
     isLoading: recoveryCodeIsLoading
   }] = userAPI.useRecoveryCodeMutation();
-  const [change, { error: changeError, data: changeData,
-    isLoading: changeIsLoading, isSuccess: changeIsSuccess }] =
-    userAPI.useChangeMutation();
+  const [change, {
+    error: changeError,
+    data: changeData,
+    isLoading: changeIsLoading,
+    isSuccess: changeIsSuccess
+  }] = userAPI.useChangeMutation();
+
+  useEffect(() => {
+    setShouldShowError(true);
+  }, [recoveryEmailError, recoveryCodeError, changeError]);
 
   useEffect(() => {
     if (recoveryCodeError) {
@@ -80,22 +95,22 @@ export default function ForgotPasswordPage() {
         <form className={styles.form} onSubmit={onEmailSubmit}>
           <label htmlFor='email'> Email: </label>
           <EmailInput
-            onChange={handleChange}
+            onChange={onChange}
             value={values.email}
             shouldSetFocusOnLoad={true}
           />
           <CustomButton
             type='submit'
             extraStyles={styles.btn}
-            disabled={recoveryEmailIsLoading}
+            disabled={recoveryEmailIsLoading || !isFormValid}
           >
             Отправить код на почту
           </CustomButton>
         </form>
       </>)}
-      {recoveryEmailError && (
-        <p>
-          Ошибка: {recoveryEmailError?.data?.error}
+      {recoveryEmailError && shouldShowError && (
+        <p className={styles.error}>
+          {recoveryEmailError?.data?.error}
         </p>
       )}
       {recoveryEmailIsSuccess && !token && (<>
@@ -109,14 +124,16 @@ export default function ForgotPasswordPage() {
             maxLength={6}
             id='code'
             name='code'
-            onChange={handleChange}
+            onChange={onChange}
             value={values.code}
             shouldSetFocusOnLoad={true}
           />
           <CustomButton
             type='submit'
             extraStyles={styles.registerButton}
-            disabled={recoveryCodeIsLoading || isAttemptLimit}
+            disabled={
+              recoveryCodeIsLoading || isAttemptLimit || !isFormValid
+            }
           >
             Отправить код
           </CustomButton>
@@ -128,9 +145,9 @@ export default function ForgotPasswordPage() {
             </CustomButton>
           }
         </form>
-        {recoveryCodeError && (
-          <p>
-            Ошибка: {recoveryCodeError?.data?.error}
+        {recoveryCodeError && shouldShowError && (
+          <p className={styles.error}>
+            {recoveryCodeError?.data?.error}
           </p>
         )}
       </>)}
@@ -141,21 +158,21 @@ export default function ForgotPasswordPage() {
         <form className={styles.form} onSubmit={onPasswordSubmit}>
           <label htmlFor='password'> Пароль: </label>
           <PasswordInput
-            onChange={handleChange}
+            onChange={onChange}
             value={values.password}
             shouldSetFocusOnLoad={true}
           />
           <CustomButton
             type='submit'
             extraStyles={styles.registerButton}
-            disabled={changeIsLoading}
+            disabled={changeIsLoading || !isFormValid}
           >
             Сохранить
           </CustomButton>
         </form>
-        {changeError && (
-          <p>
-            Ошибка: {changeError?.data?.error}
+        {changeError && shouldShowError && (
+          <p className={styles.error}>
+            {changeError?.data?.error}
           </p>
         )}
       </>)}

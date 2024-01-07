@@ -12,6 +12,7 @@ import { BACKEND_URL } from '../../utils/constants';
 import DeleteModal from '../../utils/HOC/DeleteModal';
 import { EmailInput, PasswordInput, TextInput } from '../../utils/HOC/inputs';
 import CustomButton from '../../components/CustomButton/CustomButton';
+import { isFormValidSelector } from '../../store/selectors/validationSelector';
 
 
 export default function ProfilePage() {
@@ -28,6 +29,7 @@ export default function ProfilePage() {
     email: email,
     password: '',
   });
+  const isFormValid = useSelector(isFormValidSelector);
 
   useEffect(() => {
     avatar && setSelectedAvatar(avatar);
@@ -151,6 +153,7 @@ export default function ProfilePage() {
           type="submit"
           extraStyles={styles.registerButton}
           disabled={
+            !isFormValid ||
             (!isInputChanged || changeIsLoading) && selectedAvatar === avatar
           }
         >
@@ -158,7 +161,7 @@ export default function ProfilePage() {
         </CustomButton>
         {changeError && (
           <div style={{ color: 'red' }}>
-            Ошибка: {changeError.data.error}
+            {changeError.data.error}
           </div>
         )}
         {changeIsSuccess && showNotificationStatus &&

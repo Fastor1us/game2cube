@@ -3,7 +3,7 @@ import { useForm } from '../../utils/hooks/use-form';
 import { userAPI } from '../../utils/api/user-api';
 import styles from './RegisterPage.module.css';
 import { setAvatarList, setUserData } from '../../store/slicers/userSlicer';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import AvatarList from '../../components/AvatarList/AvatarList';
 import Modal from '../../components/Modal/Modal';
@@ -11,6 +11,7 @@ import { BACKEND_URL } from '../../utils/constants';
 import { defaultAvatar } from '../../utils/constants';
 import { EmailInput, PasswordInput, TextInput } from '../../utils/HOC/inputs';
 import CustomButton from '../../components/CustomButton/CustomButton';
+import { isFormValidSelector } from '../../store/selectors/validationSelector';
 
 
 export default function RegisterPage() {
@@ -19,24 +20,41 @@ export default function RegisterPage() {
   const navigate = useNavigate();
   const [selectedAvatar, setSelectedAvatar] = useState(null);
   const [showAvaModal, setShowAvaModal] = useState(false);
+  const [arePassordsDifferent, setArePassordsDifferent] = useState(false);
   const { values, handleChange } = useForm({
-    username: 'test2',
-    email: 'test2@test.ru',
-    password: '12345',
-    passwordConfirmation: '12345',
+    username: 'admin',
+    email: 'fewgwer3@ya.ru',
+    password: '1234',
+    passwordConfirmation: '1234',
     confirmationCode: '',
   });
+  const isFormValid = useSelector(isFormValidSelector);
+  const [shouldShowError, setShouldShowError] = useState(false);
+
+  const onChange = (event) => {
+    setShouldShowError(false);
+    handleChange(event);
+  }
+
+  useEffect(() => {
+    // проверка на соответствие паролей в onRegisterSubmit
+    setArePassordsDifferent(false);
+  }, [values]);
 
   const [register, { error: regError, data: regData,
     isLoading: regIsLoading, isSuccess: regIsSuccess,
     isError: regIsError }] = userAPI.useRegisterMutation();
   const onRegisterSubmit = useCallback((e) => {
     e.preventDefault();
-    register({
-      username: values.username,
-      email: values.email,
-      password: values.password,
-    });
+    if (values.password === values.passwordConfirmation) {
+      register({
+        username: values.username,
+        email: values.email,
+        password: values.password,
+      });
+    } else {
+      setArePassordsDifferent(true);
+    }
   }, [values]);
   useEffect(() => {
     regError && console.log('error data:', regError.data);
@@ -78,6 +96,10 @@ export default function RegisterPage() {
       dispatch(setAvatarList(getAvatarListData));
   }, [getAvatarListData, getAvatarListIsSuccess]);
 
+  useEffect(() => {
+    setShouldShowError(true);
+  }, [regError, confirmError]);
+
   return (<>
     {!regIsSuccess && (<>
       <h2 className={styles.title}>
@@ -108,14 +130,14 @@ export default function RegisterPage() {
         <TextInput
           id='username'
           name='username'
-          onChange={handleChange}
+          onChange={onChange}
           value={values.username}
           shouldSetFocusOnLoad={true}
         />
 
         <label htmlFor='email'> Email: </label>
         <EmailInput
-          onChange={handleChange}
+          onChange={onChange}
           value={values.email}
         />
 
@@ -138,15 +160,20 @@ export default function RegisterPage() {
         <CustomButton
           type='submit'
           extraStyles={styles.registerButton}
-          disabled={regIsLoading}
+          disabled={regIsLoading || !isFormValid}
         >
           Зарегистрироваться
         </CustomButton>
       </form>
     </>)}
-    {regIsError && (
-      <p>
-        Ошибка: {regError.data.error}
+    {regIsError && shouldShowError && (
+      <p className={styles.error}>
+        {regError.data.error}
+      </p>
+    )}
+    {arePassordsDifferent && (
+      <p className={styles.error}>
+        Пароли не совпадают
       </p>
     )}
 
@@ -162,9 +189,11 @@ export default function RegisterPage() {
         <TextInput
           id='confirmationCode'
           name='confirmationCode'
-          onChange={handleChange}
+          onChange={onChange}
           value={values.confirmationCode}
           shouldSetFocusOnLoad={true}
+          minLength={6}
+          maxLength={6}
         />
         <CustomButton
           type='submit'
@@ -174,9 +203,9 @@ export default function RegisterPage() {
           Отправить код
         </CustomButton>
       </form>
-      {confirmIsError && (
-        <p>
-          Ошибка: {confirmError.data.error}
+      {confirmIsError && shouldShowError && (
+        <p className={styles.error}>
+          {confirmError.data.error}
         </p>
       )}
     </>)}
