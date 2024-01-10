@@ -48,8 +48,10 @@ export default function Engine() {
       }
     };
     document.addEventListener('mouseup', handleMouseUp);
+    document.addEventListener('touchend', handleMouseUp);
     return () => {
       document.removeEventListener('mouseup', handleMouseUp);
+      document.removeEventListener('touchend', handleMouseUp);
     };
   }, []);
 
@@ -239,6 +241,8 @@ export default function Engine() {
       // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
       if (!isMoveAdjacent(prevCellCoords, currCellCoords)) {
         console.log('сработал ход наискосок, блокируем');
+        console.log('prevCellCoords', prevCellCoords);
+        console.log('currCellCoords', currCellCoords);
         dispatch(setIsWatching(false));
         return;
       }

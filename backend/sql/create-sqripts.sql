@@ -161,7 +161,7 @@ AS $function$
 DECLARE
   user_data game2cube.users;
 BEGIN
-  EXECUTE format('SELECT * FROM game2cube.users WHERE %I = $1', p_column)
+  EXECUTE format('SELECT * FROM game2cube.users WHERE LOWER(%I) = LOWER($1)', p_column)
   INTO user_data
   USING p_value;
   RETURN user_data;

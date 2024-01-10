@@ -143,6 +143,8 @@ export default function Manager(props) {
           <Game />
         </section>
 
+        <LevelList />
+
         <div className={styles.arrowContainer}>
           <img src={svgArrowLeft} alt='стрелка влево'
             className={`
@@ -162,7 +164,6 @@ export default function Manager(props) {
           />
         </div>
 
-        <LevelList />
       </section>)}
   </>);
 }

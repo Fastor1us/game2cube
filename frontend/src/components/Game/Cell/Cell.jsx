@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useRef } from 'react';
+import React, { forwardRef, useCallback, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   setCellCoords,
@@ -14,8 +14,8 @@ import styles from './Cell.module.css';
 const Cell = forwardRef((props, ref) => {
   const dispatch = useDispatch();
   const innerRef = useRef();
-
   const isMainCellLinked = useSelector(linkedColorSelector(props.color));
+  const isTouchInside = useRef(false);
 
   useEffect(() => {
     if (!props.isCellOutsideGame && !props.isCreatingMode) {
@@ -63,9 +63,49 @@ const Cell = forwardRef((props, ref) => {
           }
         }
       }
+      const handleTouchStart = () => {
+        dispatch(setCellCoords({
+          row: props.row,
+          col: props.col,
+        }));
+        if (isTouchInside.current) {
+          return;
+        }
+        handleMouseEnter();
+        isTouchInside.current = true;
+      }
+      const handleTouchMove = (event) => {
+        const rect = innerRef.current.getBoundingClientRect();
+        const touch = event.touches[0];
+        if (
+          touch.clientX >= rect.left &&
+          touch.clientX <= rect.right &&
+          touch.clientY >= rect.top &&
+          touch.clientY <= rect.bottom
+        ) {
+          if (isTouchInside.current) {
+            return;
+          }
+          handleMouseEnter();
+          isTouchInside.current = true;
+        } else {
+          isTouchInside.current = false;
+        }
+      };
+      const handleTouchEnd = () => {
+        isTouchInside.current = false;
+      };
       innerRef.current.addEventListener('mouseenter', handleMouseEnter);
+      innerRef.current.addEventListener('touchstart', handleTouchStart);
+      document.addEventListener('touchmove', handleTouchMove);
+      innerRef.current.addEventListener('touchend', handleTouchEnd);
+      innerRef.current.addEventListener('touchcancel', handleTouchEnd);
       return () => {
         innerRef.current && innerRef.current.removeEventListener('mouseenter', handleMouseEnter);
+        innerRef.current && innerRef.current.removeEventListener('touchstart', handleTouchStart);
+        document.removeEventListener('touchmove', handleTouchMove);
+        innerRef.current && innerRef.current.removeEventListener('touchend', handleTouchEnd);
+        innerRef.current && innerRef.current.removeEventListener('touchcancel', handleTouchEnd);
       };
     }
   }, []);

@@ -15,6 +15,7 @@ import { userAPI } from './utils/api/user-api';
 import { OnlyAuth, OnlyUnAuth } from './components/ProtectedRoute.jsx';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
+import { TouchBackend } from 'react-dnd-touch-backend';
 import ForgotPasswordPage from './pages/ForgotPasswordPage/ForgotPasswordPage.jsx';
 
 
@@ -38,6 +39,11 @@ export default function App() {
     error && localStorage.removeItem('token');
   }, [data, error]);
 
+  const isTouchDevice =
+    ('ontouchstart' in window)
+    || (navigator.maxTouchPoints > 0)
+    || (navigator.msMaxTouchPoints > 0);
+
   return (
     <Routes>
       <Route path='/' element={<Layout />}>
@@ -57,7 +63,9 @@ export default function App() {
         <Route path='/game' element={<GamePage />} />
         <Route path='/create-level'
           element={
-            <DndProvider backend={HTML5Backend}>
+            <DndProvider
+              backend={isTouchDevice ? TouchBackend : HTML5Backend}
+            >
               <CreateLevelsPage />
             </DndProvider>
           }

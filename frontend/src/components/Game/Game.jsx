@@ -33,12 +33,18 @@ export default function Game() {
     ref.current.addEventListener('mousedown', handleMouseDown);
     ref.current.addEventListener('mouseup', handleMouseUp);
     ref.current.addEventListener('mouseleave', handleMouseLeave);
+    ref.current.addEventListener('touchstart', handleMouseDown);
+    ref.current.addEventListener('touchend', handleMouseUp);
+    ref.current.addEventListener('touchcancel', handleMouseLeave);
 
     return () => {
       if (ref.current) {
         ref.current.removeEventListener('mousedown', handleMouseDown);
         ref.current.removeEventListener('mouseup', handleMouseUp);
         ref.current.removeEventListener('mouseleave', handleMouseLeave);
+        ref.current.removeEventListener('touchstart', handleMouseDown);
+        ref.current.removeEventListener('touchend', handleMouseUp);
+        ref.current.removeEventListener('touchcancel', handleMouseLeave);
       }
     };
   }, []);

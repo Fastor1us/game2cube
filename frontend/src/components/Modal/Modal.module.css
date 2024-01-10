@@ -43,3 +43,11 @@
 .closeBtn:hover {
   cursor: pointer;
 }
+
+@media (min-width: 412px) and (max-width: 539px) {
+  .container {
+    max-width: 539px;
+    width: 100%;
+    color: red
+  }
+}
