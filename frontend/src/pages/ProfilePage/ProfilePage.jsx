@@ -151,7 +151,7 @@ export default function ProfilePage() {
 
         <CustomButton
           type="submit"
-          extraStyles={styles.registerButton}
+          extraClass={styles.registerButton}
           disabled={
             !isFormValid ||
             (!isInputChanged || changeIsLoading) && selectedAvatar === avatar
@@ -172,7 +172,7 @@ export default function ProfilePage() {
             </div>
           )}
         <CustomButton
-          extraStyles={styles.deleteButton}
+          extraClass={styles.deleteButton}
           onClick={handleDelete}
           disabled={deleteIsLoading}
         >

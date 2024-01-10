@@ -40,7 +40,8 @@ exports.delete = async (req, res) => {
 }
 
 exports.get = async (req, res) => {
-  const { user, size, main, random } = req.query;
+  const { user, minSize, maxSize, main, random } = req.query;
+  const size = { min: minSize, max: maxSize };
   try {
     if (main) {
       const levels = await gameService.getUserLevels('admin', req.token);
@@ -52,9 +53,35 @@ exports.get = async (req, res) => {
       res.json({ levels });
       return;
     }
-    if (user) {
+    if (user?.length > 0) {
       const levels = await gameService.getUserLevels(user, req.token);
-      res.json({ levels });
+      if (levels.length === 0) {
+        res.status(404).json({ error: 'Пользователь не найден' });
+        return;
+      }
+      if (minSize || maxSize) {
+        res.json({
+          levels: levels
+            .filter(
+              level => level.size >= size.min && level.size <= size.max
+            )
+            .sort((a, b) => a.size - b.size)
+        });
+        return;
+      } else {
+        res.json({
+          levels: levels.sort((a, b) => a.size - b.size)
+        });
+        return;
+      }
+    }
+    if (user === '') {
+      const levels = await gameService.getAllLevels(
+        minSize, maxSize, req.token
+      );
+      res.json({
+        levels: levels.sort((a, b) => a.size - b.size)
+      });
       return;
     }
   } catch (error) {

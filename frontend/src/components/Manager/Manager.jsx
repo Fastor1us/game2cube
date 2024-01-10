@@ -107,7 +107,7 @@ export default function Manager(props) {
               }
             />
             <b>
-              {level?.likes || ''}
+              {level?.likes || 0}
             </b>
           </p>
         </div>

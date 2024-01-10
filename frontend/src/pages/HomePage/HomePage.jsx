@@ -27,6 +27,7 @@ export default function HomePage() {
     gameAPI.useGetMutation();
 
   useEffect(() => {
+    console.log(data);
     data && dispatch(setLevels(data.levels));
   }, [data]);
 

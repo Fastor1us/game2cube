@@ -4,7 +4,8 @@
 }
 
 .levelItem {
-  padding: 5px 20px;
+  width: 40px;
+  padding: 7px 0;
   border: 1px inset rgba(143, 16, 16, 0.5);
   user-select: none;
 }
@@ -22,25 +23,6 @@
 
 @media (min-width: 412px) and (max-width: 1023px) {
   .levelItem {
-    padding: 5px 14px;
+    width: 35px;
   }
-}
-
-
-
-.list {
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
-  border: 1px outset rgb(151, 91, 201);
-}
-
-.listItem {
-  padding: 5px;
-  border: 1px inset rgba(143, 16, 16, 0.555);
-}
-
-.listItem:hover {
-  cursor: pointer;
-  outline: 2px solid rgb(0, 0, 0, 0.7);
 }

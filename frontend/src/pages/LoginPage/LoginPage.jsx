@@ -60,7 +60,7 @@ export default function LoginPage() {
       />
 
       <CustomButton
-        extraStyles={styles.registerButton}
+        extraClass={styles.registerButton}
         type="submit"
         disabled={isLoading || !isFormValid}
       >

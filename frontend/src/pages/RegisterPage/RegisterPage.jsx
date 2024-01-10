@@ -22,10 +22,10 @@ export default function RegisterPage() {
   const [showAvaModal, setShowAvaModal] = useState(false);
   const [arePassordsDifferent, setArePassordsDifferent] = useState(false);
   const { values, handleChange } = useForm({
-    username: 'admin',
-    email: 'fewgwer3@ya.ru',
-    password: '1234',
-    passwordConfirmation: '1234',
+    username: '',
+    email: '',
+    password: '',
+    passwordConfirmation: '',
     confirmationCode: '',
   });
   const isFormValid = useSelector(isFormValidSelector);
@@ -159,7 +159,7 @@ export default function RegisterPage() {
 
         <CustomButton
           type='submit'
-          extraStyles={styles.registerButton}
+          extraClass={styles.registerButton}
           disabled={regIsLoading || !isFormValid}
         >
           Зарегистрироваться
@@ -197,7 +197,7 @@ export default function RegisterPage() {
         />
         <CustomButton
           type='submit'
-          extraStyles={styles.registerButton}
+          extraClass={styles.registerButton}
           disabled={confirmIsLoading}
         >
           Отправить код

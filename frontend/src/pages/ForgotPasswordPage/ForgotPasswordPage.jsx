@@ -101,7 +101,7 @@ export default function ForgotPasswordPage() {
           />
           <CustomButton
             type='submit'
-            extraStyles={styles.btn}
+            extraClass={styles.btn}
             disabled={recoveryEmailIsLoading || !isFormValid}
           >
             Отправить код на почту
@@ -130,7 +130,7 @@ export default function ForgotPasswordPage() {
           />
           <CustomButton
             type='submit'
-            extraStyles={styles.registerButton}
+            extraClass={styles.registerButton}
             disabled={
               recoveryCodeIsLoading || isAttemptLimit || !isFormValid
             }
@@ -164,7 +164,7 @@ export default function ForgotPasswordPage() {
           />
           <CustomButton
             type='submit'
-            extraStyles={styles.registerButton}
+            extraClass={styles.registerButton}
             disabled={changeIsLoading || !isFormValid}
           >
             Сохранить

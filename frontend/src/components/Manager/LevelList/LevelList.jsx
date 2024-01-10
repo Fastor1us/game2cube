@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { currLevelSelector, levelsSelector } from '../../../store/selectors/managerSelectors';
 import styles from './LevelList.module.css';
@@ -11,6 +11,7 @@ export default function LevelList() {
   const dispatch = useDispatch();
   const levels = useSelector(levelsSelector);
   const currLevel = useSelector(currLevelSelector);
+  const [currentPage, setCurrentPage] = useState(0);
 
   useEffect(() => {
     if (currLevel.index === null) {
@@ -19,10 +20,18 @@ export default function LevelList() {
   }, []);
 
   useEffect(() => {
+    setCurrLevel({ index: 0 });
+    setCurrentPage(0);
+    dispatch(setLinkedColors({}));
+    dispatch(setIsCompleted(false));
+  }, [levels]);
+
+  useEffect(() => {
     if (levels && levels.length > 0) {
-      const index = currLevel.index || 0;
+      const index = currLevel?.index ? (
+        currLevel?.index > levels.length - 1 ? 0 : currLevel.index
+      ) : 0;
       const size = levels[index].size;
-      // tech - технический стороковый массив координат цветных ячеек
       const tech = levels[index].cells.map(item => {
         return item.row + '' + item.col;
       });
@@ -55,29 +64,84 @@ export default function LevelList() {
   }, [levels, currLevel]);
 
   const onClick = (index) => {
-    // TODO заблокировать выбор текущего уровня
-    if (true) {
+    if (currLevel.index !== index) {
       dispatch(setCurrLevel({
         index: index,
-        // id: levels[level].id
       }));
       dispatch(setLinkedColors({}));
       dispatch(setIsCompleted(false));
     }
   }
 
+  useEffect(() => {
+    if (currLevel?.index) {
+      const index = currLevel.index;
+      if (index < 9) {
+        setCurrentPage(0);
+      } else {
+        setCurrentPage(Math.floor((index - 1) / (8)));
+      }
+    }
+  }, [currLevel]);
+
   return (
     <section className={styles.levelList}>
-      {levels && levels.map((_, index) => (
-        <div key={index}
-          onClick={() => { onClick(index) }}
-          className={`
+      {levels.length > 10 ? (<>
+        {currentPage > 0 && (
+          <div
+            onClick={() => { setCurrentPage(currentPage - 1) }}
+            className={styles.levelItem}
+          >
+            ...
+          </div>
+        )}
+
+        {levels && levels.map((_, index) => {
+          const tech = currentPage ? 1 : 0;
+          if (currentPage === 0) {
+            if (index > 8) {
+              return null;
+            }
+          } else if (
+            index < currentPage * 8 + tech
+            || index >= (currentPage + 1) * 8 + tech
+          ) {
+            return null;
+          }
+          return (
+            <div
+              key={index}
+              onClick={() => { onClick(index) }}
+              className={`
+              ${styles.levelItem} ${currLevel.index === index ? styles.active : ''}
+            `}
+            >
+              {index + 1}
+            </div>
+          );
+        })}
+
+        {levels && levels.length > (currentPage + 1) * 8 && (
+          <div
+            onClick={() => { setCurrentPage(currentPage + 1) }}
+            className={styles.levelItem}
+          >
+            ...
+          </div>
+        )}
+      </>) : (<>
+        {levels && levels.map((_, index) => (
+          <div key={index}
+            onClick={() => { onClick(index) }}
+            className={`
             ${styles.levelItem} ${currLevel.index === index ? styles.active : ''}
           `}
-        >
-          {index + 1}
-        </div>
-      ))}
+          >
+            {index + 1}
+          </div>
+        ))}
+      </>)
+      }
     </section>
   );
 }
