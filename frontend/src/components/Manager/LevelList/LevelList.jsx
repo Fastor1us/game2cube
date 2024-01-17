@@ -20,7 +20,7 @@ export default function LevelList() {
   }, []);
 
   useEffect(() => {
-    setCurrLevel({ index: 0 });
+    dispatch(setCurrLevel({ index: 0 }));
     setCurrentPage(0);
     dispatch(setLinkedColors({}));
     dispatch(setIsCompleted(false));

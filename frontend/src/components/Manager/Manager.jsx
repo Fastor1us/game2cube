@@ -86,7 +86,7 @@ export default function Manager(props) {
         <div className={styles.header}>
           <div className={styles.headerItem}>
             <div style={{ userSelect: 'none' }}>
-              автор:
+              {`автор: `}
             </div>
             <b>
               {level?.author || ''}
@@ -136,6 +136,16 @@ export default function Manager(props) {
                 </section>
               </Modal>
             }
+          </form>
+        </>)}
+
+        {props?.isRandomLevels && (<>
+          <form className={styles.myLevelsform}
+            onSubmit={(e) => e.preventDefault()}
+          >
+            <CustomButton onClick={() => props.getRandomLevels()}>
+              обновить уровни
+            </CustomButton>
           </form>
         </>)}
 

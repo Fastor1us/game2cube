@@ -40,7 +40,7 @@ exports.delete = async (req, res) => {
 }
 
 exports.get = async (req, res) => {
-  const { user, minSize, maxSize, main, random } = req.query;
+  const { user, minSize, maxSize, main, random, byFilter } = req.query;
   const size = { min: minSize, max: maxSize };
   try {
     if (main) {
@@ -54,12 +54,13 @@ exports.get = async (req, res) => {
       return;
     }
     if (user?.length > 0) {
-      const levels = await gameService.getUserLevels(user, req.token);
+      const levels =
+        await gameService.getUserLevels(user, req.token, byFilter);
       if (levels.length === 0) {
         res.status(404).json({ error: 'Пользователь не найден' });
         return;
       }
-      if (minSize || maxSize) {
+      if (byFilter) {
         res.json({
           levels: levels
             .filter(

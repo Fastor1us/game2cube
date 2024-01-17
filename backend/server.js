@@ -24,13 +24,6 @@ app.use((req, res, next) => {
   next();
 });
 
-exports.get = async (req, res) => {
-  // Доступ к токену через req.token
-  console.log('Токен:', req.token);
-
-  // Остальной код обработчика запроса
-};
-
 // ==========================================================
 // ==================== USER ROUTE ==========================
 app.use('/user', userRoutes);
@@ -39,5 +32,5 @@ app.use('/game', gameRoutes);
 // ==========================================================
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}!\n`);
+  console.log(`Сервер запущен на порту ${port}\n`);
 });

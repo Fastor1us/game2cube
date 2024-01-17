@@ -17,6 +17,7 @@ const CustomInput = ({
   disabled,
   shouldSetFocusOnLoad,
   onChange,
+  validate,
   ...rest
 }) => {
   const dispatch = useDispatch();
@@ -115,9 +116,10 @@ const CustomInput = ({
         onInput={handleChange}
         {...rest}
       />
-      <div className={styles.error}>
-        {errorMsg}
-      </div>
+      {validate &&
+        <div className={styles.error}>
+          {errorMsg}
+        </div>}
     </div>
   );
 };
@@ -126,6 +128,7 @@ CustomInput.defaultProps = {
   required: true,
   disabled: false,
   shouldSetFocusOnLoad: false,
+  validate: true
 };
 
 export default CustomInput;

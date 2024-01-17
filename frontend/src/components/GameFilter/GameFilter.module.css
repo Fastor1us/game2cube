@@ -9,12 +9,17 @@
   position: relative;
 }
 
+.inputContainer {
+  user-select: none;
+}
+
 .info {
   margin-bottom: 15px;
 }
 
 .error {
   color: red;
+  font-size: 24px;
 }
 
 /* Стили для мобильных устройств */

@@ -27,7 +27,8 @@ const RangeSlider = ({
         display: 'flex',
         justifyContent: 'center',
         flexWrap: 'wrap',
-        padding: '0 10px'
+        padding: '0 10px',
+        userSelect: 'none',
       }}
     >
       <Range

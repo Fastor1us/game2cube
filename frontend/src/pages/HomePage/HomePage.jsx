@@ -18,6 +18,7 @@ export default function HomePage() {
   const location = useLocation();
   const { username, isAuth } = useSelector(userSelector);
   const [isMyLevels, setIsMyLevels] = useState(false);
+  const [isRandomLevels, setIsRandomLevels] = useState(false);
   const [isSearch, setIsSearch] = useState(false);
   const [isRules, setIsRules] = useState(false);
   const [isAboutProject, setIsAboutProject] = useState(false);
@@ -27,12 +28,12 @@ export default function HomePage() {
     gameAPI.useGetMutation();
 
   useEffect(() => {
-    console.log(data);
     data && dispatch(setLevels(data.levels));
   }, [data]);
 
   const reset = useCallback(() => {
     setIsMyLevels(false);
+    setIsRandomLevels(false);
     setIsSearch(false);
     setIsRules(false);
     setIsAboutProject(false);
@@ -42,14 +43,17 @@ export default function HomePage() {
   }, []);
 
   const onLiClick = (strNavItem, callback) => {
-    reset();
-    setCurrTab(strNavItem);
-    callback();
+    if (strNavItem !== currTab) {
+      reset();
+      setCurrTab(strNavItem);
+      callback();
+    }
   }
   const onMainLevelsClick = () => {
     get({ main: true });
   }
   const onRandomLevelsClick = () => {
+    setIsRandomLevels(true);
     get({ random: true });
   }
   const onMyLevelsClick = () => {
@@ -69,8 +73,8 @@ export default function HomePage() {
   }
 
   const navPanelData = [
-    ['основные уровни', onMainLevelsClick],
-    ['случайные уровни', onRandomLevelsClick],
+    ['уровни от админа', onMainLevelsClick],
+    ['10 случайных уровней', onRandomLevelsClick],
     ['мои уровни', onMyLevelsClick],
     ['поиск по фильтру', onSearchClick],
     ['правила игры', onRulesClick],
@@ -118,7 +122,13 @@ export default function HomePage() {
         {currTab && (currTab?.charAt(0).toUpperCase() + currTab?.slice(1))}
       </h1>
       {isSearch && <GameFilter />}
-      {!isAboutProject && !isRules && <Manager isMyLevels={isMyLevels} />}
+      {!isAboutProject && !isRules &&
+        <Manager
+          isMyLevels={isMyLevels}
+          isRandomLevels={isRandomLevels}
+          getRandomLevels={onRandomLevelsClick}
+        />
+      }
       {isRules && <GameRules />}
       {isAboutProject && <AboutProject />}
     </section>

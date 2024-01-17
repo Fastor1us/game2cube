@@ -232,6 +232,7 @@ exports.getAvatar = async (req, res) => {
   try {
     const imagePath = path.join(__dirname,
       '../public/uploads/avatars', filename);
+    // `../public/uploads/avatars/${filename}`);
     res.sendFile(imagePath);
   } catch (error) {
     console.error('Ошибка получения аватара:', error);

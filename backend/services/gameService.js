@@ -53,12 +53,16 @@ const isAbleToLike = async (token, levelId) => {
 }
 
 
-const getUserLevels = async (username, token) => {
+// WHERE LOWER(u.username) = LOWER($1)
+const getUserLevels = async (username, token, byFilter) => {
   // Получаем все уровни пользователя
   const levelsResult = await pool.query(`
-  SELECT l.id, l.size FROM game2cube.levels AS l
+  SELECT l.id, l.size, u.username FROM game2cube.levels AS l
   JOIN game2cube.users AS u ON l.user_id = u.id
-  WHERE u.username = $1
+  WHERE ${byFilter ?
+      "LOWER(u.username) LIKE LOWER($1 || '%')" :
+      "LOWER(u.username) = LOWER($1)"
+    }
   `, [username]);
   // Получаем все ячейки для каждого уровня
   const levelsWithCells = await Promise.all(
@@ -68,7 +72,7 @@ const getUserLevels = async (username, token) => {
         WHERE c.level_id = $1
       `, [level.id]);
       return {
-        author: username,
+        author: level.username,
         levelId: level.id,
         likes: await amountOfLikes(level.id),
         isAbleToLike: token ? await isAbleToLike(token, level.id) : false,
