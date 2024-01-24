@@ -45,43 +45,45 @@ const CustomInput = ({
     const { validity } = inputRef.current;
     const value = event.target.value;
 
-    const setError = (msg) => {
-      if (msg.length > 0) {
-        dispatch(setInputValidation({
-          key: validKey,
-          value: false
-        }));
+    if (validate) {
+      const setError = (msg) => {
+        if (msg.length > 0) {
+          dispatch(setInputValidation({
+            key: validKey,
+            value: false
+          }));
+        } else {
+          dispatch(setInputValidation({
+            key: validKey,
+            value: true
+          }));
+        }
+        setErrorMsg(msg);
+      }
+
+      if (!validity.valid) {
+        setError(inputRef.current.validationMessage);
       } else {
-        dispatch(setInputValidation({
-          key: validKey,
-          value: true
-        }));
+        setError('');
       }
-      setErrorMsg(msg);
-    }
 
-    if (!validity.valid) {
-      setError(inputRef.current.validationMessage);
-    } else {
-      setError('');
-    }
-
-    if (type === 'password') {
-      if (value.length === 0 && required) {
-        setError('Вы пропустили это поле.');
+      if (type === 'password') {
+        if (value.length === 0 && required) {
+          setError('Вы пропустили это поле.');
+        }
+        if (value.length > 0 &&
+          (value.length < minLength || value.length > maxLength)
+        ) {
+          setError(`
+            Пароль должен содержать от ${minLength} до ${maxLength} символов.
+          `);
+        }
       }
-      if (value.length > 0 &&
-        (value.length < minLength || value.length > maxLength)
-      ) {
-        setError(`
-          Пароль должен содержать от ${minLength} до ${maxLength} символов.
-        `);
-      }
-    }
 
-    if (type === 'email') {
-      if (value.length > 0 && !/.+@.+\..+/.test(value)) {
-        setError('Неверный формат адреса электронной почты');
+      if (type === 'email') {
+        if (value.length > 0 && !/.+@.+\..+/.test(value)) {
+          setError('Неверный формат адреса электронной почты');
+        }
       }
     }
 
@@ -91,7 +93,7 @@ const CustomInput = ({
   useEffect(() => {
     shouldSetFocusOnLoad && inputRef.current.focus();
 
-    required && dispatch(setInputValidation({
+    required && validate && dispatch(setInputValidation({
       key: validKey,
       value: inputRef.current.validity.valid
     }));
@@ -116,10 +118,9 @@ const CustomInput = ({
         onInput={handleChange}
         {...rest}
       />
-      {validate &&
-        <div className={styles.error}>
-          {errorMsg}
-        </div>}
+      <div className={styles.error}>
+        {errorMsg}
+      </div>
     </div>
   );
 };

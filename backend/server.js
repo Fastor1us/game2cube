@@ -3,8 +3,8 @@ const userRoutes = require('./routes/userRoutes');
 const gameRoutes = require('./routes/gameRoutes');
 const serverData = require('../server_data.js');
 
-const port = 3001;
 const app = express();
+const PORT = process.env.PORT || 3001;
 
 app.use((req, res, next) => {
   const url = process.env.NODE_ENV === 'prod' ?
@@ -31,6 +31,6 @@ app.use('/user', userRoutes);
 app.use('/game', gameRoutes);
 // ==========================================================
 
-app.listen(port, () => {
-  console.log(`Сервер запущен на порту ${port}\n`);
+app.listen(PORT, () => {
+  console.log(`Сервер запущен на порту ${PORT}\n`);
 });

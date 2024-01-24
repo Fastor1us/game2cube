@@ -10,7 +10,7 @@ exports.add = async (req, res) => {
     const levels = await gameService.getUserLevels(user[0].username, token);
     if (levels.length === 10) {
       res.status(409).json({
-        error: 'Привышен допустимый лимит кол-ва уровней для пользователя'
+        error: 'Превышен допустимый лимит кол-ва уровней для пользователя'
       });
       return;
     }

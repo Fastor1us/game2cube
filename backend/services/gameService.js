@@ -10,7 +10,6 @@ const createLevel = async (token, size) => {
   return id;
 }
 
-
 const createCells = async (levelId, cells) => {
   const cellsValues = cells.map((_, index) =>
     `($${index * 4 + 1}, $${index * 4 + 2}, $${index * 4 + 3}, $${index * 4 + 4})`);
@@ -24,7 +23,6 @@ const createCells = async (levelId, cells) => {
   }, []);
   await pool.query(cellsQuery, cellsParams);
 }
-
 
 const deleteLevel = async (token, levelId) => {
   const { rows } = await pool.query(`
@@ -42,7 +40,6 @@ const deleteLevel = async (token, levelId) => {
   }
 }
 
-
 const isAbleToLike = async (token, levelId) => {
   const { rows } = await pool.query(`
     SELECT * FROM game2cube.likes AS l
@@ -52,8 +49,6 @@ const isAbleToLike = async (token, levelId) => {
   return !(rows.length > 0);
 }
 
-
-// WHERE LOWER(u.username) = LOWER($1)
 const getUserLevels = async (username, token, byFilter) => {
   // Получаем все уровни пользователя
   const levelsResult = await pool.query(`
@@ -62,7 +57,7 @@ const getUserLevels = async (username, token, byFilter) => {
   WHERE ${byFilter ?
       "LOWER(u.username) LIKE LOWER($1 || '%')" :
       "LOWER(u.username) = LOWER($1)"
-    }
+    } LIMIT 100
   `, [username]);
   // Получаем все ячейки для каждого уровня
   const levelsWithCells = await Promise.all(
