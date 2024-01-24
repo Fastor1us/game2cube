@@ -1,15 +1,14 @@
 const express = require('express');
 const userRoutes = require('./routes/userRoutes');
 const gameRoutes = require('./routes/gameRoutes');
-const serverData = require('../server_data.js');
+const URL = process.env.URL || 'http://localhost:3000';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
 app.use((req, res, next) => {
-  const url = process.env.NODE_ENV === 'prod' ?
-    serverData.cors.prod : serverData.cors.dev;
-  res.setHeader('Access-Control-Allow-Origin', url);
+  console.log(URL);
+  res.setHeader('Access-Control-Allow-Origin', URL);
   res.setHeader('Access-Control-Allow-Headers',
     'Content-Type, Authorization');
   res.setHeader('Access-Control-Allow-Credentials', 'true');

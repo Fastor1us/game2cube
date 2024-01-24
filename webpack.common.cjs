@@ -1,3 +1,5 @@
+const webpack = require('webpack');
+
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
@@ -55,11 +57,13 @@ module.exports = {
       },
     ]
   },
-  plugins: [
-    new HtmlWebpackPlugin({
-      template: './frontend/public/index.html',
-    }),
-    new MiniCssExtractPlugin(),
+  plugins: [new webpack.DefinePlugin({
+    process: { env: {} }
+  }),
+  new HtmlWebpackPlugin({
+    template: './frontend/public/index.html',
+  }),
+  new MiniCssExtractPlugin(),
   ],
   resolve: {
     extensions: ['.js', '.jsx'],
