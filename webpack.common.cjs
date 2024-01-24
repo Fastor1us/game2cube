@@ -57,13 +57,14 @@ module.exports = {
       },
     ]
   },
-  plugins: [new webpack.DefinePlugin({
-    process: { env: {} }
-  }),
-  new HtmlWebpackPlugin({
-    template: './frontend/public/index.html',
-  }),
-  new MiniCssExtractPlugin(),
+  plugins: [
+    new webpack.DefinePlugin({
+      process: { env: {} }
+    }),
+    new HtmlWebpackPlugin({
+      template: './frontend/public/index.html',
+    }),
+    new MiniCssExtractPlugin(),
   ],
   resolve: {
     extensions: ['.js', '.jsx'],

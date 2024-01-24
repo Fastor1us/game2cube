@@ -7,7 +7,6 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 app.use((req, res, next) => {
-  console.log(URL);
   res.setHeader('Access-Control-Allow-Origin', URL);
   res.setHeader('Access-Control-Allow-Headers',
     'Content-Type, Authorization');
