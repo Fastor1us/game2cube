@@ -1,6 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/dist/query/react';
 import { BACKEND_URL } from '../constants';
 
+console.log(BACKEND_URL);
 const API_URL = `${BACKEND_URL}/user`;
 
 
