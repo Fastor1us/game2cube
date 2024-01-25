@@ -9,7 +9,5 @@ export const cellPattern = {
 export const defaultAvatar = 'avatar001.svg';
 
 
-console.log(BACKEND_URL);
-
-export const BACKEND_URL =
-  process.env.REACT_APP_BACKEND_URL || 'http://localhost:3001';
+export const BACKEND_URL = process.env.NODE_ENV === 'production' ?
+  'https://game2cube-backend.onrender.com' : 'http://localhost:3001';

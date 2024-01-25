@@ -9,7 +9,7 @@
     "b-start": "cross-env node backend/server.js ",
     "b-serve": "cross-env nodemon backend/server.js",
     "f-build": "webpack --config webpack.prod.cjs --mode production",
-    "f-run-build": "start ./frontend/build/index.html"
+    "f-run-build": "serve ./frontend/build"
   },
   "keywords": [],
   "author": "Kiryushin Oleg <fewgwer3@ya.ru>",
