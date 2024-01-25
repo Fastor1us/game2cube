@@ -53,7 +53,7 @@ export default function ForgotPasswordPage() {
     if (recoveryCodeError) {
       /лимит/i.test(recoveryCodeError?.data?.error) &&
         setIsAttemptLimit(true);
-      console.log('recoveryCodeError:', recoveryCodeError?.data);
+      // console.log('recoveryCodeError:', recoveryCodeError?.data);
     }
     // recoveryCodeIsSuccess && .current.focus();
     recoveryCodeIsSuccess && recoveryCodeData &&

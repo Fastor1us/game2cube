@@ -240,9 +240,9 @@ export default function Engine() {
       // сценарий с цветной на свой (другой belong)/другой цвет наискосок
       // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
       if (!isMoveAdjacent(prevCellCoords, currCellCoords)) {
-        console.log('сработал ход наискосок, блокируем');
-        console.log('prevCellCoords', prevCellCoords);
-        console.log('currCellCoords', currCellCoords);
+        // console.log('сработал ход наискосок, блокируем');
+        // console.log('prevCellCoords', prevCellCoords);
+        // console.log('currCellCoords', currCellCoords);
         dispatch(setIsWatching(false));
         return;
       }

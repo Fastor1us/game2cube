@@ -1,18 +1,11 @@
 const { Pool } = require('pg');
 
-// const pool = new Pool({
-//   user: 'postgres',
-//   host: 'localhost',
-//   database: 'postgres',
-//   password: 'elephant-DB',
-//   port: 5432,
-// });
 
 const pool = new Pool({
-  user: 'express',
-  host: 'localhost',
-  database: 'postgres',
-  password: 'gfhjkmr<L',
+  user: process.env.POSTGRE_USER || 'express',
+  host: process.env.POSTGRE_HOST || 'localhost',
+  database: process.env.POSTGRE_DATABASE || 'postgres',
+  password: process.env.POSTGRE_PASSWORD || 'gfhjkmr<L',
   port: 5432,
 });
 
