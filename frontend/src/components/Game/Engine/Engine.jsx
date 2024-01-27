@@ -47,11 +47,14 @@ export default function Engine() {
         }));
       }
     };
-    document.addEventListener('mouseup', handleMouseUp);
-    document.addEventListener('touchend', handleMouseUp);
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    !isMobile ?
+      document.addEventListener('mouseup', handleMouseUp) :
+      document.addEventListener('touchend', handleMouseUp);
     return () => {
-      document.removeEventListener('mouseup', handleMouseUp);
-      document.removeEventListener('touchend', handleMouseUp);
+      !isMobile ?
+        document.removeEventListener('mouseup', handleMouseUp) :
+        document.removeEventListener('touchend', handleMouseUp);
     };
   }, []);
 

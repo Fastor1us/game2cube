@@ -19,6 +19,7 @@ const Cell = forwardRef((props, ref) => {
 
   useEffect(() => {
     if (!props.isCellOutsideGame && !props.isCreatingMode) {
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
       const handleMouseEnter = () => {
         dispatch(setCellCoords({
           row: props.row,
@@ -64,7 +65,7 @@ const Cell = forwardRef((props, ref) => {
         }
       }
       const handleTouchStart = (e) => {
-        if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+        if (isMobile && getGridData()[props.row][props.col].color !== null) {
           e.preventDefault();
         }
         handleMouseEnter();
@@ -91,19 +92,25 @@ const Cell = forwardRef((props, ref) => {
       const handleTouchEnd = () => {
         isTouchInside.current = false;
       };
-      innerRef.current.addEventListener('mouseenter', handleMouseEnter);
-      innerRef.current.addEventListener('touchstart', handleTouchStart);
-      document.addEventListener('touchmove', handleTouchMove);
-      document.addEventListener('touchend', handleTouchEnd);
-      document.addEventListener('touchcancel', handleTouchEnd);
+      if (!isMobile) {
+        innerRef.current.addEventListener('mouseenter', handleMouseEnter);
+      } else {
+        innerRef.current.addEventListener('touchstart', handleTouchStart);
+        document.addEventListener('touchmove', handleTouchMove);
+        document.addEventListener('touchend', handleTouchEnd);
+        document.addEventListener('touchcancel', handleTouchEnd);
+      }
       return () => {
-        if (innerRef.current) {
-          innerRef.current.removeEventListener('mouseenter', handleMouseEnter);
-          innerRef.current.removeEventListener('touchstart', handleTouchStart);
+        if (!isMobile) {
+          innerRef.current &&
+            innerRef.current.removeEventListener('mouseenter', handleMouseEnter);
+        } else {
+          innerRef.current &&
+            innerRef.current.removeEventListener('touchstart', handleTouchStart);
+          document.removeEventListener('touchmove', handleTouchMove);
+          document.removeEventListener('touchend', handleTouchEnd);
+          document.removeEventListener('touchcancel', handleTouchEnd);
         }
-        document.removeEventListener('touchmove', handleTouchMove);
-        document.removeEventListener('touchend', handleTouchEnd);
-        document.removeEventListener('touchcancel', handleTouchEnd);
       };
     }
   }, []);
