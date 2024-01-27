@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { gameAPI } from '../../utils/api/game-api.js';
 import { useDispatch, useSelector } from 'react-redux';
-import { setCurrLevel, setLevels } from '../../store/slicers/managerSlicer.js';
+import { setCurrLevelIndex, setLevels } from '../../store/slicers/managerSlicer.js';
 import { userSelector } from '../../store/selectors/userSelectors.js';
 import Manager from '../../components/Manager/Manager.jsx';
 import styles from './HomePage.module.css';
@@ -22,7 +22,7 @@ export default function HomePage() {
   const [isSearch, setIsSearch] = useState(false);
   const [isRules, setIsRules] = useState(false);
   const [isAboutProject, setIsAboutProject] = useState(false);
-  const [currTab, setCurrTab] = useState(null);
+  const [currTitleTab, setCurrTitleTab] = useState(null);
   const [get, { data, isSuccess: getIsSuccess,
     error: getError, isLoading: getIsLoading }] =
     gameAPI.useGetMutation();
@@ -38,14 +38,12 @@ export default function HomePage() {
     setIsRules(false);
     setIsAboutProject(false);
     dispatch(setLevels([]));
-    dispatch(setGridData([]));
-    dispatch(setCurrLevel({ index: null }));
   }, []);
 
-  const onLiClick = (strNavItem, callback) => {
-    if (strNavItem !== currTab) {
+  const onNavPanelClick = (strNavItem, callback) => {
+    if (strNavItem !== currTitleTab) {
       reset();
-      setCurrTab(strNavItem);
+      setCurrTitleTab(strNavItem);
       callback();
     }
   }
@@ -82,17 +80,17 @@ export default function HomePage() {
   ];
 
   useEffect(() => {
-    setCurrTab(navPanelData[0][0]);
+    setCurrTitleTab(navPanelData[0][0]);
     get({ main: true });
   }, [isAuth]);
 
   useEffect(() => {
     get({ main: true });
-    setCurrTab(navPanelData[0][0]);
+    setCurrTitleTab(navPanelData[0][0]);
     return () => {
       dispatch(setLevels([]));
       dispatch(setGridData([]));
-      dispatch(setCurrLevel({ index: null }));
+      dispatch(setCurrLevelIndex(null));
     }
   }, []);
 
@@ -108,7 +106,9 @@ export default function HomePage() {
     <section className={styles.container}>
       <ul className={styles.list}>
         {navPanelData.map((item, index) => (
-          <li key={index} onClick={() => onLiClick(item[0], item[1])}
+          <li
+            key={index}
+            onClick={() => onNavPanelClick(item[0], item[1])}
             className={`${[
               styles.listItem,
               getIsLoading && styles.listItemDisabled
@@ -119,12 +119,15 @@ export default function HomePage() {
         ))}
       </ul>
       <h1 className={styles.title}>
-        {currTab && (currTab?.charAt(0).toUpperCase() + currTab?.slice(1))}
+        {currTitleTab &&
+          (currTitleTab?.charAt(0).toUpperCase() + currTitleTab?.slice(1))
+        }
       </h1>
       {isSearch && <GameFilter />}
       {!isAboutProject && !isRules &&
         <Manager
           isLoading={getIsLoading}
+          error={getError}
           isMyLevels={isMyLevels}
           isRandomLevels={isRandomLevels}
           getRandomLevels={onRandomLevelsClick}

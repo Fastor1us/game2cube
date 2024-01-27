@@ -1,26 +1,26 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { currLevelSelector, levelsSelector } from '../../../store/selectors/managerSelectors';
+import { currLevelIndexSelector, levelsSelector } from '../../../store/selectors/managerSelectors';
 import styles from './LevelList.module.css';
 import { setGridData, setIsCompleted, setLinkedColors } from '../../../store/slicers/gameSlicer';
 import { cellPattern } from '../../../utils/constants';
-import { setCurrLevel } from '../../../store/slicers/managerSlicer';
+import { setCurrLevelIndex } from '../../../store/slicers/managerSlicer';
 
 
 export default function LevelList() {
   const dispatch = useDispatch();
   const levels = useSelector(levelsSelector);
-  const currLevel = useSelector(currLevelSelector);
+  const currLevelIndex = useSelector(currLevelIndexSelector);
   const [currentPage, setCurrentPage] = useState(0);
 
   useEffect(() => {
-    if (currLevel.index === null) {
-      dispatch(setCurrLevel({ index: 0 }));
+    if (currLevelIndex === null) {
+      dispatch(setCurrLevelIndex(0));
     }
   }, []);
 
   useEffect(() => {
-    dispatch(setCurrLevel({ index: 0 }));
+    dispatch(setCurrLevelIndex(0));
     setCurrentPage(0);
     dispatch(setLinkedColors({}));
     dispatch(setIsCompleted(false));
@@ -28,26 +28,26 @@ export default function LevelList() {
 
   useEffect(() => {
     const handleKeyPress = (event) => {
-      if (event.key === "ArrowLeft" && currLevel.index > 0) {
-        dispatch(setCurrLevel({ index: currLevel.index - 1 }));
+      if (event.key === "ArrowLeft" && currLevelIndex > 0) {
+        dispatch(setCurrLevelIndex(currLevelIndex));
       }
       if (
         event.key === "ArrowRight" &&
-        currLevel.index < levels.length - 1
+        currLevelIndex < levels.length - 1
       ) {
-        dispatch(setCurrLevel({ index: currLevel.index + 1 }));
+        dispatch(setCurrLevelIndex(currLevelIndex + 1));
       }
     };
     window.addEventListener("keydown", handleKeyPress);
     return () => {
       window.removeEventListener("keydown", handleKeyPress);
     };
-  }, [currLevel, levels]);
+  }, [currLevelIndex, levels]);
 
   useEffect(() => {
     if (levels && levels.length > 0) {
-      const index = currLevel?.index ? (
-        currLevel?.index > levels.length - 1 ? 0 : currLevel.index
+      const index = currLevelIndex ? (
+        currLevelIndex > levels.length - 1 ? 0 : currLevelIndex
       ) : 0;
       const size = levels[index].size;
       const tech = levels[index].cells.map(item => {
@@ -79,28 +79,26 @@ export default function LevelList() {
           })
       ));
     }
-  }, [levels, currLevel]);
+  }, [levels, currLevelIndex]);
 
   const onClick = (index) => {
-    if (currLevel.index !== index) {
-      dispatch(setCurrLevel({
-        index: index,
-      }));
+    if (currLevelIndex !== index) {
+      dispatch(setCurrLevelIndex(index));
       dispatch(setLinkedColors({}));
       dispatch(setIsCompleted(false));
     }
   }
 
   useEffect(() => {
-    if (currLevel?.index) {
-      const index = currLevel.index;
+    if (currLevelIndex) {
+      const index = currLevelIndex;
       if (index < 9) {
         setCurrentPage(0);
       } else {
         setCurrentPage(Math.floor((index - 1) / (8)));
       }
     }
-  }, [currLevel]);
+  }, [currLevelIndex]);
 
   return (
     <section className={styles.levelList}>
@@ -131,8 +129,9 @@ export default function LevelList() {
               key={index}
               onClick={() => { onClick(index) }}
               className={`
-              ${styles.levelItem} ${currLevel.index === index ? styles.active : ''}
-            `}
+                ${styles.levelItem} 
+                ${currLevelIndex === index ? styles.active : ''}
+              `}
             >
               {index + 1}
             </div>
@@ -149,11 +148,13 @@ export default function LevelList() {
         )}
       </>) : (<>
         {levels && levels.map((_, index) => (
-          <div key={index}
+          <div
+            key={index}
             onClick={() => { onClick(index) }}
             className={`
-            ${styles.levelItem} ${currLevel.index === index ? styles.active : ''}
-          `}
+              ${styles.levelItem} 
+              ${currLevelIndex === index ? styles.active : ''}
+            `}
           >
             {index + 1}
           </div>

@@ -1,9 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  currLevel: {
-    index: null
-  },
+  currLevelIndex: null,
   levels: [],
 }
 
@@ -14,8 +12,8 @@ const managerSlicer = createSlice({
     setLevels(state, action) {
       state.levels = action.payload;
     },
-    setCurrLevel(state, action) {
-      state.currLevel = action.payload;
+    setCurrLevelIndex(state, action) {
+      state.currLevelIndex = action.payload;
       // state.currLevel = Object.assign({}, action.payload);
     },
     toggleLevelReduxLike(state, action) {
@@ -40,7 +38,7 @@ const managerSlicer = createSlice({
 
 export const {
   setLevels,
-  setCurrLevel,
+  setCurrLevelIndex,
   toggleLevelReduxLike
 } = managerSlicer.actions;
 
