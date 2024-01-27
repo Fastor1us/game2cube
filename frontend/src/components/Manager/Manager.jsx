@@ -156,7 +156,7 @@ export default function Manager(props) {
           <Game />
         </section>
 
-        <LevelList />
+        {/* <LevelList /> */}
 
         <div className={styles.arrowContainer}>
           <img

@@ -38,6 +38,7 @@ export default function HomePage() {
     setIsRules(false);
     setIsAboutProject(false);
     dispatch(setLevels([]));
+    dispatch(setCurrLevelIndex(0));
   }, []);
 
   const onNavPanelClick = (strNavItem, callback) => {

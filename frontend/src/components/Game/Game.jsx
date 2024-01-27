@@ -22,7 +22,7 @@ export default function Game() {
   const handleMouseDown = useCallback((e) => {
     if (
       /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) &&
-      currCellCoords?.row &&
+      currCellCoords?.row !== null &&
       getGridData()[currCellCoords.row][currCellCoords?.col].color !== null
     ) {
       e.preventDefault();
@@ -84,9 +84,12 @@ export default function Game() {
       >
         {fields.map((_, row) => {
           return _.map((item, col) => {
-            return <Cell key={row + '' + col}
-              {...{ row, col }} {...item}
-              size={fields.length} />
+            return <Cell
+              key={row + '' + col}
+              {...{ row, col }}
+              {...item}
+              size={fields.length}
+            />
           });
         })}
       </ul>
