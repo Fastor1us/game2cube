@@ -2,13 +2,13 @@ import React, { useEffect, useState } from 'react';
 import Game from '../Game/Game';
 import styles from './Manager.module.css';
 import { useDispatch, useSelector } from 'react-redux';
-import { currLevelSelector, levelsSelector } from '../../store/selectors/managerSelectors';
+import { currLevelIndexSelector, levelsSelector } from '../../store/selectors/managerSelectors';
 import heartFilledSVG from '../../images/manager/heart-filled.svg';
 import heartOutlineSVG from '../../images/manager/heart-outline.svg';
 import heartDisabledSVG from '../../images/manager/heart-disabled.svg';
 import { isAuthSelector } from '../../store/selectors/userSelectors';
 import { gameAPI } from '../../utils/api/game-api';
-import { setCurrLevel, setLevels, toggleLevelReduxLike } from '../../store/slicers/managerSlicer';
+import { setCurrLevelIndex, setLevels, toggleLevelReduxLike } from '../../store/slicers/managerSlicer';
 import LevelList from './LevelList/LevelList';
 import Modal from '../Modal/Modal';
 import svgArrowLeft from '../../images/manager/arrow-left.svg';
@@ -24,7 +24,7 @@ export default function Manager(props) {
   const navigate = useNavigate();
   const isAuth = useSelector(isAuthSelector);
   const levels = useSelector(levelsSelector);
-  const currLevel = useSelector(currLevelSelector);
+  const currLevelIndex = useSelector(currLevelIndexSelector);
   const [showDelModal, setShowDelModal] = useState(false);
 
   const [toggleLike, { data: toggleLikeData, error: toggleLikeError,
@@ -34,7 +34,7 @@ export default function Manager(props) {
     isSuccess: deleteLevelIsSuccess, isLoading: deleteLevelIsLoading }] =
     gameAPI.useDeleteMutation();
 
-  const level = levels?.length > 0 && levels[currLevel.index];
+  const level = levels?.length > 0 && levels[currLevelIndex];
 
   const handleLike = async () => {
     if (isAuth && !toggleLikeIsLoading) {
@@ -46,41 +46,41 @@ export default function Manager(props) {
 
   useEffect(() => {
     toggleLikeIsSuccess && dispatch(
-      toggleLevelReduxLike({ index: currLevel.index }));
+      toggleLevelReduxLike({ index: currLevelIndex }));
   }, [toggleLikeIsSuccess]);
 
   useEffect(() => {
     dispatch(setLinkedColors({}));
     dispatch(setIsCompleted(false));
-  }, [currLevel]);
+  }, [currLevelIndex]);
 
   const handleDelete = () => {
     setShowDelModal(false);
     if (isAuth && !deleteLevelIsLoading) {
       deleteLevel({
         token: localStorage.getItem('token'),
-        levelId: levels[currLevel.index].levelId
+        levelId: levels[currLevelIndex].levelId
       });
     }
     if (levels.length === 1) {
-      dispatch(setCurrLevel({ index: null }));
+      dispatch(setCurrLevelIndex(null));
       dispatch(setLevels([]));
       return;
     }
-    dispatch(setCurrLevel({ index: currLevel.index - 1 }));
+    dispatch(setCurrLevelIndex(currLevelIndex - 1));
     dispatch(setLevels(
-      levels.filter((_, index) => index !== currLevel.index)
+      levels.filter((_, index) => index !== currLevelIndex)
     ));
   }
 
   const handleLefArrow = () => {
-    currLevel.index > 0 &&
-      dispatch(setCurrLevel({ index: currLevel.index - 1 }));
+    currLevelIndex > 0 &&
+      dispatch(setCurrLevelIndex(currLevelIndex - 1));
   }
 
   const handleRightArrow = () => {
-    currLevel.index < levels.length - 1 &&
-      dispatch(setCurrLevel({ index: currLevel.index + 1 }));
+    currLevelIndex < levels.length - 1 &&
+      dispatch(setCurrLevelIndex(currLevelIndex + 1));
   }
 
   return (<>
@@ -104,7 +104,7 @@ export default function Manager(props) {
               style={{ userSelect: 'none' }}
               src={
                 isAuth ? (levels?.length > 0 &&
-                  levels[currLevel.index]?.isAbleToLike ?
+                  levels[currLevelIndex]?.isAbleToLike ?
                   heartOutlineSVG : heartFilledSVG
                 ) : heartDisabledSVG
               }
@@ -115,7 +115,7 @@ export default function Manager(props) {
           </p>
         </div>
 
-        {props?.isMyLevels && (<>
+        {props.isMyLevels && (<>
           <form className={styles.myLevelsform}
             onSubmit={(e) => e.preventDefault()}
           >
@@ -142,7 +142,7 @@ export default function Manager(props) {
           </form>
         </>)}
 
-        {props?.isRandomLevels && (<>
+        {props.isRandomLevels && (<>
           <form className={styles.myLevelsform}
             onSubmit={(e) => e.preventDefault()}
           >
@@ -159,18 +159,20 @@ export default function Manager(props) {
         <LevelList />
 
         <div className={styles.arrowContainer}>
-          <img src={svgArrowLeft} alt='стрелка влево'
+          <img
+            src={svgArrowLeft} alt='стрелка влево'
             className={`
               ${styles.svgArrow}
-              ${currLevel.index > 0 ?
+              ${currLevelIndex > 0 ?
                 styles.enabledArrow : styles.disabledArrow}
             `}
             onClick={handleLefArrow}
           />
-          <img src={svgArrowRight} alt='стрелка вправо'
+          <img
+            src={svgArrowRight} alt='стрелка вправо'
             className={`
               ${styles.svgArrow}
-              ${currLevel.index < levels.length - 1 ?
+              ${currLevelIndex < levels.length - 1 ?
                 styles.enabledArrow : styles.disabledArrow}
             `}
             onClick={handleRightArrow}
@@ -178,7 +180,7 @@ export default function Manager(props) {
         </div>
       </section>
     )}
-    {levels?.length === 0 && !props?.isLoading && props?.isMyLevels &&
+    {levels?.length === 0 && !props.isLoading && props.isMyLevels &&
       <div>
         <h2>
           Здесь будут отображаться ваши уровни
@@ -192,6 +194,10 @@ export default function Manager(props) {
         </p>
       </div>
     }
-    {props?.isLoading && <h2>Загрузка...</h2>}
+    {props.isLoading && <h2>Загрузка...</h2>}
+    {props.error && (<>
+      <h2>Упс, произошла ошибка...</h2>
+      <p>Попробуйте еще раз позже</p>
+    </>)}
   </>);
 }
