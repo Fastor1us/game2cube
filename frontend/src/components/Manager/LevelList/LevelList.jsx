@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { currLevelSelector, levelsSelector } from '../../../store/selectors/managerSelectors';
 import styles from './LevelList.module.css';
@@ -25,6 +25,24 @@ export default function LevelList() {
     dispatch(setLinkedColors({}));
     dispatch(setIsCompleted(false));
   }, [levels]);
+
+  useEffect(() => {
+    const handleKeyPress = (event) => {
+      if (event.key === "ArrowLeft" && currLevel.index > 0) {
+        dispatch(setCurrLevel({ index: currLevel.index - 1 }));
+      }
+      if (
+        event.key === "ArrowRight" &&
+        currLevel.index < levels.length - 1
+      ) {
+        dispatch(setCurrLevel({ index: currLevel.index + 1 }));
+      }
+    };
+    window.addEventListener("keydown", handleKeyPress);
+    return () => {
+      window.removeEventListener("keydown", handleKeyPress);
+    };
+  }, [currLevel, levels]);
 
   useEffect(() => {
     if (levels && levels.length > 0) {

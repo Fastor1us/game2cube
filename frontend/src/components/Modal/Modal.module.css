@@ -44,7 +44,7 @@
   cursor: pointer;
 }
 
-@media (min-width: 412px) and (max-width: 539px) {
+@media (min-width: 375px) and (max-width: 539px) {
   .container {
     max-width: 539px;
     width: 100%;

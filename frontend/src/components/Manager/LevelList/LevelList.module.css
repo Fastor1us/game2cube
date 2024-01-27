@@ -4,8 +4,8 @@
 }
 
 .levelItem {
-  width: 40px;
-  padding: 7px 0;
+  width: 30px;
+  padding: 5px 0;
   border: 1px inset rgba(143, 16, 16, 0.5);
   user-select: none;
 }

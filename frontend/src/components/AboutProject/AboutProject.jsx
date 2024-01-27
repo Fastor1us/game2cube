@@ -1,5 +1,6 @@
 import React from 'react';
 import styles from './AboutProject.module.css';
+import { PORTFOLIO_URL } from '../../utils/constants';
 
 
 export default function AboutProject() {
@@ -10,11 +11,11 @@ export default function AboutProject() {
       </p>
       <p>
         <a
-          href="TODO"
+          href={PORTFOLIO_URL}
           target="_blank"
           rel="noreferrer"
         >
-          <b>Портфолио. TODO</b>
+          <b>Портфолио</b>
         </a>
       </p>
       <p style={{ marginBottom: 0 }}>

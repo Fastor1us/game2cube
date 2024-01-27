@@ -78,7 +78,7 @@
 }
 
 
-@media (min-width: 412px) and (max-width: 540px) {
+@media (max-width: 600px) {
   .arrowContainer {
     display: flex;
     justify-content: space-around;
@@ -93,7 +93,7 @@
   }
 }
 
-@media (min-width: 541px) and (max-width: 625px) {
+@media (min-width: 601px) and (max-width: 825px) {
   .svgArrow {
     width: 45px;
   }

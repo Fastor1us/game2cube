@@ -1,4 +1,4 @@
-import React, { forwardRef, useCallback, useEffect, useRef } from 'react';
+import React, { forwardRef, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   setCellCoords,
@@ -63,20 +63,16 @@ const Cell = forwardRef((props, ref) => {
           }
         }
       }
-      const handleTouchStart = () => {
-        dispatch(setCellCoords({
-          row: props.row,
-          col: props.col,
-        }));
-        if (isTouchInside.current) {
-          return;
+      const handleTouchStart = (e) => {
+        if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+          e.preventDefault();
         }
         handleMouseEnter();
         isTouchInside.current = true;
       }
-      const handleTouchMove = (event) => {
+      const handleTouchMove = (e) => {
         const rect = innerRef.current.getBoundingClientRect();
-        const touch = event.touches[0];
+        const touch = e.touches[0];
         if (
           touch.clientX >= rect.left &&
           touch.clientX <= rect.right &&
@@ -98,14 +94,16 @@ const Cell = forwardRef((props, ref) => {
       innerRef.current.addEventListener('mouseenter', handleMouseEnter);
       innerRef.current.addEventListener('touchstart', handleTouchStart);
       document.addEventListener('touchmove', handleTouchMove);
-      innerRef.current.addEventListener('touchend', handleTouchEnd);
-      innerRef.current.addEventListener('touchcancel', handleTouchEnd);
+      document.addEventListener('touchend', handleTouchEnd);
+      document.addEventListener('touchcancel', handleTouchEnd);
       return () => {
-        innerRef.current && innerRef.current.removeEventListener('mouseenter', handleMouseEnter);
-        innerRef.current && innerRef.current.removeEventListener('touchstart', handleTouchStart);
+        if (innerRef.current) {
+          innerRef.current.removeEventListener('mouseenter', handleMouseEnter);
+          innerRef.current.removeEventListener('touchstart', handleTouchStart);
+        }
         document.removeEventListener('touchmove', handleTouchMove);
-        innerRef.current && innerRef.current.removeEventListener('touchend', handleTouchEnd);
-        innerRef.current && innerRef.current.removeEventListener('touchcancel', handleTouchEnd);
+        document.removeEventListener('touchend', handleTouchEnd);
+        document.removeEventListener('touchcancel', handleTouchEnd);
       };
     }
   }, []);
@@ -123,21 +121,11 @@ const Cell = forwardRef((props, ref) => {
           props.isBlocked && styles.blockedCell,
           props.color && !props.step && styles[`color-${props.color}`],
           props.color && !props.step && styles.filledCell,
-          props.step && styles.emptyCell,
+          props.step && styles.step,
+          props.step && styles[`step-${props.color}`],
           props.size && styles[`field-size-${props.size}`],
         ].filter(Boolean).join(' ')}`}
-      >
-        {
-          props.step &&
-          <div className={`${[
-            styles.cell,
-            styles.step,
-            styles.filledCell,
-            styles[`color-${props.color}`],
-          ].filter(Boolean).join(' ')}`}
-          ></div>
-        }
-      </div >
+      ></div>
     </li >
   );
 });

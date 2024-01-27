@@ -142,8 +142,9 @@ export default function CreatingLevelsPage() {
         <CustomButton
           disabled={isLoading || isError || isSaved}
           onClick={() => setIsCreatingMode(!isCreatingMode)}
+          extraClass={isCreatingMode ? styles.btnCreateMod : styles.btnPlayMod}
         >
-          включение/выключение режима прохождения уровня
+          {isCreatingMode ? 'включить режим прохождения' : 'включить режим расстановки'}
         </CustomButton>
         <CustomButton
           onClick={handleSave}
@@ -197,9 +198,11 @@ export default function CreatingLevelsPage() {
           }
 
           {!isCreatingMode && <Game />}
-          {!isCreatingMode && !isCompleted ?
-            <div>Режим прохождения</div> :
-            <div>Режим расстановки</div>
+          {!isCompleted &&
+            <div>
+              {'Текущий режим: '}
+              {isCreatingMode ? 'Расстановка' : 'Прохождение'}
+            </div>
           }
         </section>
       </div>

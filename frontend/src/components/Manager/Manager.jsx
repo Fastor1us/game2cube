@@ -15,10 +15,13 @@ import svgArrowLeft from '../../images/manager/arrow-left.svg';
 import svgArrowRight from '../../images/manager/arrow-right.svg';
 import { setIsCompleted, setLinkedColors } from '../../store/slicers/gameSlicer';
 import CustomButton from '../CustomButton/CustomButton';
+import { useNavigate } from 'react-router-dom';
+import kiwiSVG from '../../images/manager/kiwi-gamer.gif';
 
 
 export default function Manager(props) {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const isAuth = useSelector(isAuthSelector);
   const levels = useSelector(levelsSelector);
   const currLevel = useSelector(currLevelSelector);
@@ -81,8 +84,8 @@ export default function Manager(props) {
   }
 
   return (<>
-    {levels && levels.length > 0 &&
-      (<section className={styles.manager}>
+    {levels && levels.length > 0 && (
+      <section className={styles.manager}>
         <div className={styles.header}>
           <div className={styles.headerItem}>
             <div style={{ userSelect: 'none' }}>
@@ -173,7 +176,22 @@ export default function Manager(props) {
             onClick={handleRightArrow}
           />
         </div>
+      </section>
+    )}
+    {levels?.length === 0 && !props?.isLoading && props?.isMyLevels &&
+      <div>
+        <h2>
+          Здесь будут отображаться ваши уровни
+        </h2>
+        <img src={kiwiSVG} alt="kiwiSVG" style={{ marginBottom: '40px' }} />
+        <CustomButton onClick={() => navigate('/create-level')}>
+          Перейти на страницу создания уровней
+        </CustomButton>
+        <p>
 
-      </section>)}
+        </p>
+      </div>
+    }
+    {props?.isLoading && <h2>Загрузка...</h2>}
   </>);
 }

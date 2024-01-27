@@ -61,9 +61,8 @@ export default function Engine() {
       return;
     }
     if (prevCellCoords.row !== null && isWatching) {
-      const prevCellData = getGridData()[prevCellCoords.row][prevCellCoords.col];
       dispatch(setCellState({
-        address: prevCellCoords, data: { ...prevCellData, focus: false },
+        address: prevCellCoords, data: { focus: false },
       }));
     }
   }, [prevCellCoords, isWatching, isCompleted]);

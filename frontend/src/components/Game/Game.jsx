@@ -19,7 +19,8 @@ export default function Game() {
 
   const fields = useSelector(gridDataSelector);
 
-  const handleMouseDown = useCallback(() => {
+  const handleMouseDown = useCallback((e) => {
+    e.preventDefault();
     dispatch(setIsWatching(true));
   }, []);
   const handleMouseUp = useCallback(() => {
@@ -34,8 +35,8 @@ export default function Game() {
     ref.current.addEventListener('mouseup', handleMouseUp);
     ref.current.addEventListener('mouseleave', handleMouseLeave);
     ref.current.addEventListener('touchstart', handleMouseDown);
-    ref.current.addEventListener('touchend', handleMouseUp);
-    ref.current.addEventListener('touchcancel', handleMouseLeave);
+    document.addEventListener('touchend', handleMouseUp);
+    document.addEventListener('touchcancel', handleMouseLeave);
 
     return () => {
       if (ref.current) {
@@ -43,8 +44,8 @@ export default function Game() {
         ref.current.removeEventListener('mouseup', handleMouseUp);
         ref.current.removeEventListener('mouseleave', handleMouseLeave);
         ref.current.removeEventListener('touchstart', handleMouseDown);
-        ref.current.removeEventListener('touchend', handleMouseUp);
-        ref.current.removeEventListener('touchcancel', handleMouseLeave);
+        document.removeEventListener('touchend', handleMouseUp);
+        document.removeEventListener('touchcancel', handleMouseLeave);
       }
     };
   }, []);

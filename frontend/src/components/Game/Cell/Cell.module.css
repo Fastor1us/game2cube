@@ -22,9 +22,46 @@
 }
 
 .step {
-  transform: scale(.75);
+  background-color: antiquewhite;
   width: 100%;
   height: 100%;
+  position: relative;
+}
+
+.step::after {
+  content: '';
+  position: absolute;
+  height: 60%;
+  width: 60%;
+  border: 6px outset rgba(0, 0, 0, 0.5);
+}
+
+.step-1::after {
+  background-color: RoyalBlue;
+}
+
+.step-2::after {
+  background-color: ForestGreen;
+}
+
+.step-3::after {
+  background-color: Gray;
+}
+
+.step-4::after {
+  background-color: Crimson;
+}
+
+.step-5::after {
+  background-color: DarkOrchid;
+}
+
+.step-6::after {
+  background-color: Goldenrod;
+}
+
+.step-7::after {
+  background-color: Coral;
 }
 
 .focus {

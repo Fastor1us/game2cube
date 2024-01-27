@@ -124,6 +124,7 @@ export default function HomePage() {
       {isSearch && <GameFilter />}
       {!isAboutProject && !isRules &&
         <Manager
+          isLoading={getIsLoading}
           isMyLevels={isMyLevels}
           isRandomLevels={isRandomLevels}
           getRandomLevels={onRandomLevelsClick}
