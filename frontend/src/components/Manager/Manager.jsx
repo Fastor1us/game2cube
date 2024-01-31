@@ -73,7 +73,7 @@ export default function Manager(props) {
     ));
   }
 
-  const handleLefArrow = () => {
+  const handleLeftArrow = () => {
     currLevelIndex > 0 &&
       dispatch(setCurrLevelIndex(currLevelIndex - 1));
   }
@@ -166,7 +166,7 @@ export default function Manager(props) {
               ${currLevelIndex > 0 ?
                 styles.enabledArrow : styles.disabledArrow}
             `}
-            onClick={handleLefArrow}
+            onClick={handleLeftArrow}
           />
           <img
             src={svgArrowRight} alt='стрелка вправо'
@@ -189,15 +189,14 @@ export default function Manager(props) {
         <CustomButton onClick={() => navigate('/create-level')}>
           Перейти на страницу создания уровней
         </CustomButton>
-        <p>
-
-        </p>
       </div>
     }
     {props.isLoading && <h2>Загрузка...</h2>}
-    {props.error && (<>
+    {props.isError && !props.isSearch && !props.isMyLevels && (<>
       <h2>Упс, произошла ошибка...</h2>
       <p>Попробуйте еще раз позже</p>
     </>)}
+    {props.isError && !props.isSearch && !props.isMyLevels &&
+      <p> {props.error?.data?.error}</p>}
   </>);
 }

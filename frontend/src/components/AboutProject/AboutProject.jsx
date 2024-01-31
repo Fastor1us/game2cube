@@ -23,8 +23,8 @@ export default function AboutProject() {
       </p>
       <ul className={styles.list}>
         <li>
-          <a href="mailto:fewgwer3@ya.ru">
-            fewgwer3@ya.ru
+          <a href="mailto:o-kir@ro.ru">
+            o-kir@ro.ru
           </a>
         </li>
         <li>

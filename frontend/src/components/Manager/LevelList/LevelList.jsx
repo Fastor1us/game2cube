@@ -29,7 +29,7 @@ export default function LevelList() {
   useEffect(() => {
     const handleKeyPress = (event) => {
       if (event.key === "ArrowLeft" && currLevelIndex > 0) {
-        dispatch(setCurrLevelIndex(currLevelIndex));
+        dispatch(setCurrLevelIndex(currLevelIndex - 1));
       }
       if (
         event.key === "ArrowRight" &&

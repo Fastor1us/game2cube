@@ -10,6 +10,7 @@ import { setGridData } from '../../store/slicers/gameSlicer.js';
 import GameRules from '../../components/GameRules/GameRules.jsx';
 import AboutProject from '../../components/AboutProject/AboutProject.jsx';
 import GameFilter from '../../components/GameFilter/GameFilter.jsx';
+import NavPanel from '../../components/NavPanel/NavPanel.jsx';
 
 
 export default function HomePage() {
@@ -23,7 +24,7 @@ export default function HomePage() {
   const [isRules, setIsRules] = useState(false);
   const [isAboutProject, setIsAboutProject] = useState(false);
   const [currTitleTab, setCurrTitleTab] = useState(null);
-  const [get, { data, isSuccess: getIsSuccess,
+  const [get, { data, isSuccess: getIsSuccess, isError: getIsError,
     error: getError, isLoading: getIsLoading }] =
     gameAPI.useGetMutation();
 
@@ -41,7 +42,8 @@ export default function HomePage() {
     dispatch(setCurrLevelIndex(0));
   }, []);
 
-  const onNavPanelClick = (strNavItem, callback) => {
+  const onNavPanelClick = (data) => {
+    const [strNavItem, callback] = data;
     if (strNavItem !== currTitleTab) {
       reset();
       setCurrTitleTab(strNavItem);
@@ -99,26 +101,20 @@ export default function HomePage() {
     if (location?.search === '?about') {
       reset();
       setIsAboutProject(true);
+      setCurrTitleTab('о проекте');
       navigate('/');
     }
   }, [location]);
 
   return (
     <section className={styles.container}>
-      <ul className={styles.list}>
-        {navPanelData.map((item, index) => (
-          <li
-            key={index}
-            onClick={() => onNavPanelClick(item[0], item[1])}
-            className={`${[
-              styles.listItem,
-              getIsLoading && styles.listItemDisabled
-            ].filter(Boolean).join(' ')}`}
-          >
-            {item[0]}
-          </li>
-        ))}
-      </ul>
+      <NavPanel
+        data={navPanelData}
+        callback={onNavPanelClick}
+        disabled={getIsLoading}
+        activeTabIndex={isAboutProject ? 5 : undefined}
+      />
+
       <h1 className={styles.title}>
         {currTitleTab &&
           (currTitleTab?.charAt(0).toUpperCase() + currTitleTab?.slice(1))
@@ -128,8 +124,10 @@ export default function HomePage() {
       {!isAboutProject && !isRules &&
         <Manager
           isLoading={getIsLoading}
+          isError={getIsError}
           error={getError}
           isMyLevels={isMyLevels}
+          isSearch={isSearch}
           isRandomLevels={isRandomLevels}
           getRandomLevels={onRandomLevelsClick}
         />
