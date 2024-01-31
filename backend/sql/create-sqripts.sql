@@ -263,7 +263,7 @@ GRANT EXECUTE ON PROCEDURE game2cube.create_recovery(
 --!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 --ответ в виде:  
 --response [
---   { read_recovery: { id: 19, code: 4102, email: 'fewgwer3@ya.ru', attempt: 1  } }
+--   { read_recovery: { id: 19, code: 4102, email: 'email@email.ru', attempt: 1  } }
 -- ]
 --!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 --read_recovery
